@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventario Inteligente</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+
+  body {
+    background-color: #640328;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Barra superior fija */
+  .barra-superior {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 12vh;
+    min-height: 80px;
+    max-height: 120px;
+    background-color: white;
+    border-bottom: 4px solid #640328;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    z-index: 1000;
+  }
+
+  /* Logos en las esquinas */
+  .logo {
+    height: 80px;
+  }
+
+  .logo-izq {
+    height: 100px;
+  }
+
+  .logo-der {
+    height: 90px; 
+  }
+
+  .contenido {
+    text-align: center;
+    margin-top: 140px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .contenido h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+
+  .contenido h2 {
+    font-size: 22px;
+    font-weight: normal;
+    margin-bottom: 20px;
+  }
+
+  .contenido h3 {
+    font-size: 20px;
+    font-weight: normal;
+    margin-bottom: 30px;
+  }
+
+  /* Botón */
+  .btn {
+    padding: 15px 40px;
+    font-size: 18px;
+    background-color: white;
+    color: black; 
+    border: 2px solid black;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    background-color: black;
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Responsivo */
+  @media (max-width: 600px){
+    .logo-izq, .logo-der {
+      height: 70px;
+    }
+    .contenido h1 {
+      font-size: 28px;
+    }
+    .contenido h2 {
+      font-size: 18px;
+    }
+    .contenido h3 {
+      font-size: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Barra superior -->
+  <div class="barra-superior">
+    <img src="./img/logo_ipn.png" alt="IPN" class="logo logo-izq">
+    <img src="./img/logo_cecyt7.png" alt="CECyT 7" class="logo logo-der">
+  </div>
+
+  <!-- Contenido central -->
+  <div class="contenido">
+    <h1>Instituto Politécnico Nacional</h1>
+    <h2>Centro de Estudios Científicos y Tecnológicos<br>Número 7 "Cuauhtémoc"</h2>
+    <h3>Inventario inteligente del taller</h3>
+    <button class="btn" onclick="window.location.href='./paginas/inicio.html'">Navegar</button>
+  </div>
+
+</body>
+</html>
