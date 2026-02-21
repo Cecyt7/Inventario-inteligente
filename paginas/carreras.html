@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carreras - CECyT 7</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #640328;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Barra superior */
+        .barra-superior {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 12vh;
+            min-height: 80px;
+            background-color: white;
+            border-bottom: 4px solid #640328;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 1000;
+        }
+
+        .logo {
+            height: 80px;
+        }
+
+        .logo-izq {
+            height: 100px;
+        }
+
+        .logo-der {
+            height: 90px;
+        }
+
+        /* Contenedor principal */
+        .contenedor {
+            margin-top: 140px;
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Grid de carreras */
+        .grid-carreras {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .tarjeta-carrera {
+            background-color: white;
+            color: #640328;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .tarjeta-carrera:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+            background-color: #640328;
+            color: white;
+            border-color: #640328;
+        }
+
+        /* Carrera ACTIVA */
+        .tarjeta-carrera.activa {
+            background-color: white;
+            color: #640328;
+        }
+
+        .tarjeta-carrera.activa:hover {
+            background-color: #640328;
+            color: white;
+        }
+
+        /* Carrera DESACTIVA (en rojo) */
+        .tarjeta-carrera.desactiva {
+            background-color: #ff6b6b;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.7;
+            border-color: #ff6b6b;
+        }
+
+        .tarjeta-carrera.desactiva:hover {
+            transform: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            background-color: #ff5252;
+        }
+
+        .icono-carrera {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .nombre-carrera {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .descripcion-carrera {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .badge-proximamente {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Botón volver */
+        .btn-volver {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: white;
+            color: #640328;
+            border: 2px solid white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-volver:hover {
+            background-color: #640328;
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 2px solid white;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .titulo {
+                font-size: 24px;
+            }
+
+            .grid-carreras {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .contenedor {
+                margin-top: 140px;
+                padding: 20px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra superior -->
+    <div class="barra-superior">
+        <img src="./img/logo_ipn.png" alt="IPN" class="logo logo-izq">
+        <img src="./img/logo_cecyt7.png" alt="CECyT 7" class="logo logo-der">
+    </div>
+
+    <!-- Contenedor principal -->
+    <div class="contenedor">
+        
+        <!-- Botón volver -->
+        <button class="btn-volver" onclick="window.location.href='../index.html'">← Volver al Inicio</button>
+
+        <h1 class="titulo">🎓 Carreras Disponibles</h1>
+
+        <!-- Grid de carreras -->
+        <div class="grid-carreras">
+
+            <!-- Aeronáutica (DESACTIVA) -->
+            <div class="tarjeta-carrera desactiva">
+                <div class="icono-carrera">✈️</div>
+                <div class="nombre-carrera">Aeronáutica</div>
+                <div class="descripcion-carrera">Formación en técnicas aeronáuticas y aviación</div>
+                <div class="badge-proximamente">⏳ Próximamente</div>
+            </div>
+
+            <!-- Automotriz (DESACTIVA) -->
+            <div class="tarjeta-carrera desactiva">
+                <div class="icono-carrera">🚗</div>
+                <div class="nombre-carrera">Automotriz</div>
+                <div class="descripcion-carrera">Especialización en sistemas automotrices</div>
+                <div class="badge-proximamente">⏳ Próximamente</div>
+            </div>
+
+            <!-- Construcción (DESACTIVA) -->
+            <div class="tarjeta-carrera desactiva">
+                <div class="icono-carrera">🏗️</div>
+                <div class="nombre-carrera">Construcción</div>
+                <div class="descripcion-carrera">Técnicas y métodos de construcción</div>
+                <div class="badge-proximamente">⏳ Próximamente</div>
+            </div>
+
+            <!-- Energías Sustentables (DESACTIVA) -->
+            <div class="tarjeta-carrera desactiva">
+                <div class="icono-carrera">⚡</div>
+                <div class="nombre-carrera">Energías Sustentables</div>
+                <div class="descripcion-carrera">Tecnologías sostenibles y limpias</div>
+                <div class="badge-proximamente">⏳ Próximamente</div>
+            </div>
+
+            <!-- Electricidad (DESACTIVA) -->
+            <div class="tarjeta-carrera desactiva">
+                <div class="icono-carrera">💡</div>
+                <div class="nombre-carrera">Electricidad</div>
+                <div class="descripcion-carrera">Sistemas eléctricos e instalaciones</div>
+                <div class="badge-proximamente">⏳ Próximamente</div>
+            </div>
+
+            <!-- Mantenimiento Industrial (ACTIVA) -->
+            <div class="tarjeta-carrera activa" onclick="window.location.href='./carrera-mantenimiento.html'">
+                <div class="icono-carrera">🔧</div>
+                <div class="nombre-carrera">Mantenimiento Industrial</div>
+                <div class="descripcion-carrera">Mantenimiento de maquinaria industrial</div>
+                <div style="margin-top: 10px; font-size: 12px; color: #ffd700; font-weight: bold;">✅ Disponible</div>
+            </div>
+
+            <!-- Soldadura (DESACTIVA) -->
+            <div class="tarjeta-carrera desactiva">
+                <div class="icono-carrera">🔥</div>
+                <div class="nombre-carrera">Soldadura</div>
+                <div class="descripcion-carrera">Técnicas avanzadas de soldadura</div>
+                <div class="badge-proximamente">⏳ Próximamente</div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>CECyT 7 "Cuauhtémoc" - Instituto Politécnico Nacional</p>
+            <p>Todas las carreras con excelencia académica y formación práctica</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
