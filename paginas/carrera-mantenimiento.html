@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mantenimiento Industrial - CECyT 7</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #640328;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .barra-superior {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 12vh;
+      min-height: 80px;
+      background-color: white;
+      border-bottom: 4px solid #640328;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      z-index: 1000;
+    }
+
+    .logo {
+      height: 80px;
+    }
+
+    .contenedor {
+      margin-top: 140px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .btn-volver {
+      padding: 10px 20px;
+      background-color: white;
+      color: #640328;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .consulta {
+      background-color: white;
+      color: #640328;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .consulta input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    .consulta button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #640328;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .respuesta {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f2f2f2;
+      color: #333;
+      border-radius: 6px;
+      min-height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra superior -->
+  <div class="barra-superior">
+    <img src="./img/logo_ipn.png" class="logo">
+    <img src="./img/logo_cecyt7.png" class="logo">
+  </div>
+
+  <div class="contenedor">
+    <button class="btn-volver" onclick="window.location.href='./carreras.html'">
+      ← Volver a Carreras
+    </button>
+
+    <h1>🔧 Mantenimiento Industrial</h1>
+
+    <div class="consulta">
+      <p>Consulta información sobre la maquinaria del taller:</p>
+
+      <input 
+        type="text" 
+        id="pregunta"
+        placeholder="Ejemplo: ¿Dónde se ubican los tornos?"
+      >
+
+      <button onclick="hacerPregunta()">Consultar</button>
+
+      <div class="respuesta" id="respuesta">
+        Aquí aparecerá la respuesta del sistema.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function hacerPregunta() {
+      const pregunta = document.getElementById("pregunta").value;
+      const respuestaDiv = document.getElementById("respuesta");
+
+      if (pregunta.trim() === "") {
+        respuestaDiv.innerText = "Escribe una pregunta primero.";
+        return;
+      }
+
+      respuestaDiv.innerText = "Consultando al sistema...";
+
+      fetch("https://script.google.com/macros/s/AKfycbwbv5tA5LppROQYt4j557N0OxuoLHCq1CWnOuwG09C-HH6zXX2zPyb0jm-2PAvMVR2T/exec?pregunta=" + encodeURIComponent(pregunta))
+        .then(res => res.text())
+        .then(data => {
+          respuestaDiv.innerText = data;
+        })
+        .catch(err => {
+          respuestaDiv.innerText = "Error al consultar el sistema.";
+          console.error(err);
+        });
+    }
+  </script>
+
+</body>
+</html>
