@@ -126,27 +126,41 @@
     </div>
   </div>
 
-  <script>
+<script>
 function hacerPregunta() {
   const pregunta = document.getElementById("pregunta").value;
   const respuestaDiv = document.getElementById("respuesta");
 
-  respuestaDiv.innerText = "Consultando...";
+  if (!pregunta.trim()) {
+    respuestaDiv.innerText = "Escribe una pregunta primero.";
+    return;
+  }
 
-  const url = "https://script.google.com/macros/s/AKfycbwbv5tA5LppROQYt4j557N0OxuoLHCq1CWnOuwG09C-HH6zXX2zPyb0jm-2PAvMVR2T/exec"
-    + "?pregunta=" + encodeURIComponent(pregunta)
-    + "&t=" + new Date().getTime(); // rompe caché
+  respuestaDiv.innerText = "Consultando al sistema...";
 
-  fetch(url)
-    .then(r => r.text())
-    .then(d => respuestaDiv.innerText = d)
-    .catch(e => {
-      respuestaDiv.innerText = "Error al consultar";
-      console.error(e);
+  const url =
+    "https://script.google.com/macros/s/AKfycbwbv5tA5LppROQYt4j557N0OxuoLHCq1CWnOuwG09C-HH6zXX2zPyb0jm-2PAvMVR2T/exec" +
+    "?pregunta=" + encodeURIComponent(pregunta) +
+    "&nocache=" + Date.now();
+
+  fetch(url, {
+    method: "GET",
+    redirect: "follow",
+    mode: "cors"
+  })
+    .then(response => response.text())
+    .then(texto => {
+      respuestaDiv.innerText = texto || "⚠️ Respuesta vacía del servidor";
+    })
+    .catch(error => {
+      respuestaDiv.innerText = "❌ Error al consultar el sistema";
+      console.error(error);
     });
 }
 </script>
+  
 </body>
 
 </html>
+
 
