@@ -143,18 +143,21 @@ function hacerPregunta() {
     "?pregunta=" + encodeURIComponent(pregunta) +
     "&nocache=" + Date.now();
 
-  fetch(url, {
-    method: "GET",
-    redirect: "follow",
-    mode: "cors"
-  })
-    .then(response => response.text())
-    .then(texto => {
-      respuestaDiv.innerText = texto || "⚠️ Respuesta vacía del servidor";
+  fetch(url)
+    .then(res => res.text())
+    .then(data => {
+      console.log("Respuesta del servidor:", data);
+
+      if (!data || data.trim() === "") {
+        respuestaDiv.innerText = "⚠️ El servidor respondió vacío";
+        return;
+      }
+
+      respuestaDiv.innerText = data;
     })
-    .catch(error => {
-      respuestaDiv.innerText = "❌ Error al consultar el sistema";
-      console.error(error);
+    .catch(err => {
+      console.error("Error:", err);
+      respuestaDiv.innerText = "❌ Error conectando con el servidor";
     });
 }
 </script>
@@ -162,5 +165,6 @@ function hacerPregunta() {
 </body>
 
 </html>
+
 
 
