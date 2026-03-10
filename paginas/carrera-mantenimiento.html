@@ -6,9 +6,15 @@
   <title>Mantenimiento Industrial - CECyT 7</title>
 
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #640328;
       color: white;
       min-height: 100vh;
@@ -35,7 +41,7 @@
 
     .contenedor {
       margin-top: 140px;
-      max-width: 800px;
+      max-width: 900px;
       margin-left: auto;
       margin-right: auto;
       padding: 30px;
@@ -44,6 +50,7 @@
     h1 {
       text-align: center;
       margin-bottom: 30px;
+      font-size: 32px;
     }
 
     .btn-volver {
@@ -55,6 +62,11 @@
       cursor: pointer;
       font-weight: bold;
       margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    .btn-volver:hover {
+      background-color: #f0f0f0;
     }
 
     .consulta {
@@ -63,34 +75,107 @@
       padding: 25px;
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      margin-bottom: 20px;
     }
 
-    .consulta input {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      margin-top: 10px;
+    .consulta p {
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
       margin-bottom: 15px;
     }
 
-    .consulta button {
-      width: 100%;
+    .consulta input {
+      flex: 1;
       padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .consulta button {
+      padding: 12px 30px;
       font-size: 16px;
       background-color: #640328;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .consulta button:hover {
+      background-color: #4a0220;
+    }
+
+    .consulta button:active {
+      transform: scale(0.98);
     }
 
     .respuesta {
-      margin-top: 20px;
-      padding: 15px;
       background-color: #f2f2f2;
       color: #333;
+      padding: 15px;
       border-radius: 6px;
       min-height: 40px;
+      border-left: 4px solid #640328;
+    }
+
+    .respuesta.error {
+      background-color: #ffebee;
+      border-left-color: #c62828;
+      color: #c62828;
+    }
+
+    .respuesta.exito {
+      background-color: #e8f5e9;
+      border-left-color: #2e7d32;
+      color: #2e7d32;
+    }
+
+    .cargando {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #640328;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .resultados {
+      margin-top: 20px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .resultado-item {
+      background-color: #f9f9f9;
+      color: #333;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border-left: 3px solid #640328;
+    }
+
+    .resultado-item strong {
+      color: #640328;
     }
   </style>
 </head>
@@ -98,8 +183,8 @@
 
   <!-- Barra superior -->
   <div class="barra-superior">
-    <img src="./img/logo_ipn.png" class="logo">
-    <img src="./img/logo_cecyt7.png" class="logo">
+    <img src="../img/logo_ipn.png" class="logo">
+    <img src="../img/logo_cecyt7.png" class="logo">
   </div>
 
   <div class="contenedor">
@@ -112,60 +197,105 @@
     <div class="consulta">
       <p>Consulta información sobre la maquinaria del taller:</p>
 
-      <input 
-        type="text" 
-        id="pregunta"
-        placeholder="Ejemplo: ¿Dónde se ubican los tornos?"
-      >
-
-      <button onclick="hacerPregunta()">Consultar</button>
-
-      <div class="respuesta" id="respuesta">
-        Aquí aparecerá la respuesta del sistema.
+      <div class="input-group">
+        <input 
+          type="text" 
+          id="pregunta"
+          placeholder="Ejemplo: ¿Dónde se ubican los tornos?"
+          onkeypress="if(event.key === 'Enter') hacerPregunta()"
+        >
+        <button onclick="hacerPregunta()">🔍 Buscar</button>
       </div>
+
+      <div class="cargando" id="cargando">
+        <div class="spinner"></div>
+        <p>Buscando en la base de datos...</p>
+      </div>
+
+      <div class="respuesta" id="respuesta" style="display: none;"></div>
+      <div class="resultados" id="resultados"></div>
     </div>
   </div>
 
-<script>
-function hacerPregunta() {
-  const pregunta = document.getElementById("pregunta").value;
-  const respuestaDiv = document.getElementById("respuesta");
+  <script>
+  
+    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsumpa1srOhz1kyoDWS-qz5E5kZrcwjgf0NBbCcqvXPuoCtfWAbJifQhh8s0bWLBc6/exec';
 
-  if (!pregunta.trim()) {
-    respuestaDiv.innerText = "Escribe una pregunta primero.";
-    return;
-  }
-
-  respuestaDiv.innerText = "Consultando al sistema...";
-
-  const url =
-    "https://script.google.com/macros/s/AKfycbwbv5tA5LppROQYt4j557N0OxuoLHCq1CWnOuwG09C-HH6zXX2zPyb0jm-2PAvMVR2T/exec" +
-    "?pregunta=" + encodeURIComponent(pregunta) +
-    "&nocache=" + Date.now();
-
-  fetch(url)
-    .then(res => res.text())
-    .then(data => {
-      console.log("Respuesta del servidor:", data);
-
-      if (!data || data.trim() === "") {
-        respuestaDiv.innerText = "⚠️ El servidor respondió vacío";
+    async function hacerPregunta() {
+      const pregunta = document.getElementById('pregunta').value.trim();
+      
+      if (!pregunta) {
+        mostrarError('Por favor escribe una pregunta');
         return;
       }
 
-      respuestaDiv.innerText = data;
-    })
-    .catch(err => {
-      console.error("Error:", err);
-      respuestaDiv.innerText = "❌ Error conectando con el servidor";
+      mostrarCargando(true);
+      ocultarRespuesta();
+
+      try {
+        const response = await fetch(
+          `${GOOGLE_APPS_SCRIPT_URL}?accion=hacerConsulta&pregunta=${encodeURIComponent(pregunta)}`
+        );
+
+        if (!response.ok) {
+          throw new Error('Error al conectar con la base de datos');
+        }
+
+        const datos = await response.json();
+        mostrarRespuestas(datos);
+      } catch (error) {
+        mostrarError(`Error: ${error.message}`);
+      } finally {
+        mostrarCargando(false);
+      }
+    }
+
+    function mostrarRespuestas(datos) {
+      const respuestasDiv = document.getElementById('respuesta');
+      const resultadosDiv = document.getElementById('resultados');
+
+      if (datos.cantidad === 0) {
+        respuestasDiv.className = 'respuesta error';
+        respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
+        respuestasDiv.style.display = 'block';
+        resultadosDiv.innerHTML = '';
+        return;
+      }
+
+      respuestasDiv.className = 'respuesta exito';
+      respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
+      respuestasDiv.style.display = 'block';
+
+      resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
+        <div class="resultado-item">
+          <strong>${i + 1}. Campo:</strong> ${r.coincidencia}<br>
+          <strong>Valor:</strong> ${r.valor}
+        </div>
+      `).join('');
+    }
+
+    function mostrarError(mensaje) {
+      const respuestasDiv = document.getElementById('respuesta');
+      respuestasDiv.className = 'respuesta error';
+      respuestasDiv.textContent = `⚠️ ${mensaje}`;
+      respuestasDiv.style.display = 'block';
+      document.getElementById('resultados').innerHTML = '';
+    }
+
+    function ocultarRespuesta() {
+      document.getElementById('respuesta').style.display = 'none';
+      document.getElementById('resultados').innerHTML = '';
+    }
+
+    function mostrarCargando(visible) {
+      document.getElementById('cargando').style.display = visible ? 'block' : 'none';
+    }
+
+    // Cargar datos al iniciar (opcional)
+    window.addEventListener('load', () => {
+      console.log('Página cargada. Conectando a Google Sheets...');
     });
-}
-</script>
-  
+  </script>
+
 </body>
-
 </html>
-
-
-
-
