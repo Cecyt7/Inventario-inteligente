@@ -56,6 +56,19 @@
     .resultado-item { background-color: #f9f9f9; color: #333; padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 3px solid #640328; }
     .resultado-item strong { color: #640328; }
     .resultado-pre { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    
+    .btn-voz{
+    padding: 12px 16px;
+    font-size: 16px;
+    background-color: #1e88e5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  .btn-voz:hover{ background-color: #1565c0; }
   </style>
 </head>
 
@@ -79,7 +92,9 @@
           placeholder="Ejemplo: Torno 18 / planta baja / fuera de servicio"
           onkeypress="if(event.key === 'Enter') hacerPregunta()"
         >
-        <button onclick="hacerPregunta()">🔍 Buscar</button>
+        <button type="button" onclick="hacerPregunta()">🔍 Buscar</button>
+        <button type="button" class="btn-voz" onclick="dictarPregunta()" title="Hablar (dictado)">🎤</button>
+        <button type="button" class="btn-voz" onclick="toggleVoz()" id="btnVoz" title="Activar/Desactivar voz">🔊 OFF</button>
       </div>
 
       <div class="cargando" id="cargando">
@@ -159,12 +174,14 @@
         respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
         respuestasDiv.style.display = 'block';
         resultadosDiv.innerHTML = '';
+        hablar('No se encontraron resultados.');
         return;
       }
 
       respuestasDiv.className = 'respuesta exito';
       respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
       respuestasDiv.style.display = 'block';
+       hablar(`Se encontraron ${datos.cantidad} resultado(s).`);
 
       resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
         <div class="resultado-item">
@@ -239,6 +256,68 @@
         mostrarCargando(false);
       }
     }
+let VOZ_ACTIVA = false;
+
+function toggleVoz() {
+  VOZ_ACTIVA = !VOZ_ACTIVA;
+  const btn = document.getElementById("btnVoz");
+  if (btn) btn.textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
+
+  // confirmación hablada o en texto
+  const msg = VOZ_ACTIVA ? "Voz activada." : "Voz desactivada.";
+  if (VOZ_ACTIVA) hablar(msg);
+  else console.log(msg);
+}
+
+function hablar(texto) {
+  if (!VOZ_ACTIVA) return;
+  if (!("speechSynthesis" in window)) return;
+
+  // Evita que se encime si preguntan varias veces
+  window.speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(String(texto));
+  u.lang = "es-MX";
+  u.rate = 1;   // 0.1 - 10
+  u.pitch = 1;  // 0 - 2
+  window.speechSynthesis.speak(u);
+}
+
+function dictarPregunta() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    mostrarError('Tu navegador no soporta dictado por voz. Usa Chrome.');
+    hablar('Tu navegador no soporta dictado por voz.');
+    return;
+  }
+
+  const rec = new SpeechRecognition();
+  rec.lang = 'es-MX';
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
+
+  mostrarCargando(true);
+
+  rec.onresult = (event) => {
+    const texto = event.results[0][0].transcript;
+    document.getElementById('pregunta').value = texto;
+    mostrarCargando(false);
+    hacerPregunta(); // dispara la consulta normal
+  };
+
+  rec.onerror = (event) => {
+    mostrarCargando(false);
+    mostrarError('Voz: ' + event.error);
+    hablar('Ocurrió un error con el micrófono.');
+  };
+
+  rec.onend = () => {
+    mostrarCargando(false);
+  };
+
+  rec.start();
+}
   </script>
 </body>
 </html>
