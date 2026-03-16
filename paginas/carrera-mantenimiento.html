@@ -6,202 +6,77 @@
   <title>Mantenimiento Industrial - CECyT 7</title>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #640328;
-      color: white;
-      min-height: 100vh;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #640328; color: white; min-height: 100vh; }
 
     .barra-superior {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      height: 12vh;
-      min-height: 80px;
-      background-color: white;
-      border-bottom: 4px solid #640328;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 30px;
-      z-index: 1000;
+      position: fixed; top: 0; width: 100%; height: 12vh; min-height: 80px;
+      background-color: white; border-bottom: 4px solid #640328;
+      display: flex; justify-content: space-between; align-items: center; padding: 0 30px; z-index: 1000;
     }
+    .logo { height: 80px; }
 
-    .logo {
-      height: 80px;
-    }
+    .contenedor { margin-top: 140px; max-width: 900px; margin-left: auto; margin-right: auto; padding: 30px; }
 
-    .contenedor {
-      margin-top: 140px;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 30px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 32px;
-    }
+    h1 { text-align: center; margin-bottom: 30px; font-size: 32px; }
 
     .btn-volver {
-      padding: 10px 20px;
-      background-color: white;
-      color: #640328;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-bottom: 20px;
-      transition: all 0.3s;
+      padding: 10px 20px; background-color: white; color: #640328; border: none;
+      border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; transition: all 0.3s;
     }
-
-    .btn-volver:hover {
-      background-color: #f0f0f0;
-    }
+    .btn-volver:hover { background-color: #f0f0f0; }
 
     .consulta {
-      background-color: white;
-      color: #640328;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      margin-bottom: 20px;
+      background-color: white; color: #640328; padding: 25px; border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3); margin-bottom: 20px;
     }
 
-    .consulta p {
-      margin-bottom: 15px;
-      font-weight: bold;
-    }
+    .consulta p { margin-bottom: 15px; font-weight: bold; }
 
-    .input-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .consulta input {
-      flex: 1;
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-    }
-
+    .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+    .consulta input { flex: 1; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 6px; }
     .consulta button {
-      padding: 12px 30px;
-      font-size: 16px;
-      background-color: #640328;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s;
+      padding: 12px 30px; font-size: 16px; background-color: #640328; color: white;
+      border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s;
     }
+    .consulta button:hover { background-color: #4a0220; }
 
-    .consulta button:hover {
-      background-color: #4a0220;
-    }
+    .respuesta { background-color: #f2f2f2; color: #333; padding: 15px; border-radius: 6px; min-height: 40px; border-left: 4px solid #640328; }
+    .respuesta.error { background-color: #ffebee; border-left-color: #c62828; color: #c62828; }
+    .respuesta.exito { background-color: #e8f5e9; border-left-color: #2e7d32; color: #2e7d32; }
 
-    .consulta button:active {
-      transform: scale(0.98);
-    }
-
-    .respuesta {
-      background-color: #f2f2f2;
-      color: #333;
-      padding: 15px;
-      border-radius: 6px;
-      min-height: 40px;
-      border-left: 4px solid #640328;
-    }
-
-    .respuesta.error {
-      background-color: #ffebee;
-      border-left-color: #c62828;
-      color: #c62828;
-    }
-
-    .respuesta.exito {
-      background-color: #e8f5e9;
-      border-left-color: #2e7d32;
-      color: #2e7d32;
-    }
-
-    .cargando {
-      display: none;
-      text-align: center;
-      margin: 20px 0;
-    }
-
+    .cargando { display: none; text-align: center; margin: 20px 0; }
     .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #640328;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
+      border: 4px solid #f3f3f3; border-top: 4px solid #640328; border-radius: 50%;
+      width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;
     }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .resultados {
-      margin-top: 20px;
-      max-height: 500px;
-      overflow-y: auto;
-    }
-
-    .resultado-item {
-      background-color: #f9f9f9;
-      color: #333;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border-left: 3px solid #640328;
-    }
-
-    .resultado-item strong {
-      color: #640328;
-    }
+    .resultados { margin-top: 20px; max-height: 500px; overflow-y: auto; }
+    .resultado-item { background-color: #f9f9f9; color: #333; padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 3px solid #640328; }
+    .resultado-item strong { color: #640328; }
+    .resultado-pre { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
   </style>
 </head>
-<body>
 
-  <!-- Barra superior -->
+<body>
   <div class="barra-superior">
-    <img src="../img/logo_ipn.png" class="logo">
-    <img src="../img/logo_cecyt7.png" class="logo">
+    <img src="../img/logo_ipn.png" class="logo" alt="IPN">
+    <img src="../img/logo_cecyt7.png" class="logo" alt="CECyT 7">
   </div>
 
   <div class="contenedor">
-    <button class="btn-volver" onclick="window.location.href='./carreras.html'">
-      ← Volver a Carreras
-    </button>
-
+    <button class="btn-volver" onclick="window.location.href='./carreras.html'">← Volver a Carreras</button>
     <h1>🔧 Mantenimiento Industrial</h1>
 
     <div class="consulta">
       <p>Consulta información sobre la maquinaria del taller:</p>
 
       <div class="input-group">
-        <input 
-          type="text" 
+        <input
+          type="text"
           id="pregunta"
-          placeholder="Ejemplo: ¿Dónde se ubican los tornos?"
+          placeholder="Ejemplo: Torno 18 / planta baja / fuera de servicio"
           onkeypress="if(event.key === 'Enter') hacerPregunta()"
         >
         <button onclick="hacerPregunta()">🔍 Buscar</button>
@@ -212,137 +87,158 @@
         <p>Buscando en la base de datos...</p>
       </div>
 
-      <div class="respuesta" id="respuesta" style="display: none;"></div>
+      <div class="respuesta" id="respuesta" style="display:none;"></div>
       <div class="resultados" id="resultados"></div>
     </div>
   </div>
 
-<script>
-const SHEET_CSV_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub?gid=0&single=true&output=csv';
+  <script>
+    const SHEET_CSV_URL =
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub?gid=0&single=true&output=csv';
 
-// CSV parser (maneja comillas y comas dentro de comillas)
-function parseCSV(text) {
-  const rows = [];
-  let row = [];
-  let cur = '';
-  let inQuotes = false;
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cur = '';
+      let inQuotes = false;
 
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    const next = text[i + 1];
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const next = text[i + 1];
 
-    if (c === '"' && inQuotes && next === '"') { // escape ""
-      cur += '"';
-      i++;
-      continue;
-    }
-    if (c === '"') {
-      inQuotes = !inQuotes;
-      continue;
-    }
-    if (c === ',' && !inQuotes) {
-      row.push(cur);
-      cur = '';
-      continue;
-    }
-    if ((c === '\n' || c === '\r') && !inQuotes) {
-      if (c === '\r' && next === '\n') i++; // CRLF
-      row.push(cur);
-      cur = '';
-      if (row.length > 1 || row[0] !== '') rows.push(row);
-      row = [];
-      continue;
-    }
-    cur += c;
-  }
+        if (c === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
+        if (c === '"') { inQuotes = !inQuotes; continue; }
 
-  // último campo
-  row.push(cur);
-  if (row.length > 1 || row[0] !== '') rows.push(row);
+        if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
 
-  return rows;
-}
-
-async function cargarDatosSheet() {
-  const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-  if (!res.ok) throw new Error("No pude cargar el CSV (HTTP " + res.status + ")");
-  const csv = await res.text();
-
-  const rows = parseCSV(csv);
-  if (!rows.length) throw new Error("CSV vacío");
-
-  const headers = rows[0].map(h => String(h || '').trim());
-  const data = rows.slice(1).map(r => {
-    const obj = {};
-    headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
-    return obj;
-  });
-
-  return data;
-}
-
-function detectarConsultaTorno(pregunta) {
-  const m = pregunta.toLowerCase().match(/\btorno\s*(\d+)\b/);
-  return m ? m[1] : null;
-}
-
-let CACHE = null;
-
-async function hacerPregunta() {
-  const pregunta = document.getElementById('pregunta').value.trim();
-  if (!pregunta) return mostrarError('Por favor escribe una pregunta');
-
-  mostrarCargando(true);
-  ocultarRespuesta();
-
-  try {
-    if (!CACHE) CACHE = await cargarDatosSheet();
-
-    const idTorno = detectarConsultaTorno(pregunta);
-
-    // Caso: "Torno 18"
-    if (idTorno) {
-      const row = CACHE.find(x =>
-        String(x["MAQUINA"]).toLowerCase() === "torno" &&
-        String(x["IDENTIFICACION"]).trim() === String(idTorno).trim()
-      );
-
-      if (!row) throw new Error(`No encontré el torno ${idTorno}`);
-
-      mostrarRespuestas({
-        cantidad: 1,
-        resultados: [{
-          coincidencia: "TORNO",
-          valor: `ID ${idTorno}`,
-          item: row
-        }]
-      });
-      return;
-    }
-
-    // Caso: búsqueda general por texto
-    const q = pregunta.toLowerCase();
-    const results = [];
-
-    for (const item of CACHE) {
-      for (const [k, v] of Object.entries(item)) {
-        if (String(v).toLowerCase().includes(q)) {
-          results.push({ coincidencia: k, valor: v, item });
-          break;
+        if ((c === '\n' || c === '\r') && !inQuotes) {
+          if (c === '\r' && next === '\n') i++;
+          row.push(cur); cur = '';
+          if (row.length > 1 || row[0] !== '') rows.push(row);
+          row = [];
+          continue;
         }
+
+        cur += c;
+      }
+
+      row.push(cur);
+      if (row.length > 1 || row[0] !== '') rows.push(row);
+      return rows;
+    }
+
+    async function cargarDatosSheet() {
+      const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+      if (!res.ok) throw new Error("No pude cargar el CSV (HTTP " + res.status + ")");
+      const csv = await res.text();
+
+      const rows = parseCSV(csv);
+      if (!rows.length) throw new Error("CSV vacío");
+
+      const headers = rows[0].map(h => String(h || '').trim());
+      const data = rows.slice(1).map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
+        return obj;
+      });
+
+      return data;
+    }
+
+    function detectarConsultaTorno(pregunta) {
+      const m = pregunta.toLowerCase().match(/\btorno\s*(\d+)\b/);
+      return m ? m[1] : null;
+    }
+
+    function mostrarRespuestas(datos) {
+      const respuestasDiv = document.getElementById('respuesta');
+      const resultadosDiv = document.getElementById('resultados');
+
+      if (!datos || !Array.isArray(datos.resultados) || datos.cantidad === 0) {
+        respuestasDiv.className = 'respuesta error';
+        respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
+        respuestasDiv.style.display = 'block';
+        resultadosDiv.innerHTML = '';
+        return;
+      }
+
+      respuestasDiv.className = 'respuesta exito';
+      respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
+      respuestasDiv.style.display = 'block';
+
+      resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
+        <div class="resultado-item">
+          <strong>${i + 1}. Coincidencia:</strong> ${r.coincidencia}<br>
+          <strong>Valor:</strong> ${r.valor}<br><br>
+          <div class="resultado-pre"><strong>Registro:</strong>\n${Object.entries(r.item || {}).map(([k,v]) => `${k}: ${v}`).join('\n')}</div>
+        </div>
+      `).join('');
+    }
+
+    function mostrarError(mensaje) {
+      const respuestasDiv = document.getElementById('respuesta');
+      respuestasDiv.className = 'respuesta error';
+      respuestasDiv.textContent = `⚠️ ${mensaje}`;
+      respuestasDiv.style.display = 'block';
+      document.getElementById('resultados').innerHTML = '';
+    }
+
+    function ocultarRespuesta() {
+      document.getElementById('respuesta').style.display = 'none';
+      document.getElementById('resultados').innerHTML = '';
+    }
+
+    function mostrarCargando(visible) {
+      document.getElementById('cargando').style.display = visible ? 'block' : 'none';
+    }
+
+    let CACHE = null;
+
+    async function hacerPregunta() {
+      const pregunta = document.getElementById('pregunta').value.trim();
+      if (!pregunta) return mostrarError('Por favor escribe una pregunta');
+
+      mostrarCargando(true);
+      ocultarRespuesta();
+
+      try {
+        if (!CACHE) CACHE = await cargarDatosSheet();
+
+        const idTorno = detectarConsultaTorno(pregunta);
+
+        if (idTorno) {
+          const row = CACHE.find(x =>
+            String(x["MAQUINA"] || "").toLowerCase() === "torno" &&
+            String(x["IDENTIFICACION"] || "").trim() === String(idTorno).trim()
+          );
+
+          if (!row) throw new Error(`No encontré el torno ${idTorno}`);
+
+          return mostrarRespuestas({
+            cantidad: 1,
+            resultados: [{ coincidencia: "TORNO", valor: `ID ${idTorno}`, item: row }]
+          });
+        }
+
+        const q = pregunta.toLowerCase();
+        const results = [];
+
+        for (const item of CACHE) {
+          for (const [k, v] of Object.entries(item)) {
+            if (String(v).toLowerCase().includes(q)) {
+              results.push({ coincidencia: k, valor: v, item });
+              break;
+            }
+          }
+        }
+
+        mostrarRespuestas({ cantidad: results.length, resultados: results });
+      } catch (e) {
+        mostrarError(`Error: ${e.message}`);
+      } finally {
+        mostrarCargando(false);
       }
     }
-
-    mostrarRespuestas({ cantidad: results.length, resultados: results });
-
-  } catch (e) {
-    mostrarError(`Error: ${e.message}`);
-  } finally {
-    mostrarCargando(false);
-  }
-}
-</script>
-
+  </script>
 </body>
 </html>
