@@ -217,85 +217,72 @@
     </div>
   </div>
 
-  <script>
-  
-    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsumpa1srOhz1kyoDWS-qz5E5kZrcwjgf0NBbCcqvXPuoCtfWAbJifQhh8s0bWLBc6/exec';
+<script>
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAPNIelj_q1DAQCqQR2MVih_SYMJpME1rB_RuDL-1zpkAwsxYf72nKHxF1zmnhdgbQ/exec';
 
-    async function hacerPregunta() {
-      const pregunta = document.getElementById('pregunta').value.trim();
-      
-      if (!pregunta) {
-        mostrarError('Por favor escribe una pregunta');
-        return;
-      }
+function detectarConsultaTorno(pregunta) {
+  const m = pregunta.toLowerCase().match(/\btorno\s*(\d+)\b/);
+  return m ? m[1] : null; // regresa "17" o null
+}
 
-      mostrarCargando(true);
-      ocultarRespuesta();
+async function fetchJsonRobusto(url) {
+  const res = await fetch(url);
+  const text = await res.text();
 
-      try {
-        const response = await fetch(
-          `${GOOGLE_APPS_SCRIPT_URL}?accion=hacerConsulta&pregunta=${encodeURIComponent(pregunta)}`
-        );
+  if (!text) throw new Error("Respuesta vacía del servidor");
 
-        if (!response.ok) {
-          throw new Error('Error al conectar con la base de datos');
-        }
+  let data;
+  try { data = JSON.parse(text); }
+  catch {
+    throw new Error("El servidor no devolvió JSON (posible permisos). Respuesta: " + text.slice(0, 200));
+  }
 
-        const datos = await response.json();
-        mostrarRespuestas(datos);
-      } catch (error) {
-        mostrarError(`Error: ${error.message}`);
-      } finally {
-        mostrarCargando(false);
-      }
+  if (!res.ok) throw new Error(data?.error || "Error HTTP " + res.status);
+  return data;
+}
+
+async function hacerPregunta() {
+  const pregunta = document.getElementById('pregunta').value.trim();
+  if (!pregunta) return mostrarError('Por favor escribe una pregunta');
+
+  mostrarCargando(true);
+  ocultarRespuesta();
+
+  try {
+    const idTorno = detectarConsultaTorno(pregunta);
+
+    let datos;
+    if (idTorno) {
+      // Consulta exacta por torno #
+      const url = `${GOOGLE_APPS_SCRIPT_URL}?accion=buscarPorId&tipo=TORNO&id=${encodeURIComponent(idTorno)}`;
+      datos = await fetchJsonRobusto(url);
+
+      if (!datos.ok) throw new Error(datos.error || "No encontrado");
+      // Mostrar bonito (puedes adaptar)
+      mostrarRespuestas({
+        cantidad: 1,
+        resultados: [{
+          coincidencia: "TORNO",
+          valor: `ID ${idTorno}`,
+          item: datos.data
+        }]
+      });
+    } else {
+      // Consulta general
+      const url = `${GOOGLE_APPS_SCRIPT_URL}?accion=hacerConsulta&pregunta=${encodeURIComponent(pregunta)}`;
+      datos = await fetchJsonRobusto(url);
+
+      if (!datos.ok) throw new Error(datos.error || "Error en consulta");
+      mostrarRespuestas(datos);
     }
 
-    function mostrarRespuestas(datos) {
-      const respuestasDiv = document.getElementById('respuesta');
-      const resultadosDiv = document.getElementById('resultados');
-
-      if (datos.cantidad === 0) {
-        respuestasDiv.className = 'respuesta error';
-        respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
-        respuestasDiv.style.display = 'block';
-        resultadosDiv.innerHTML = '';
-        return;
-      }
-
-      respuestasDiv.className = 'respuesta exito';
-      respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
-      respuestasDiv.style.display = 'block';
-
-      resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
-        <div class="resultado-item">
-          <strong>${i + 1}. Campo:</strong> ${r.coincidencia}<br>
-          <strong>Valor:</strong> ${r.valor}
-        </div>
-      `).join('');
-    }
-
-    function mostrarError(mensaje) {
-      const respuestasDiv = document.getElementById('respuesta');
-      respuestasDiv.className = 'respuesta error';
-      respuestasDiv.textContent = `⚠️ ${mensaje}`;
-      respuestasDiv.style.display = 'block';
-      document.getElementById('resultados').innerHTML = '';
-    }
-
-    function ocultarRespuesta() {
-      document.getElementById('respuesta').style.display = 'none';
-      document.getElementById('resultados').innerHTML = '';
-    }
-
-    function mostrarCargando(visible) {
-      document.getElementById('cargando').style.display = visible ? 'block' : 'none';
-    }
-
-    // Cargar datos al iniciar (opcional)
-    window.addEventListener('load', () => {
-      console.log('Página cargada. Conectando a Google Sheets...');
-    });
-  </script>
+  } catch (error) {
+    mostrarError(`Error: ${error.message}`);
+  } finally {
+    mostrarCargando(false);
+  }
+}
+</script>
 
 </body>
 </html>
