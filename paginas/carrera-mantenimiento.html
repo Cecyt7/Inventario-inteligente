@@ -69,6 +69,26 @@
     white-space: nowrap;
   }
   .btn-voz:hover{ background-color: #1565c0; }
+      .input-group{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: stretch;
+  }
+
+  .botones{
+    display: flex;
+    gap: 10px;
+  }
+  @media (min-width: 769px){
+    .input-group { flex-direction: row; }
+    .consulta input { flex: 1; }
+  }
+  @media (max-width: 768px){
+    .input-group { flex-direction: column; }
+    .botones { width: 100%; }
+    .botones button { flex: 1; } /* reparte ancho parejo */
+  }
   </style>
 </head>
 
@@ -85,17 +105,20 @@
     <div class="consulta">
       <p>Consulta información sobre la maquinaria del taller:</p>
 
-      <div class="input-group">
-        <input
-          type="text"
-          id="pregunta"
-          placeholder="Ejemplo: Torno 18 / planta baja / fuera de servicio"
-          onkeypress="if(event.key === 'Enter') hacerPregunta()"
-        >
-        <button type="button" onclick="hacerPregunta()">🔍 Buscar</button>
-        <button type="button" class="btn-voz" onclick="dictarPregunta()" title="Hablar (dictado)">🎤</button>
-        <button type="button" class="btn-voz" onclick="toggleVoz()" id="btnVoz" title="Activar/Desactivar voz">🔊 OFF</button>
-      </div>
+    <div class="input-group">
+  <input
+    type="text"
+    id="pregunta"
+    placeholder="Ejemplo: Torno 18"
+    onkeypress="if(event.key === 'Enter') hacerPregunta()"
+  >
+
+  <div class="botones">
+    <button type="button" onclick="hacerPregunta()">🔍 Buscar</button>
+    <button type="button" class="btn-voz" onclick="dictarPregunta()" title="Hablar (dictado)">🎤</button>
+    <button type="button" class="btn-voz" onclick="toggleVoz()" id="btnVoz" title="Activar/Desactivar voz">🔊 OFF</button>
+  </div>
+</div>
 
       <div class="cargando" id="cargando">
         <div class="spinner"></div>
