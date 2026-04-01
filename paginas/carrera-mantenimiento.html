@@ -132,12 +132,13 @@
   </div>
 
   <script>
-    (function(){
-  const hoy = new Date().toISOString().slice(0,10);
+(function () {
+  const hoy = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const pase = localStorage.getItem("pase_ok_fecha");
+
+  // si NO hay pase hoy -> fuera
   if (pase !== hoy) {
-    // si no ha pasado lista hoy, lo mandamos
-    window.location.href = "./pase-lista.html";
+    window.location.replace("./pase-lista.html");
   }
 })();
     const SHEET_CSV_URL =
@@ -350,18 +351,16 @@ function dictarPregunta() {
 
   rec.start();
 }
-function terminarSesion(){
-  // quita el “permiso” de hoy
+
+    function terminarSesion(){
   localStorage.removeItem("pase_ok_fecha");
   localStorage.removeItem("pase_ok_boleta");
-
-  // opcional: borrar también datos del alumno
+  // si quieres cerrar completo, descomenta:
   // localStorage.removeItem("alumno_nombre");
   // localStorage.removeItem("alumno_boleta");
   // localStorage.removeItem("alumno_grupo");
 
-  // manda de regreso al pase de lista
-  window.location.href = "./pase-lista.html";
+  window.location.replace("./pase-lista.html");
 }
   </script>
 </body>
