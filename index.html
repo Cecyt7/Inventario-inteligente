@@ -32,23 +32,14 @@
     z-index: 1000;
   }
 
-  /* Logos en las esquinas */
-  .logo {
-    height: 80px;
-  }
+  .logo-izq { height: 100px; }
+  .logo-der { height: 90px; }
 
-  .logo-izq {
-    height: 100px;
-  }
-
-  .logo-der {
-    height: 90px; 
-  }
-
+  /* Contenido (deja espacio para la barra fija) */
   .contenido {
     text-align: center;
     margin-top: 140px;
-    flex: 1;
+    flex: 1; /* empuja el footer al fondo */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -56,72 +47,72 @@
     padding: 20px;
   }
 
-  .contenido h1 {
-    font-size: 36px;
-    margin-bottom: 10px;
-  }
+  .contenido h1 { font-size: 36px; margin-bottom: 10px; }
+  .contenido h2 { font-size: 22px; font-weight: normal; margin-bottom: 20px; }
+  .contenido h3 { font-size: 20px; font-weight: normal; margin-bottom: 30px; }
 
-  .contenido h2 {
-    font-size: 22px;
-    font-weight: normal;
-    margin-bottom: 20px;
-  }
-
-  .contenido h3 {
-    font-size: 20px;
-    font-weight: normal;
-    margin-bottom: 30px;
-  }
-
-  /* Botón */
   .btn {
     padding: 15px 40px;
     font-size: 18px;
     background-color: white;
-    color: black; 
+    color: black;
     border: 2px solid black;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
     transition: all 0.3s ease;
   }
+  .btn:hover { background-color: black; color: white; transform: scale(1.05); }
+  .btn:active { transform: scale(0.95); }
 
-  .btn:hover {
-    background-color: black;
-    color: white;
-    transform: scale(1.05);
+  /* Footer */
+  footer {
+    padding: 18px 20px 26px;
+    text-align: center;
   }
 
-  .btn:active {
-    transform: scale(0.95);
+  .footer-linea {
+    width: min(620px, 88%);
+    height: 2px;
+    background: white;
+    margin: 0 auto 14px;
+    border-radius: 2px;
+    opacity: 0.9;
+  }
+
+  .footer-titulo {
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-bottom: 10px;
+  }
+
+  .footer-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 720px;
+    opacity: 0.95;
+    line-height: 1.55;
+    font-size: 14px;
   }
 
   /* Responsivo */
   @media (max-width: 600px){
-    .logo-izq, .logo-der {
-      height: 70px;
-    }
-    .contenido h1 {
-      font-size: 28px;
-    }
-    .contenido h2 {
-      font-size: 18px;
-    }
-    .contenido h3 {
-      font-size: 16px;
-    }
+    .logo-izq, .logo-der { height: 70px; }
+    .contenido h1 { font-size: 28px; }
+    .contenido h2 { font-size: 18px; }
+    .contenido h3 { font-size: 16px; }
+    .footer-lista { font-size: 12.5px; }
   }
 </style>
 </head>
 <body>
 
-  <!-- Barra superior -->
   <div class="barra-superior">
-    <img src="./img/logo_ipn.png" alt="IPN" class="logo logo-izq">
-    <img src="./img/logo_cecyt7.png" alt="CECyT 7" class="logo logo-der">
+    <img src="./img/logo_ipn.png" alt="IPN" class="logo-izq">
+    <img src="./img/logo_cecyt7.png" alt="CECyT 7" class="logo-der">
   </div>
 
-  <!-- Contenido central -->
   <div class="contenido">
     <h1>Instituto Politécnico Nacional</h1>
     <h2>Centro de Estudios Científicos y Tecnológicos<br>Número 7 "Cuauhtémoc"</h2>
@@ -129,6 +120,19 @@
     <button class="btn" onclick="window.location.href='./paginas/carreras.html'">Navegar</button>
   </div>
 
-</body>
+  <footer>
+    <div class="footer-linea"></div>
+    <div class="footer-titulo">Creado por alumnos del 6IM3</div>
+    <ul class="footer-lista">
+      <li>ALVAREZ VUDOYRA HECTOR MIGUEL</li>
+      <li>BAUTISTA MARTINEZ ANA JANETTE</li>
+      <li>CRUZ RODRIGUEZ ALEXIS</li>
+      <li>CRUZ REYES VALENTINA</li>
+      <li>FERREIRO JURADO RAUL</li>
+      <li>MONSALVO CORONADO BRENDA VIRIDIANA</li>
+      <li>PERES SALIINAS MATEO</li>
+    </ul>
+  </footer>
 
+</body>
 </html>
