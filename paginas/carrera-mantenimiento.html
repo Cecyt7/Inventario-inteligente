@@ -128,6 +128,7 @@
       <div class="respuesta" id="respuesta" style="display:none;"></div>
       <div class="resultados" id="resultados"></div>
     </div>
+    <button class="btn-volver" type="button" onclick="terminarSesion()">🛑 Terminar</button>
   </div>
 
   <script>
@@ -349,6 +350,21 @@ function dictarPregunta() {
 
   rec.start();
 }
+    <script>
+function terminarSesion(){
+  // quita el “permiso” de hoy
+  localStorage.removeItem("pase_ok_fecha");
+  localStorage.removeItem("pase_ok_boleta");
+
+  // opcional: borrar también datos del alumno
+  // localStorage.removeItem("alumno_nombre");
+  // localStorage.removeItem("alumno_boleta");
+  // localStorage.removeItem("alumno_grupo");
+
+  // manda de regreso al pase de lista
+  window.location.href = "./pase-lista.html";
+}
+</script>
   </script>
 </body>
 </html>
