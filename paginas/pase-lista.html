@@ -223,20 +223,24 @@
     OBS: "1808407685"
   };
 
-  function abrirFormPrefill({ nombre, boleta, grupo, maquina, id, accion, obs }) {
-    const p = new URLSearchParams();
-    p.set("usp", "pp_url");
-    p.set(`entry.${ENTRY.NOMBRE}`, nombre || "");
-    p.set(`entry.${ENTRY.BOLETA}`, boleta || "");
-    p.set(`entry.${ENTRY.GRUPO}`, grupo || "");
-    p.set(`entry.${ENTRY.MAQUINA}`, (maquina || "").toUpperCase());
-    p.set(`entry.${ENTRY.IDENTIFICACION}`, String(id || ""));
-    p.set(`entry.${ENTRY.ACCION}`, (accion || "").toUpperCase()); // INICIO / FIN
-    p.set(`entry.${ENTRY.OBS}`, obs || "");
+function abrirFormPrefill({ nombre, boleta, grupo, maquina, id, accion, obs }) {
+  const p = new URLSearchParams();
+  p.set("usp", "pp_url");
 
-    const url = `${FORM_BASE}?${p.toString()}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-  }
+  p.set(`entry.${ENTRY.NOMBRE}`, (nombre || "").trim());
+  p.set(`entry.${ENTRY.BOLETA}`, (boleta || "").trim());
+  p.set(`entry.${ENTRY.GRUPO}`,  (grupo  || "").trim());
+
+  // IMPORTANTÍSIMO: no forzar mayúsculas
+  p.set(`entry.${ENTRY.MAQUINA}`, (maquina || "").trim());
+  p.set(`entry.${ENTRY.IDENTIFICACION}`, String(id || "").trim());
+  p.set(`entry.${ENTRY.ACCION}`, (accion || "").trim());
+
+  p.set(`entry.${ENTRY.OBS}`, (obs || "").trim());
+
+  const url = `${FORM_BASE}?${p.toString()}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
 
   function abrirFormVacio(){
     abrirFormPrefill({ accion: "INICIO" });
