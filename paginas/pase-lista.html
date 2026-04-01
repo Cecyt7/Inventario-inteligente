@@ -223,63 +223,117 @@
     OBS: "1808407685"
   };
 
-function abrirFormPrefill({ nombre, boleta, grupo, maquina, id, accion, obs }) {
-  const p = new URLSearchParams();
-  p.set("usp", "pp_url");
+  function hoyYYYYMMDD() {
+    return new Date().toISOString().slice(0, 10);
+  }
 
-  p.set(`entry.${ENTRY.NOMBRE}`, (nombre || "").trim());
-  p.set(`entry.${ENTRY.BOLETA}`, (boleta || "").trim());
-  p.set(`entry.${ENTRY.GRUPO}`,  (grupo  || "").trim());
+  function getAlumnoGuardado() {
+    return {
+      nombre: (localStorage.getItem("alumno_nombre") || "").trim(),
+      boleta: (localStorage.getItem("alumno_boleta") || "").trim(),
+      grupo:  (localStorage.getItem("alumno_grupo")  || "").trim()
+    };
+  }
 
-  // IMPORTANTÍSIMO: no forzar mayúsculas
-  p.set(`entry.${ENTRY.MAQUINA}`, (maquina || "").trim());
-  p.set(`entry.${ENTRY.IDENTIFICACION}`, String(id || "").trim());
-  p.set(`entry.${ENTRY.ACCION}`, (accion || "").trim());
+  function abrirFormPrefill({ nombre, boleta, grupo, maquina, id, accion, obs }) {
+    nombre = (nombre || "").trim();
+    grupo  = (grupo  || "").trim();
+    maquina = (maquina || "").trim();
+    accion = (accion || "").trim();
+    obs = (obs || "").trim();
 
-  p.set(`entry.${ENTRY.OBS}`, (obs || "").trim());
+    // Limpia numéricos (por validaciones del form)
+    const boletaLimpia = (boleta || "").replace(/\D/g, "");
+    const idLimpia = String(id || "").replace(/\D/g, "");
 
-  const url = `${FORM_BASE}?${p.toString()}`;
-  window.open(url, "_blank", "noopener,noreferrer");
-}
+    // Validación dura antes de abrir
+    if (!nombre || !boletaLimpia || !grupo || !maquina || !idLimpia || !accion) {
+      alert("Faltan datos obligatorios o inválidos. Revisa nombre/boleta/grupo/máquina/identificación/acción.");
+      console.log("DEBUG abrirFormPrefill datos:", { nombre, boleta, boletaLimpia, grupo, maquina, id, idLimpia, accion, obs });
+      return;
+    }
 
-  function abrirFormVacio(){
-    abrirFormPrefill({ accion: "INICIO" });
-    bot("Te abrí el formulario. Para salida usa comando 'fin ...' o cambia ACCION a FIN antes de enviar.");
+    const p = new URLSearchParams();
+    p.set("usp", "pp_url");
+    p.set(`entry.${ENTRY.NOMBRE}`, nombre);
+    p.set(`entry.${ENTRY.BOLETA}`, boletaLimpia);
+    p.set(`entry.${ENTRY.GRUPO}`, grupo);
+    p.set(`entry.${ENTRY.MAQUINA}`, maquina);              // opciones en MAYUS
+    p.set(`entry.${ENTRY.IDENTIFICACION}`, idLimpia);      // solo dígitos
+    p.set(`entry.${ENTRY.ACCION}`, accion);                // INICIO / FIN
+    p.set(`entry.${ENTRY.OBS}`, obs);
+
+    const url = `${FORM_BASE}?${p.toString()}`;
+    console.log("Abriendo Form URL:", url);
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function abrirFormVacio() {
+    const { nombre, boleta, grupo } = getAlumnoGuardado();
+    if (!nombre || !boleta || !grupo) {
+      bot("Primero guarda tu nombre/boleta/grupo arriba 👆");
+      return;
+    }
+    // Abre prellenado con alumno; máquina/identificación los completa el usuario
+    abrirFormPrefill({
+      nombre,
+      boleta,
+      grupo,
+      maquina: "TORNO",     // puedes cambiar a "" si prefieres no preseleccionar
+      id: "1",              // igual; si no quieres, pon ""
+      accion: "INICIO",
+      obs: ""
+    });
+    bot("Te abrí el formulario. Ajusta MÁQUINA / IDENTIFICACIÓN si hace falta y dale ENVIAR.");
   }
 
   // ======= Guardar alumno =======
-  function guardarAlumno(){
-    const nombre = document.getElementById("nombre").value.trim();
-    const boleta = document.getElementById("boleta").value.trim();
-    const grupo  = document.getElementById("grupo").value.trim();
-    if(!nombre || !boleta || !grupo){ alert("Completa nombre, boleta y grupo"); return; }
+  function guardarAlumno() {
+    const nombre = (document.getElementById("nombre")?.value || "").trim();
+    const boleta = (document.getElementById("boleta")?.value || "").trim();
+    const grupo  = (document.getElementById("grupo")?.value  || "").trim();
+
+    const boletaLimpia = boleta.replace(/\D/g, "");
+
+    if (!nombre || !boletaLimpia || !grupo) {
+      alert("Completa nombre, boleta (solo números) y grupo.");
+      return;
+    }
+
     localStorage.setItem("alumno_nombre", nombre);
-    localStorage.setItem("alumno_boleta", boleta);
+    localStorage.setItem("alumno_boleta", boletaLimpia);
     localStorage.setItem("alumno_grupo", grupo);
-    const hoy = new Date().toISOString().slice(0,10); // YYYY-MM-DD
-    localStorage.setItem("pase_ok_fecha", hoy);
-    localStorage.setItem("pase_ok_boleta", boleta);
+
+    // Marca que pasó lista hoy
+    localStorage.setItem("pase_ok_fecha", hoyYYYYMMDD());
+    localStorage.setItem("pase_ok_boleta", boletaLimpia);
+
     bot("Alumno guardado ✅");
   }
 
-  window.addEventListener("DOMContentLoaded", ()=>{
-    document.getElementById("nombre").value = localStorage.getItem("alumno_nombre") || "";
-    document.getElementById("boleta").value = localStorage.getItem("alumno_boleta") || "";
-    document.getElementById("grupo").value  = localStorage.getItem("alumno_grupo")  || "";
-    bot("Listo. Escribe o dicta: 'inicio torno 17' o 'fin mesa 2'.");
+  window.addEventListener("DOMContentLoaded", () => {
+    const { nombre, boleta, grupo } = getAlumnoGuardado();
+    if (document.getElementById("nombre")) document.getElementById("nombre").value = nombre;
+    if (document.getElementById("boleta")) document.getElementById("boleta").value = boleta;
+    if (document.getElementById("grupo"))  document.getElementById("grupo").value  = grupo;
+
+    bot("Listo. Escribe o dicta: 'inicio torno 12' o 'fin mesa 2'.");
   });
 
   // ======= Chat UI =======
-  function me(text){
+  function me(text) {
     const chat = document.getElementById("chat");
+    if (!chat) return;
     const d = document.createElement("div");
     d.className = "msg me";
     d.textContent = text;
     chat.appendChild(d);
     chat.scrollTop = chat.scrollHeight;
   }
-  function bot(text){
+
+  function bot(text) {
     const chat = document.getElementById("chat");
+    if (!chat) return;
     const d = document.createElement("div");
     d.className = "msg bot";
     d.textContent = text;
@@ -288,30 +342,30 @@ function abrirFormPrefill({ nombre, boleta, grupo, maquina, id, accion, obs }) {
   }
 
   // ======= Comandos =======
-  function normalizarMaquina(raw){
-    const r = String(raw||"").toLowerCase();
+  function normalizarMaquina(raw) {
+    const r = String(raw || "").toLowerCase();
 
     if (r.startsWith("torno")) return "TORNO";
     if (r.startsWith("fresadora")) return "FRESADORA";
     if (r.startsWith("cepillo")) return "CEPILLO";
     if (r.startsWith("soldadora") || r.includes("soldar")) return "SOLDADORA";
-
-    // Mesa -> valor exacto del Form
     if (r.startsWith("mesa")) return "MESA DE ELECTRONICA";
-    if (r.includes("mesa de electronica") || r.includes("mesa de electrónica")) return "MESA DE ELECTRONICA";
 
     return null;
   }
 
-  function parseComandoRegistro(texto){
-    const t = String(texto||"").toLowerCase().trim();
+  function parseComandoRegistro(texto) {
+    let t = String(texto || "").toLowerCase().trim();
+
+    // Permite "torno12" => "torno 12", "mesa2" => "mesa 2"
+    t = t.replace(/(torno|fresadora|cepillo|soldadora|mesa)(\d+)/g, "$1 $2");
 
     let accion = null;
     if (t.startsWith("inicio") || t.includes(" inicio ")) accion = "INICIO";
     if (t.startsWith("fin") || t.includes(" fin ")) accion = "FIN";
     if (!accion) return null;
 
-    const m = t.match(/\b(torno|fresadora|cepillo|soldadora|mesa(?:\s+de\s+electr[oó]nica)?)\s*(\d+)\b/);
+    const m = t.match(/\b(torno|fresadora|cepillo|soldadora|mesa(?:\s+de\s+electr[oó]nica)?)\s*(\d{1,4})\b/);
     if (!m) return null;
 
     const maquina = normalizarMaquina(m[1]);
@@ -326,24 +380,24 @@ function abrirFormPrefill({ nombre, boleta, grupo, maquina, id, accion, obs }) {
     return { accion, maquina, id, obs };
   }
 
-  function ejecutarComandoRegistro(texto){
+  function ejecutarComandoRegistro(texto) {
     const cmd = parseComandoRegistro(texto);
-    const hoy = new Date().toISOString().slice(0,10);
-    localStorage.setItem("pase_ok_fecha", hoy);
-    localStorage.setItem("pase_ok_boleta", boleta);
-    if(!cmd) return false;
+    if (!cmd) return false;
 
-    const nombre = localStorage.getItem("alumno_nombre") || "";
-    const boleta = localStorage.getItem("alumno_boleta") || "";
-    const grupo  = localStorage.getItem("alumno_grupo")  || "";
-
-    if(!nombre || !boleta || !grupo){
+    const { nombre, boleta, grupo } = getAlumnoGuardado();
+    if (!nombre || !boleta || !grupo) {
       bot("Primero guarda tu nombre/boleta/grupo arriba 👆");
       return true;
     }
 
+    // Marca pase del día
+    localStorage.setItem("pase_ok_fecha", hoyYYYYMMDD());
+    localStorage.setItem("pase_ok_boleta", boleta);
+
     abrirFormPrefill({
-      nombre, boleta, grupo,
+      nombre,
+      boleta,
+      grupo,
       maquina: cmd.maquina,
       id: cmd.id,
       accion: cmd.accion,
@@ -354,22 +408,28 @@ function abrirFormPrefill({ nombre, boleta, grupo, maquina, id, accion, obs }) {
     return true;
   }
 
-  function enviarCmd(){
+  function enviarCmd() {
     const input = document.getElementById("cmd");
+    if (!input) return;
+
     const texto = input.value.trim();
-    if(!texto) return;
+    if (!texto) return;
+
     me(texto);
     input.value = "";
 
-    if(!ejecutarComandoRegistro(texto)){
+    if (!ejecutarComandoRegistro(texto)) {
       bot("No entendí. Ej: 'inicio torno 17' o 'fin mesa 2 obs revisé cables'");
     }
   }
 
   // ======= Voz (dictado del comando) =======
-  function dictarCmd(){
+  function dictarCmd() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if(!SpeechRecognition){ alert("Tu navegador no soporta dictado. Usa Chrome."); return; }
+    if (!SpeechRecognition) {
+      alert("Tu navegador no soporta dictado. Usa Chrome.");
+      return;
+    }
 
     const rec = new SpeechRecognition();
     rec.lang = "es-MX";
@@ -379,10 +439,11 @@ function abrirFormPrefill({ nombre, boleta, grupo, maquina, id, accion, obs }) {
     rec.onresult = (e) => {
       const texto = e.results[0][0].transcript;
       me(texto);
-      if(!ejecutarComandoRegistro(texto)){
+      if (!ejecutarComandoRegistro(texto)) {
         bot("No entendí. Di: 'inicio torno 17' o 'fin torno 17'.");
       }
     };
+
     rec.onerror = (e) => alert("Error de voz: " + e.error);
     rec.start();
   }
