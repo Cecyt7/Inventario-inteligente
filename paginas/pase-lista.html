@@ -252,6 +252,9 @@
     localStorage.setItem("alumno_nombre", nombre);
     localStorage.setItem("alumno_boleta", boleta);
     localStorage.setItem("alumno_grupo", grupo);
+    const hoy = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+    localStorage.setItem("pase_ok_fecha", hoy);
+    localStorage.setItem("pase_ok_boleta", boleta);
     bot("Alumno guardado ✅");
   }
 
@@ -321,6 +324,9 @@
 
   function ejecutarComandoRegistro(texto){
     const cmd = parseComandoRegistro(texto);
+    const hoy = new Date().toISOString().slice(0,10);
+    localStorage.setItem("pase_ok_fecha", hoy);
+    localStorage.setItem("pase_ok_boleta", boleta);
     if(!cmd) return false;
 
     const nombre = localStorage.getItem("alumno_nombre") || "";
