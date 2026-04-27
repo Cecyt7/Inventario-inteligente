@@ -130,238 +130,262 @@
     </div>
     <button class="btn-volver" type="button" onclick="terminarSesion()">🛑 Terminar</button>
   </div>
-
+<scrip>
   <script>
+      
 (function () {
   const hoy = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const pase = localStorage.getItem("pase_ok_fecha");
 
-  // si NO hay pase hoy -> fuera
-  if (pase !== hoy) {
-    window.location.replace("./pase-lista.html");
+  // Mapeo de máquinas a gid (pestaña ID en Google Sheets)
+  const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
+  
+  const MAQUINAS_GID = {
+    'torno': 0,                    // pestaña TORNOS
+    'fresadora': 1,                // pestaña FRESADORA
+    'mesa': 2,                     // pestaña MESA DE ELECTRONICA
+    'esmeril': 3,                  // pestaña ESMERIL
+    'soldadora': 4,                // pestaña PLANTAS DE SOLDAR
+    'taladradora': 5,              // pestaña TALADRADORA
+    'cepillo': 6,                  // pestaña CEPILLO
+    'compresor': 7,                // pestaña COMPRESOR
+    'cnc': 8                       // pestaña COMPUTADORAS CNC
+  };
+
+  function detectarMaquina(pregunta) {
+    const q = pregunta.toLowerCase();
+    
+    if (q.includes('torno'))           return { nombre: 'TORNO', key: 'torno' };
+    if (q.includes('fresadora'))       return { nombre: 'FRESADORA', key: 'fresadora' };
+    if (q.includes('mesa'))            return { nombre: 'MESA DE ELECTRONICA', key: 'mesa' };
+    if (q.includes('esmeril'))         return { nombre: 'ESMERIL', key: 'esmeril' };
+    if (q.includes('solda'))           return { nombre: 'SOLDADORA', key: 'soldadora' };
+    if (q.includes('taladra'))         return { nombre: 'TALADRADORA', key: 'taladradora' };
+    if (q.includes('cepillo'))         return { nombre: 'CEPILLO', key: 'cepillo' };
+    if (q.includes('compresor'))       return { nombre: 'COMPRESOR', key: 'compresor' };
+    if (q.includes('cnc') || q.includes('computadora')) return { nombre: 'COMPUTADORAS CNC', key: 'cnc' };
+    
+    return null; // No detecta máquina
   }
-})();
-    const SHEET_CSV_URL =
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub?gid=0&single=true&output=csv';
 
-    function parseCSV(text) {
-      const rows = [];
-      let row = [];
-      let cur = '';
-      let inQuotes = false;
+  function detectarID(pregunta) {
+    const m = pregunta.match(/\b(\d+)\b/);
+    return m ? m[1] : null;
+  }
 
-      for (let i = 0; i < text.length; i++) {
-        const c = text[i];
-        const next = text[i + 1];
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let cur = '';
+    let inQuotes = false;
 
-        if (c === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
-        if (c === '"') { inQuotes = !inQuotes; continue; }
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      const next = text[i + 1];
 
-        if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
+      if (c === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
+      if (c === '"') { inQuotes = !inQuotes; continue; }
 
-        if ((c === '\n' || c === '\r') && !inQuotes) {
-          if (c === '\r' && next === '\n') i++;
-          row.push(cur); cur = '';
-          if (row.length > 1 || row[0] !== '') rows.push(row);
-          row = [];
-          continue;
-        }
+      if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
 
-        cur += c;
+      if ((c === '\n' || c === '\r') && !inQuotes) {
+        if (c === '\r' && next === '\n') i++;
+        row.push(cur); cur = '';
+        if (row.length > 1 || row[0] !== '') rows.push(row);
+        row = [];
+        continue;
       }
 
-      row.push(cur);
-      if (row.length > 1 || row[0] !== '') rows.push(row);
-      return rows;
+      cur += c;
     }
 
-    async function cargarDatosSheet() {
-      const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-      if (!res.ok) throw new Error("No pude cargar el CSV (HTTP " + res.status + ")");
-      const csv = await res.text();
+    row.push(cur);
+    if (row.length > 1 || row[0] !== '') rows.push(row);
+    return rows;
+  }
 
-      const rows = parseCSV(csv);
-      if (!rows.length) throw new Error("CSV vacío");
+  async function cargarDatosSheet(gid) {
+    const url = `${SHEET_BASE}?gid=${gid}&single=true&output=csv`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("No pude cargar el CSV (HTTP " + res.status + ")");
+    const csv = await res.text();
 
-      const headers = rows[0].map(h => String(h || '').trim());
-      const data = rows.slice(1).map(r => {
-        const obj = {};
-        headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
-        return obj;
-      });
+    const rows = parseCSV(csv);
+    if (!rows.length) throw new Error("CSV vacío");
 
-      return data;
-    }
+    const headers = rows[0].map(h => String(h || '').trim());
+    const data = rows.slice(1).map(r => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
+      return obj;
+    });
 
-    function detectarConsultaTorno(pregunta) {
-      const m = pregunta.toLowerCase().match(/\btorno\s*(\d+)\b/);
-      return m ? m[1] : null;
-    }
+    return data;
+  }
 
-    function mostrarRespuestas(datos) {
-      const respuestasDiv = document.getElementById('respuesta');
-      const resultadosDiv = document.getElementById('resultados');
+  function mostrarRespuestas(datos) {
+    const respuestasDiv = document.getElementById('respuesta');
+    const resultadosDiv = document.getElementById('resultados');
 
-      if (!datos || !Array.isArray(datos.resultados) || datos.cantidad === 0) {
-        respuestasDiv.className = 'respuesta error';
-        respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
-        respuestasDiv.style.display = 'block';
-        resultadosDiv.innerHTML = '';
-        hablar('No se encontraron resultados.');
-        return;
-      }
-
-      respuestasDiv.className = 'respuesta exito';
-      respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
-      respuestasDiv.style.display = 'block';
-       hablar(`Se encontraron ${datos.cantidad} resultado(s).`);
-
-      resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
-        <div class="resultado-item">
-          <strong>${i + 1}. Coincidencia:</strong> ${r.coincidencia}<br>
-          <strong>Valor:</strong> ${r.valor}<br><br>
-          <div class="resultado-pre"><strong>Registro:</strong>\n${Object.entries(r.item || {}).map(([k,v]) => `${k}: ${v}`).join('\n')}</div>
-        </div>
-      `).join('');
-    }
-
-    function mostrarError(mensaje) {
-      const respuestasDiv = document.getElementById('respuesta');
+    if (!datos || !Array.isArray(datos.resultados) || datos.cantidad === 0) {
       respuestasDiv.className = 'respuesta error';
-      respuestasDiv.textContent = `⚠️ ${mensaje}`;
+      respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
       respuestasDiv.style.display = 'block';
-      document.getElementById('resultados').innerHTML = '';
+      resultadosDiv.innerHTML = '';
+      hablar('No se encontraron resultados.');
+      return;
     }
 
-    function ocultarRespuesta() {
-      document.getElementById('respuesta').style.display = 'none';
-      document.getElementById('resultados').innerHTML = '';
-    }
+    respuestasDiv.className = 'respuesta exito';
+    respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
+    respuestasDiv.style.display = 'block';
+    hablar(`Se encontraron ${datos.cantidad} resultado(s).`);
 
-    function mostrarCargando(visible) {
-      document.getElementById('cargando').style.display = visible ? 'block' : 'none';
-    }
+    resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
+      <div class="resultado-item">
+        <strong>${i + 1}. Coincidencia:</strong> ${r.coincidencia}<br>
+        <strong>Valor:</strong> ${r.valor}<br><br>
+        <div class="resultado-pre"><strong>Registro:</strong>\n${Object.entries(r.item || {}).map(([k,v]) => `${k}: ${v}`).join('\n')}</div>
+      </div>
+    `).join('');
+  }
 
-    let CACHE = null;
+  function mostrarError(mensaje) {
+    const respuestasDiv = document.getElementById('respuesta');
+    respuestasDiv.className = 'respuesta error';
+    respuestasDiv.textContent = `⚠️ ${mensaje}`;
+    respuestasDiv.style.display = 'block';
+    document.getElementById('resultados').innerHTML = '';
+  }
 
-    async function hacerPregunta() {
-      const pregunta = document.getElementById('pregunta').value.trim();
-      if (!pregunta) return mostrarError('Por favor escribe una pregunta');
+  function ocultarRespuesta() {
+    document.getElementById('respuesta').style.display = 'none';
+    document.getElementById('resultados').innerHTML = '';
+  }
 
-      mostrarCargando(true);
-      ocultarRespuesta();
+  function mostrarCargando(visible) {
+    document.getElementById('cargando').style.display = visible ? 'block' : 'none';
+  }
 
-      try {
-        if (!CACHE) CACHE = await cargarDatosSheet();
+  let CACHE = {}; // Ahora es un objeto { 'torno': [...], 'fresadora': [...], ... }
 
-        const idTorno = detectarConsultaTorno(pregunta);
+  async function hacerPregunta() {
+    const pregunta = document.getElementById('pregunta').value.trim();
+    if (!pregunta) return mostrarError('Por favor escribe una pregunta');
 
-        if (idTorno) {
-          const row = CACHE.find(x =>
-            String(x["MAQUINA"] || "").toLowerCase() === "torno" &&
-            String(x["IDENTIFICACION"] || "").trim() === String(idTorno).trim()
-          );
+    mostrarCargando(true);
+    ocultarRespuesta();
 
-          if (!row) throw new Error(`No encontré el torno ${idTorno}`);
+    try {
+      // Detecta qué máquina busca
+      const maq = detectarMaquina(pregunta);
+      if (!maq) {
+        throw new Error('No detecté la máquina. Pregunta por: torno, fresadora, mesa, esmeril, soldadora, taladradora, cepillo, compresor o CNC.');
+      }
 
-          return mostrarRespuestas({
-            cantidad: 1,
-            resultados: [{ coincidencia: "TORNO", valor: `ID ${idTorno}`, item: row }]
-          });
-        }
+      const gid = MAQUINAS_GID[maq.key];
+      
+      // Carga solo de esa hoja si no está en caché
+      if (!CACHE[maq.key]) {
+        CACHE[maq.key] = await cargarDatosSheet(gid);
+      }
 
-        const q = pregunta.toLowerCase();
-        const results = [];
+      const data = CACHE[maq.key];
 
-        for (const item of CACHE) {
-          for (const [k, v] of Object.entries(item)) {
-            if (String(v).toLowerCase().includes(q)) {
-              results.push({ coincidencia: k, valor: v, item });
-              break;
-            }
+      // Si pregunta por ID específico
+      const id = detectarID(pregunta);
+      if (id) {
+        const row = data.find(x => String(x["IDENTIFICACION"] || "").trim() === String(id).trim());
+        if (!row) throw new Error(`No encontré ${maq.nombre} con ID ${id}`);
+
+        return mostrarRespuestas({
+          cantidad: 1,
+          resultados: [{ coincidencia: `${maq.nombre} ID`, valor: id, item: row }]
+        });
+      }
+
+      // Búsqueda general en esa máquina
+      const q = pregunta.toLowerCase();
+      const results = [];
+
+      for (const item of data) {
+        for (const [k, v] of Object.entries(item)) {
+          if (String(v).toLowerCase().includes(q)) {
+            results.push({ coincidencia: k, valor: v, item });
+            break;
           }
         }
-
-        mostrarRespuestas({ cantidad: results.length, resultados: results });
-      } catch (e) {
-        mostrarError(`Error: ${e.message}`);
-      } finally {
-        mostrarCargando(false);
       }
+
+      mostrarRespuestas({ cantidad: results.length, resultados: results });
+    } catch (e) {
+      mostrarError(`Error: ${e.message}`);
+    } finally {
+      mostrarCargando(false);
     }
-let VOZ_ACTIVA = false;
-
-function toggleVoz() {
-  VOZ_ACTIVA = !VOZ_ACTIVA;
-  const btn = document.getElementById("btnVoz");
-  if (btn) btn.textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
-
-  // confirmación hablada o en texto
-  const msg = VOZ_ACTIVA ? "Voz activada." : "Voz desactivada.";
-  if (VOZ_ACTIVA) hablar(msg);
-  else console.log(msg);
-}
-
-function hablar(texto) {
-  if (!VOZ_ACTIVA) return;
-  if (!("speechSynthesis" in window)) return;
-
-  // Evita que se encime si preguntan varias veces
-  window.speechSynthesis.cancel();
-
-  const u = new SpeechSynthesisUtterance(String(texto));
-  u.lang = "es-MX";
-  u.rate = 1;   // 0.1 - 10
-  u.pitch = 1;  // 0 - 2
-  window.speechSynthesis.speak(u);
-}
-
-function dictarPregunta() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    mostrarError('Tu navegador no soporta dictado por voz. Usa Chrome.');
-    hablar('Tu navegador no soporta dictado por voz.');
-    return;
   }
 
-  const rec = new SpeechRecognition();
-  rec.lang = 'es-MX';
-  rec.interimResults = false;
-  rec.maxAlternatives = 1;
+  let VOZ_ACTIVA = false;
 
-  mostrarCargando(true);
+  function toggleVoz() {
+    VOZ_ACTIVA = !VOZ_ACTIVA;
+    const btn = document.getElementById("btnVoz");
+    if (btn) btn.textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
 
-  rec.onresult = (event) => {
-    const texto = event.results[0][0].transcript;
-    document.getElementById('pregunta').value = texto;
-    mostrarCargando(false);
-    hacerPregunta(); // dispara la consulta normal
-  };
+    const msg = VOZ_ACTIVA ? "Voz activada." : "Voz desactivada.";
+    if (VOZ_ACTIVA) hablar(msg);
+    else console.log(msg);
+  }
 
-  rec.onerror = (event) => {
-    mostrarCargando(false);
-    mostrarError('Voz: ' + event.error);
-    hablar('Ocurrió un error con el micrófono.');
-  };
+  function hablar(texto) {
+    if (!VOZ_ACTIVA) return;
+    if (!("speechSynthesis" in window)) return;
 
-  rec.onend = () => {
-    mostrarCargando(false);
-  };
+    window.speechSynthesis.cancel();
 
-  rec.start();
-}
+    const u = new SpeechSynthesisUtterance(String(texto));
+    u.lang = "es-MX";
+    u.rate = 1;
+    u.pitch = 1;
+    window.speechSynthesis.speak(u);
+  }
 
-    function terminarSesion(){
-  localStorage.removeItem("pase_ok_fecha");
-  localStorage.removeItem("pase_ok_boleta");
-  // si quieres cerrar completo, descomenta:
-  // localStorage.removeItem("alumno_nombre");
-  // localStorage.removeItem("alumno_boleta");
-  // localStorage.removeItem("alumno_grupo");
+  function dictarPregunta() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  window.location.replace("./pase-lista.html");
-}
-  </script>
+    if (!SpeechRecognition) {
+      mostrarError('Tu navegador no soporta dictado por voz. Usa Chrome.');
+      hablar('Tu navegador no soporta dictado por voz.');
+      return;
+    }
+
+    const rec = new SpeechRecognition();
+    rec.lang = 'es-MX';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+
+    mostrarCargando(true);
+
+    rec.onresult = (event) => {
+      const texto = event.results[0][0].transcript;
+      document.getElementById('pregunta').value = texto;
+      mostrarCargando(false);
+      hacerPregunta();
+    };
+
+    rec.onerror = (event) => {
+      mostrarCargando(false);
+      mostrarError('Voz: ' + event.error);
+      hablar('Ocurrió un error con el micrófono.');
+    };
+
+    rec.onend = () => {
+      mostrarCargando(false);
+    };
+
+    rec.start();
+  }
+</script>
+
 </body>
 </html>
