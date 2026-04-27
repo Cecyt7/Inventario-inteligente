@@ -46,14 +46,13 @@
   </div>
 
   <script>
-    // ======= GUARD: verifica pase de lista =======
+    // Guard: verifica pase de lista
     (function () {
       const hoy = new Date().toISOString().slice(0, 10);
       const pase = localStorage.getItem("pase_ok_fecha");
       if (pase !== hoy) window.location.replace("./pase-lista.html");
     })();
 
-    // ======= CONFIG =======
     const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
     
     const MAQUINAS_GID = {
@@ -68,20 +67,17 @@
       'cnc': 8
     };
 
-    // ======= FUNCIONES PÚBLICAS =======
     function detectarMaquina(pregunta) {
       const q = pregunta.toLowerCase();
-      
-      if (q.includes('torno'))           return { nombre: 'TORNO', key: 'torno' };
-      if (q.includes('fresadora'))       return { nombre: 'FRESADORA', key: 'fresadora' };
-      if (q.includes('mesa'))            return { nombre: 'MESA DE ELECTRONICA', key: 'mesa' };
-      if (q.includes('esmeril'))         return { nombre: 'ESMERIL', key: 'esmeril' };
-      if (q.includes('solda'))           return { nombre: 'SOLDADORA', key: 'soldadora' };
-      if (q.includes('taladra'))         return { nombre: 'TALADRADORA', key: 'taladradora' };
-      if (q.includes('cepillo'))         return { nombre: 'CEPILLO', key: 'cepillo' };
-      if (q.includes('compresor'))       return { nombre: 'COMPRESOR', key: 'compresor' };
+      if (q.includes('torno')) return { nombre: 'TORNO', key: 'torno' };
+      if (q.includes('fresadora')) return { nombre: 'FRESADORA', key: 'fresadora' };
+      if (q.includes('mesa')) return { nombre: 'MESA DE ELECTRONICA', key: 'mesa' };
+      if (q.includes('esmeril')) return { nombre: 'ESMERIL', key: 'esmeril' };
+      if (q.includes('solda')) return { nombre: 'SOLDADORA', key: 'soldadora' };
+      if (q.includes('taladra')) return { nombre: 'TALADRADORA', key: 'taladradora' };
+      if (q.includes('cepillo')) return { nombre: 'CEPILLO', key: 'cepillo' };
+      if (q.includes('compresor')) return { nombre: 'COMPRESOR', key: 'compresor' };
       if (q.includes('cnc') || q.includes('computadora')) return { nombre: 'COMPUTADORAS CNC', key: 'cnc' };
-      
       return null;
     }
 
@@ -99,12 +95,9 @@
       for (let i = 0; i < text.length; i++) {
         const c = text[i];
         const next = text[i + 1];
-
         if (c === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
         if (c === '"') { inQuotes = !inQuotes; continue; }
-
         if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
-
         if ((c === '\n' || c === '\r') && !inQuotes) {
           if (c === '\r' && next === '\n') i++;
           row.push(cur); cur = '';
@@ -112,10 +105,8 @@
           row = [];
           continue;
         }
-
         cur += c;
       }
-
       row.push(cur);
       if (row.length > 1 || row[0] !== '') rows.push(row);
       return rows;
@@ -126,38 +117,32 @@
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) throw new Error("No pude cargar el CSV (HTTP " + res.status + ")");
       const csv = await res.text();
-
       const rows = parseCSV(csv);
       if (!rows.length) throw new Error("CSV vacío");
-
       const headers = rows[0].map(h => String(h || '').trim());
       const data = rows.slice(1).map(r => {
         const obj = {};
         headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
         return obj;
       });
-
       return data;
     }
 
     function mostrarRespuestas(datos) {
       const respuestasDiv = document.getElementById('respuesta');
       const resultadosDiv = document.getElementById('resultados');
-
       if (!datos || !Array.isArray(datos.resultados) || datos.cantidad === 0) {
         respuestasDiv.className = 'respuesta error';
-        respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
+        respuestasDiv.textContent = '❌ No se encontraron resultados.';
         respuestasDiv.style.display = 'block';
         resultadosDiv.innerHTML = '';
         hablar('No se encontraron resultados.');
         return;
       }
-
       respuestasDiv.className = 'respuesta exito';
       respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
       respuestasDiv.style.display = 'block';
       hablar(`Se encontraron ${datos.cantidad} resultado(s).`);
-
       resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
         <div class="resultado-item">
           <strong>${i + 1}. Coincidencia:</strong> ${r.coincidencia}<br>
@@ -188,39 +173,23 @@
 
     async function hacerPregunta() {
       const pregunta = document.getElementById('pregunta').value.trim();
-      if (!pregunta) return mostrarError('Por favor escribe una pregunta');
-
+      if (!pregunta) return mostrarError('Escribe una pregunta');
       mostrarCargando(true);
       ocultarRespuesta();
-
       try {
         const maq = detectarMaquina(pregunta);
-        if (!maq) {
-          throw new Error('No detecté la máquina. Pregunta por: torno, fresadora, mesa, esmeril, soldadora, taladradora, cepillo, compresor o CNC.');
-        }
-
+        if (!maq) throw new Error('No detecté la máquina. Di: torno, fresadora, mesa, esmeril, soldadora, taladradora, cepillo, compresor o CNC.');
         const gid = MAQUINAS_GID[maq.key];
-        
-        if (!CACHE[maq.key]) {
-          CACHE[maq.key] = await cargarDatosSheet(gid);
-        }
-
+        if (!CACHE[maq.key]) CACHE[maq.key] = await cargarDatosSheet(gid);
         const data = CACHE[maq.key];
-
         const id = detectarID(pregunta);
         if (id) {
           const row = data.find(x => String(x["IDENTIFICACION"] || "").trim() === String(id).trim());
           if (!row) throw new Error(`No encontré ${maq.nombre} con ID ${id}`);
-
-          return mostrarRespuestas({
-            cantidad: 1,
-            resultados: [{ coincidencia: `${maq.nombre} ID`, valor: id, item: row }]
-          });
+          return mostrarRespuestas({ cantidad: 1, resultados: [{ coincidencia: `${maq.nombre} ID`, valor: id, item: row }] });
         }
-
         const q = pregunta.toLowerCase();
         const results = [];
-
         for (const item of data) {
           for (const [k, v] of Object.entries(item)) {
             if (String(v).toLowerCase().includes(q)) {
@@ -229,7 +198,6 @@
             }
           }
         }
-
         mostrarRespuestas({ cantidad: results.length, resultados: results });
       } catch (e) {
         mostrarError(`Error: ${e.message}`);
@@ -244,7 +212,6 @@
       VOZ_ACTIVA = !VOZ_ACTIVA;
       const btn = document.getElementById("btnVoz");
       if (btn) btn.textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
-
       const msg = VOZ_ACTIVA ? "Voz activada." : "Voz desactivada.";
       if (VOZ_ACTIVA) hablar(msg);
       else console.log(msg);
@@ -253,9 +220,7 @@
     function hablar(texto) {
       if (!VOZ_ACTIVA) return;
       if (!("speechSynthesis" in window)) return;
-
       window.speechSynthesis.cancel();
-
       const u = new SpeechSynthesisUtterance(String(texto));
       u.lang = "es-MX";
       u.rate = 1;
@@ -265,37 +230,28 @@
 
     function dictarPregunta() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
       if (!SpeechRecognition) {
-        mostrarError('Tu navegador no soporta dictado por voz. Usa Chrome.');
+        mostrarError('Tu navegador no soporta dictado. Usa Chrome.');
         hablar('Tu navegador no soporta dictado por voz.');
         return;
       }
-
       const rec = new SpeechRecognition();
       rec.lang = 'es-MX';
       rec.interimResults = false;
       rec.maxAlternatives = 1;
-
       mostrarCargando(true);
-
       rec.onresult = (event) => {
         const texto = event.results[0][0].transcript;
         document.getElementById('pregunta').value = texto;
         mostrarCargando(false);
         hacerPregunta();
       };
-
       rec.onerror = (event) => {
         mostrarCargando(false);
         mostrarError('Voz: ' + event.error);
-        hablar('Ocurrió un error con el micrófono.');
+        hablar('Error con el micrófono.');
       };
-
-      rec.onend = () => {
-        mostrarCargando(false);
-      };
-
+      rec.onend = () => mostrarCargando(false);
       rec.start();
     }
 
