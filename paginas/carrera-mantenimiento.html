@@ -3,95 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mantenimiento Industrial - CECyT 7</title>
-
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #640328; color: white; min-height: 100vh; }
-
-    .barra-superior {
-      position: fixed; top: 0; width: 100%; height: 12vh; min-height: 80px;
-      background-color: white; border-bottom: 4px solid #640328;
-      display: flex; justify-content: space-between; align-items: center; padding: 0 30px; z-index: 1000;
-    }
-    .logo { height: 80px; }
-
-    .contenedor { margin-top: 140px; max-width: 900px; margin-left: auto; margin-right: auto; padding: 30px; }
-
-    h1 { text-align: center; margin-bottom: 30px; font-size: 32px; }
-
-    .btn-volver {
-      padding: 10px 20px; background-color: white; color: #640328; border: none;
-      border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; transition: all 0.3s;
-    }
-    .btn-volver:hover { background-color: #f0f0f0; }
-
-    .consulta {
-      background-color: white; color: #640328; padding: 25px; border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3); margin-bottom: 20px;
-    }
-
-    .consulta p { margin-bottom: 15px; font-weight: bold; }
-
-    .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-    .consulta input { flex: 1; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 6px; }
-    .consulta button {
-      padding: 12px 30px; font-size: 16px; background-color: #640328; color: white;
-      border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.3s;
-    }
-    .consulta button:hover { background-color: #4a0220; }
-
-    .respuesta { background-color: #f2f2f2; color: #333; padding: 15px; border-radius: 6px; min-height: 40px; border-left: 4px solid #640328; }
-    .respuesta.error { background-color: #ffebee; border-left-color: #c62828; color: #c62828; }
-    .respuesta.exito { background-color: #e8f5e9; border-left-color: #2e7d32; color: #2e7d32; }
-
-    .cargando { display: none; text-align: center; margin: 20px 0; }
-    .spinner {
-      border: 4px solid #f3f3f3; border-top: 4px solid #640328; border-radius: 50%;
-      width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    .resultados { margin-top: 20px; max-height: 500px; overflow-y: auto; }
-    .resultado-item { background-color: #f9f9f9; color: #333; padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 3px solid #640328; }
-    .resultado-item strong { color: #640328; }
-    .resultado-pre { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-    
-    .btn-voz{
-    padding: 12px 16px;
-    font-size: 16px;
-    background-color: #1e88e5;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    white-space: nowrap;
-  }
-  .btn-voz:hover{ background-color: #1565c0; }
-      .input-group{
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    align-items: stretch;
-  }
-
-  .botones{
-    display: flex;
-    gap: 10px;
-  }
-  @media (min-width: 769px){
-    .input-group { flex-direction: row; }
-    .consulta input { flex: 1; }
-  }
-  @media (max-width: 768px){
-    .input-group { flex-direction: column; }
-    .botones { width: 100%; }
-    .botones button { flex: 1; } /* reparte ancho parejo */
-  }
-  </style>
+  <title>Mantenimiento Industrial - Inventario</title>
+  <link rel="stylesheet" href="../css/carrera-mantenimiento.css">
 </head>
-
 <body>
   <div class="barra-superior">
     <img src="../img/logo_ipn.png" class="logo" alt="IPN">
@@ -105,20 +19,20 @@
     <div class="consulta">
       <p>Consulta información sobre la maquinaria del taller:</p>
 
-    <div class="input-group">
-  <input
-    type="text"
-    id="pregunta"
-    placeholder="Ejemplo: Torno 18"
-    onkeypress="if(event.key === 'Enter') hacerPregunta()"
-  >
+      <div class="input-group">
+        <input
+          type="text"
+          id="pregunta"
+          placeholder="Ejemplo: Torno 18"
+          onkeypress="if(event.key === 'Enter') hacerPregunta()"
+        >
 
-  <div class="botones">
-    <button type="button" onclick="hacerPregunta()">🔍 Buscar</button>
-    <button type="button" class="btn-voz" onclick="dictarPregunta()" title="Hablar (dictado)">🎤</button>
-    <button type="button" class="btn-voz" onclick="toggleVoz()" id="btnVoz" title="Activar/Desactivar voz">🔊 OFF</button>
-  </div>
-</div>
+        <div class="botones">
+          <button type="button" onclick="hacerPregunta()">🔍 Buscar</button>
+          <button type="button" class="btn-voz" onclick="dictarPregunta()" title="Hablar (dictado)">🎤</button>
+          <button type="button" class="btn-voz" onclick="toggleVoz()" id="btnVoz" title="Activar/Desactivar voz">🔊 OFF</button>
+        </div>
+      </div>
 
       <div class="cargando" id="cargando">
         <div class="spinner"></div>
@@ -130,262 +44,266 @@
     </div>
     <button class="btn-volver" type="button" onclick="terminarSesion()">🛑 Terminar</button>
   </div>
-<scrip>
+
   <script>
-      
-(function () {
-  const hoy = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  const pase = localStorage.getItem("pase_ok_fecha");
+    // ======= GUARD: verifica pase de lista =======
+    (function () {
+      const hoy = new Date().toISOString().slice(0, 10);
+      const pase = localStorage.getItem("pase_ok_fecha");
+      if (pase !== hoy) window.location.replace("./pase-lista.html");
+    })();
 
-  // Mapeo de máquinas a gid (pestaña ID en Google Sheets)
-  const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
-  
-  const MAQUINAS_GID = {
-    'torno': 0,                    // pestaña TORNOS
-    'fresadora': 1,                // pestaña FRESADORA
-    'mesa': 2,                     // pestaña MESA DE ELECTRONICA
-    'esmeril': 3,                  // pestaña ESMERIL
-    'soldadora': 4,                // pestaña PLANTAS DE SOLDAR
-    'taladradora': 5,              // pestaña TALADRADORA
-    'cepillo': 6,                  // pestaña CEPILLO
-    'compresor': 7,                // pestaña COMPRESOR
-    'cnc': 8                       // pestaña COMPUTADORAS CNC
-  };
-
-  function detectarMaquina(pregunta) {
-    const q = pregunta.toLowerCase();
+    // ======= CONFIG =======
+    const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
     
-    if (q.includes('torno'))           return { nombre: 'TORNO', key: 'torno' };
-    if (q.includes('fresadora'))       return { nombre: 'FRESADORA', key: 'fresadora' };
-    if (q.includes('mesa'))            return { nombre: 'MESA DE ELECTRONICA', key: 'mesa' };
-    if (q.includes('esmeril'))         return { nombre: 'ESMERIL', key: 'esmeril' };
-    if (q.includes('solda'))           return { nombre: 'SOLDADORA', key: 'soldadora' };
-    if (q.includes('taladra'))         return { nombre: 'TALADRADORA', key: 'taladradora' };
-    if (q.includes('cepillo'))         return { nombre: 'CEPILLO', key: 'cepillo' };
-    if (q.includes('compresor'))       return { nombre: 'COMPRESOR', key: 'compresor' };
-    if (q.includes('cnc') || q.includes('computadora')) return { nombre: 'COMPUTADORAS CNC', key: 'cnc' };
-    
-    return null; // No detecta máquina
-  }
+    const MAQUINAS_GID = {
+      'torno': 0,
+      'fresadora': 1,
+      'mesa': 2,
+      'esmeril': 3,
+      'soldadora': 4,
+      'taladradora': 5,
+      'cepillo': 6,
+      'compresor': 7,
+      'cnc': 8
+    };
 
-  function detectarID(pregunta) {
-    const m = pregunta.match(/\b(\d+)\b/);
-    return m ? m[1] : null;
-  }
-
-  function parseCSV(text) {
-    const rows = [];
-    let row = [];
-    let cur = '';
-    let inQuotes = false;
-
-    for (let i = 0; i < text.length; i++) {
-      const c = text[i];
-      const next = text[i + 1];
-
-      if (c === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
-      if (c === '"') { inQuotes = !inQuotes; continue; }
-
-      if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
-
-      if ((c === '\n' || c === '\r') && !inQuotes) {
-        if (c === '\r' && next === '\n') i++;
-        row.push(cur); cur = '';
-        if (row.length > 1 || row[0] !== '') rows.push(row);
-        row = [];
-        continue;
-      }
-
-      cur += c;
-    }
-
-    row.push(cur);
-    if (row.length > 1 || row[0] !== '') rows.push(row);
-    return rows;
-  }
-
-  async function cargarDatosSheet(gid) {
-    const url = `${SHEET_BASE}?gid=${gid}&single=true&output=csv`;
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error("No pude cargar el CSV (HTTP " + res.status + ")");
-    const csv = await res.text();
-
-    const rows = parseCSV(csv);
-    if (!rows.length) throw new Error("CSV vacío");
-
-    const headers = rows[0].map(h => String(h || '').trim());
-    const data = rows.slice(1).map(r => {
-      const obj = {};
-      headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
-      return obj;
-    });
-
-    return data;
-  }
-
-  function mostrarRespuestas(datos) {
-    const respuestasDiv = document.getElementById('respuesta');
-    const resultadosDiv = document.getElementById('resultados');
-
-    if (!datos || !Array.isArray(datos.resultados) || datos.cantidad === 0) {
-      respuestasDiv.className = 'respuesta error';
-      respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
-      respuestasDiv.style.display = 'block';
-      resultadosDiv.innerHTML = '';
-      hablar('No se encontraron resultados.');
-      return;
-    }
-
-    respuestasDiv.className = 'respuesta exito';
-    respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
-    respuestasDiv.style.display = 'block';
-    hablar(`Se encontraron ${datos.cantidad} resultado(s).`);
-
-    resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
-      <div class="resultado-item">
-        <strong>${i + 1}. Coincidencia:</strong> ${r.coincidencia}<br>
-        <strong>Valor:</strong> ${r.valor}<br><br>
-        <div class="resultado-pre"><strong>Registro:</strong>\n${Object.entries(r.item || {}).map(([k,v]) => `${k}: ${v}`).join('\n')}</div>
-      </div>
-    `).join('');
-  }
-
-  function mostrarError(mensaje) {
-    const respuestasDiv = document.getElementById('respuesta');
-    respuestasDiv.className = 'respuesta error';
-    respuestasDiv.textContent = `⚠️ ${mensaje}`;
-    respuestasDiv.style.display = 'block';
-    document.getElementById('resultados').innerHTML = '';
-  }
-
-  function ocultarRespuesta() {
-    document.getElementById('respuesta').style.display = 'none';
-    document.getElementById('resultados').innerHTML = '';
-  }
-
-  function mostrarCargando(visible) {
-    document.getElementById('cargando').style.display = visible ? 'block' : 'none';
-  }
-
-  let CACHE = {}; // Ahora es un objeto { 'torno': [...], 'fresadora': [...], ... }
-
-  async function hacerPregunta() {
-    const pregunta = document.getElementById('pregunta').value.trim();
-    if (!pregunta) return mostrarError('Por favor escribe una pregunta');
-
-    mostrarCargando(true);
-    ocultarRespuesta();
-
-    try {
-      // Detecta qué máquina busca
-      const maq = detectarMaquina(pregunta);
-      if (!maq) {
-        throw new Error('No detecté la máquina. Pregunta por: torno, fresadora, mesa, esmeril, soldadora, taladradora, cepillo, compresor o CNC.');
-      }
-
-      const gid = MAQUINAS_GID[maq.key];
-      
-      // Carga solo de esa hoja si no está en caché
-      if (!CACHE[maq.key]) {
-        CACHE[maq.key] = await cargarDatosSheet(gid);
-      }
-
-      const data = CACHE[maq.key];
-
-      // Si pregunta por ID específico
-      const id = detectarID(pregunta);
-      if (id) {
-        const row = data.find(x => String(x["IDENTIFICACION"] || "").trim() === String(id).trim());
-        if (!row) throw new Error(`No encontré ${maq.nombre} con ID ${id}`);
-
-        return mostrarRespuestas({
-          cantidad: 1,
-          resultados: [{ coincidencia: `${maq.nombre} ID`, valor: id, item: row }]
-        });
-      }
-
-      // Búsqueda general en esa máquina
+    // ======= FUNCIONES PÚBLICAS =======
+    function detectarMaquina(pregunta) {
       const q = pregunta.toLowerCase();
-      const results = [];
+      
+      if (q.includes('torno'))           return { nombre: 'TORNO', key: 'torno' };
+      if (q.includes('fresadora'))       return { nombre: 'FRESADORA', key: 'fresadora' };
+      if (q.includes('mesa'))            return { nombre: 'MESA DE ELECTRONICA', key: 'mesa' };
+      if (q.includes('esmeril'))         return { nombre: 'ESMERIL', key: 'esmeril' };
+      if (q.includes('solda'))           return { nombre: 'SOLDADORA', key: 'soldadora' };
+      if (q.includes('taladra'))         return { nombre: 'TALADRADORA', key: 'taladradora' };
+      if (q.includes('cepillo'))         return { nombre: 'CEPILLO', key: 'cepillo' };
+      if (q.includes('compresor'))       return { nombre: 'COMPRESOR', key: 'compresor' };
+      if (q.includes('cnc') || q.includes('computadora')) return { nombre: 'COMPUTADORAS CNC', key: 'cnc' };
+      
+      return null;
+    }
 
-      for (const item of data) {
-        for (const [k, v] of Object.entries(item)) {
-          if (String(v).toLowerCase().includes(q)) {
-            results.push({ coincidencia: k, valor: v, item });
-            break;
+    function detectarID(pregunta) {
+      const m = pregunta.match(/\b(\d+)\b/);
+      return m ? m[1] : null;
+    }
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cur = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const next = text[i + 1];
+
+        if (c === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
+        if (c === '"') { inQuotes = !inQuotes; continue; }
+
+        if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
+
+        if ((c === '\n' || c === '\r') && !inQuotes) {
+          if (c === '\r' && next === '\n') i++;
+          row.push(cur); cur = '';
+          if (row.length > 1 || row[0] !== '') rows.push(row);
+          row = [];
+          continue;
+        }
+
+        cur += c;
+      }
+
+      row.push(cur);
+      if (row.length > 1 || row[0] !== '') rows.push(row);
+      return rows;
+    }
+
+    async function cargarDatosSheet(gid) {
+      const url = `${SHEET_BASE}?gid=${gid}&single=true&output=csv`;
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("No pude cargar el CSV (HTTP " + res.status + ")");
+      const csv = await res.text();
+
+      const rows = parseCSV(csv);
+      if (!rows.length) throw new Error("CSV vacío");
+
+      const headers = rows[0].map(h => String(h || '').trim());
+      const data = rows.slice(1).map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
+        return obj;
+      });
+
+      return data;
+    }
+
+    function mostrarRespuestas(datos) {
+      const respuestasDiv = document.getElementById('respuesta');
+      const resultadosDiv = document.getElementById('resultados');
+
+      if (!datos || !Array.isArray(datos.resultados) || datos.cantidad === 0) {
+        respuestasDiv.className = 'respuesta error';
+        respuestasDiv.textContent = '❌ No se encontraron resultados. Intenta con otras palabras clave.';
+        respuestasDiv.style.display = 'block';
+        resultadosDiv.innerHTML = '';
+        hablar('No se encontraron resultados.');
+        return;
+      }
+
+      respuestasDiv.className = 'respuesta exito';
+      respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
+      respuestasDiv.style.display = 'block';
+      hablar(`Se encontraron ${datos.cantidad} resultado(s).`);
+
+      resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
+        <div class="resultado-item">
+          <strong>${i + 1}. Coincidencia:</strong> ${r.coincidencia}<br>
+          <strong>Valor:</strong> ${r.valor}<br><br>
+          <div class="resultado-pre"><strong>Registro:</strong>\n${Object.entries(r.item || {}).map(([k,v]) => `${k}: ${v}`).join('\n')}</div>
+        </div>
+      `).join('');
+    }
+
+    function mostrarError(mensaje) {
+      const respuestasDiv = document.getElementById('respuesta');
+      respuestasDiv.className = 'respuesta error';
+      respuestasDiv.textContent = `⚠️ ${mensaje}`;
+      respuestasDiv.style.display = 'block';
+      document.getElementById('resultados').innerHTML = '';
+    }
+
+    function ocultarRespuesta() {
+      document.getElementById('respuesta').style.display = 'none';
+      document.getElementById('resultados').innerHTML = '';
+    }
+
+    function mostrarCargando(visible) {
+      document.getElementById('cargando').style.display = visible ? 'block' : 'none';
+    }
+
+    let CACHE = {};
+
+    async function hacerPregunta() {
+      const pregunta = document.getElementById('pregunta').value.trim();
+      if (!pregunta) return mostrarError('Por favor escribe una pregunta');
+
+      mostrarCargando(true);
+      ocultarRespuesta();
+
+      try {
+        const maq = detectarMaquina(pregunta);
+        if (!maq) {
+          throw new Error('No detecté la máquina. Pregunta por: torno, fresadora, mesa, esmeril, soldadora, taladradora, cepillo, compresor o CNC.');
+        }
+
+        const gid = MAQUINAS_GID[maq.key];
+        
+        if (!CACHE[maq.key]) {
+          CACHE[maq.key] = await cargarDatosSheet(gid);
+        }
+
+        const data = CACHE[maq.key];
+
+        const id = detectarID(pregunta);
+        if (id) {
+          const row = data.find(x => String(x["IDENTIFICACION"] || "").trim() === String(id).trim());
+          if (!row) throw new Error(`No encontré ${maq.nombre} con ID ${id}`);
+
+          return mostrarRespuestas({
+            cantidad: 1,
+            resultados: [{ coincidencia: `${maq.nombre} ID`, valor: id, item: row }]
+          });
+        }
+
+        const q = pregunta.toLowerCase();
+        const results = [];
+
+        for (const item of data) {
+          for (const [k, v] of Object.entries(item)) {
+            if (String(v).toLowerCase().includes(q)) {
+              results.push({ coincidencia: k, valor: v, item });
+              break;
+            }
           }
         }
+
+        mostrarRespuestas({ cantidad: results.length, resultados: results });
+      } catch (e) {
+        mostrarError(`Error: ${e.message}`);
+      } finally {
+        mostrarCargando(false);
+      }
+    }
+
+    let VOZ_ACTIVA = false;
+
+    function toggleVoz() {
+      VOZ_ACTIVA = !VOZ_ACTIVA;
+      const btn = document.getElementById("btnVoz");
+      if (btn) btn.textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
+
+      const msg = VOZ_ACTIVA ? "Voz activada." : "Voz desactivada.";
+      if (VOZ_ACTIVA) hablar(msg);
+      else console.log(msg);
+    }
+
+    function hablar(texto) {
+      if (!VOZ_ACTIVA) return;
+      if (!("speechSynthesis" in window)) return;
+
+      window.speechSynthesis.cancel();
+
+      const u = new SpeechSynthesisUtterance(String(texto));
+      u.lang = "es-MX";
+      u.rate = 1;
+      u.pitch = 1;
+      window.speechSynthesis.speak(u);
+    }
+
+    function dictarPregunta() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognition) {
+        mostrarError('Tu navegador no soporta dictado por voz. Usa Chrome.');
+        hablar('Tu navegador no soporta dictado por voz.');
+        return;
       }
 
-      mostrarRespuestas({ cantidad: results.length, resultados: results });
-    } catch (e) {
-      mostrarError(`Error: ${e.message}`);
-    } finally {
-      mostrarCargando(false);
-    }
-  }
+      const rec = new SpeechRecognition();
+      rec.lang = 'es-MX';
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
 
-  let VOZ_ACTIVA = false;
+      mostrarCargando(true);
 
-  function toggleVoz() {
-    VOZ_ACTIVA = !VOZ_ACTIVA;
-    const btn = document.getElementById("btnVoz");
-    if (btn) btn.textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
+      rec.onresult = (event) => {
+        const texto = event.results[0][0].transcript;
+        document.getElementById('pregunta').value = texto;
+        mostrarCargando(false);
+        hacerPregunta();
+      };
 
-    const msg = VOZ_ACTIVA ? "Voz activada." : "Voz desactivada.";
-    if (VOZ_ACTIVA) hablar(msg);
-    else console.log(msg);
-  }
+      rec.onerror = (event) => {
+        mostrarCargando(false);
+        mostrarError('Voz: ' + event.error);
+        hablar('Ocurrió un error con el micrófono.');
+      };
 
-  function hablar(texto) {
-    if (!VOZ_ACTIVA) return;
-    if (!("speechSynthesis" in window)) return;
+      rec.onend = () => {
+        mostrarCargando(false);
+      };
 
-    window.speechSynthesis.cancel();
-
-    const u = new SpeechSynthesisUtterance(String(texto));
-    u.lang = "es-MX";
-    u.rate = 1;
-    u.pitch = 1;
-    window.speechSynthesis.speak(u);
-  }
-
-  function dictarPregunta() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      mostrarError('Tu navegador no soporta dictado por voz. Usa Chrome.');
-      hablar('Tu navegador no soporta dictado por voz.');
-      return;
+      rec.start();
     }
 
-    const rec = new SpeechRecognition();
-    rec.lang = 'es-MX';
-    rec.interimResults = false;
-    rec.maxAlternatives = 1;
-
-    mostrarCargando(true);
-
-    rec.onresult = (event) => {
-      const texto = event.results[0][0].transcript;
-      document.getElementById('pregunta').value = texto;
-      mostrarCargando(false);
-      hacerPregunta();
-    };
-
-    rec.onerror = (event) => {
-      mostrarCargando(false);
-      mostrarError('Voz: ' + event.error);
-      hablar('Ocurrió un error con el micrófono.');
-    };
-
-    rec.onend = () => {
-      mostrarCargando(false);
-    };
-
-    rec.start();
-  }
-</script>
-
+    function terminarSesion(){
+      localStorage.removeItem("pase_ok_fecha");
+      localStorage.removeItem("pase_ok_boleta");
+      window.location.replace("./pase-lista.html");
+    }
+  </script>
 </body>
 </html>
