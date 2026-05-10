@@ -318,17 +318,10 @@
       <div class="respuesta" id="respuesta" style="display:none;"></div>
       <div class="resultados" id="resultados"></div>
     </div>
-    <button class="btn-volver" type="button" onclick="terminarSesion()">🛑 Terminar</button>
   </div>
 
   <script>
-    // Guard: verifica pase de lista
-    (function () {
-      const hoy = new Date().toISOString().slice(0, 10);
-      const pase = localStorage.getItem("pase_ok_fecha");
-      if (pase !== hoy) window.location.replace("./pase-lista.html");
-    })();
-
+ 
     const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
     
     const MAQUINAS_GID = {
@@ -531,11 +524,6 @@
       rec.start();
     }
 
-    function terminarSesion(){
-      localStorage.removeItem("pase_ok_fecha");
-      localStorage.removeItem("pase_ok_boleta");
-      window.location.replace("./pase-lista.html");
-    }
   </script>
 </body>
 </html>
