@@ -274,6 +274,31 @@
         grid-template-columns: 1fr;
       }
     }
+    #resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.resultado-item {
+  background: white;
+  color: #333;
+  padding: 15px;
+  border-radius: 15px 15px 15px 0; /* Estilo burbuja */
+  border-left: 5px solid #640328;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  max-width: 90%;
+  align-self: flex-start;
+}
+
+.resultado-pre {
+  background: #f4f4f4;
+  padding: 8px;
+  font-size: 12px;
+  border-radius: 5px;
+  white-space: pre-wrap; /* Para que no se salga el texto */
+}
   </style>
 </head>
 <body>
@@ -335,19 +360,34 @@
       'cnc': 8
     };
 
-    function detectarMaquina(pregunta) {
-      const q = pregunta.toLowerCase();
-      if (q.includes('torno')) return { nombre: 'TORNO', key: 'torno' };
-      if (q.includes('fresadora')) return { nombre: 'FRESADORA', key: 'fresadora' };
-      if (q.includes('mesa')) return { nombre: 'MESA DE ELECTRONICA', key: 'mesa' };
-      if (q.includes('esmeril')) return { nombre: 'ESMERIL', key: 'esmeril' };
-      if (q.includes('solda')) return { nombre: 'SOLDADORA', key: 'soldadora' };
-      if (q.includes('taladra')) return { nombre: 'TALADRADORA', key: 'taladradora' };
-      if (q.includes('cepillo')) return { nombre: 'CEPILLO', key: 'cepillo' };
-      if (q.includes('compresor')) return { nombre: 'COMPRESOR', key: 'compresor' };
-      if (q.includes('cnc') || q.includes('computadora')) return { nombre: 'COMPUTADORAS CNC', key: 'cnc' };
-      return null;
+   function detectarMaquina(pregunta) {
+  const q = pregunta.toLowerCase();
+  
+  // Diccionario de búsqueda con Expresiones Regulares (Regex)
+  const dicc = {
+    'torno': [/torn/],
+    'fresadora': [/fresa/],
+    'mesa': [/mesa/],
+    'esmeril': [/esmeril/],
+    'soldadora': [/solda/],
+    'taladradora': [/taladra/],
+    'cepillo': [/cepillo/],
+    'compresor': [/compre/],
+    'cnc': [/cnc/, /compu/]
+  };
+
+  for (const [key, regexs] of Object.entries(dicc)) {
+    // Revisamos si alguno de los patrones coincide con la pregunta
+    if (regexs.some(rx => rx.test(q))) {
+      // Retornamos el nombre en mayúsculas y la llave para buscar el GID
+      return { 
+        nombre: key === 'mesa' ? 'MESA DE ELECTRONICA' : key.toUpperCase(), 
+        key: key 
+      };
     }
+  }
+  return null;
+}
 
     function detectarID(pregunta) {
       const m = pregunta.match(/\b(\d+)\b/);
