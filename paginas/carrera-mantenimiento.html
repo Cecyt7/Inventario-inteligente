@@ -3,17 +3,293 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mantenimiento Industrial - Inventario</title>
-  <link rel="stylesheet" href="../css/carrera-mantenimiento.css">
+  <title>Mantenimiento Industrial - CECyT 7</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #640328;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Barra superior fija */
+    .barra-superior {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 12vh;
+      min-height: 80px;
+      background-color: white;
+      border-bottom: 4px solid #640328;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      z-index: 1000;
+    }
+
+    .logo {
+      height: 80px;
+    }
+
+    /* Contenedor principal */
+    .contenedor {
+      margin-top: 140px;
+      flex: 1;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      padding: 30px 20px;
+    }
+
+    /* Botón volver */
+    .btn-volver {
+      padding: 12px 24px;
+      background-color: white;
+      color: #640328;
+      border: 2px solid white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+
+    .btn-volver:hover {
+      background-color: #640328;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    /* Título */
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 36px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Caja de consulta */
+    .consulta {
+      background-color: white;
+      color: #640328;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .consulta p {
+      font-size: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    /* Input */
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    #pregunta {
+      flex: 1;
+      min-width: 200px;
+      max-width: 500px;
+      padding: 12px 15px;
+      font-size: 16px;
+      border: 2px solid #640328;
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    #pregunta:focus {
+      border-color: #FFD700;
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    }
+
+    #pregunta::placeholder {
+      color: #999;
+    }
+
+    /* Botones */
+    .botones {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .botones button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #640328;
+      color: white;
+      border: 2px solid #640328;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .botones button:hover {
+      background-color: #FFD700;
+      color: #640328;
+      transform: scale(1.05);
+    }
+
+    .btn-voz {
+      padding: 12px 15px;
+      min-width: 50px;
+    }
+
+    /* Cargando */
+    .cargando {
+      text-align: center;
+      padding: 20px;
+      display: none;
+      color: #640328;
+    }
+
+    .spinner {
+      border: 4px solid rgba(100, 3, 40, 0.2);
+      border-top: 4px solid #640328;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Respuesta */
+    .respuesta {
+      margin-top: 15px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      display: none;
+      color: white;
+    }
+
+    .respuesta.exito {
+      background-color: #4CAF50;
+      border: 2px solid #45a049;
+    }
+
+    .respuesta.error {
+      background-color: #f44336;
+      border: 2px solid #da190b;
+    }
+
+    /* Resultados */
+    .resultados {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .resultado-item {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #FFD700;
+      color: white;
+      overflow-x: auto;
+    }
+
+    .resultado-item strong {
+      color: #FFD700;
+    }
+
+    .resultado-pre {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'Courier New', monospace;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 24px;
+      }
+
+      .contenedor {
+        margin-top: 100px;
+        padding: 20px 10px;
+      }
+
+      .consulta {
+        padding: 20px;
+      }
+
+      .input-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #pregunta {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .botones {
+        width: 100%;
+      }
+
+      .botones button {
+        flex: 1;
+        min-width: 80px;
+      }
+
+      .resultados {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Barra superior -->
   <div class="barra-superior">
     <img src="../img/logo_ipn.png" class="logo" alt="IPN">
     <img src="../img/logo_cecyt7.png" class="logo" alt="CECyT 7">
   </div>
 
+  <!-- Contenedor principal -->
   <div class="contenedor">
-   <button class="btn-volver" onclick="window.location.href='carreras.html'">← Volver a Carreras</button>
+    <button class="btn-volver" onclick="window.location.href='./carreras.html'">
+      ← Volver a Carreras
+    </button>
+
     <h1>🔧 Mantenimiento Industrial</h1>
 
     <div class="consulta">
@@ -39,20 +315,12 @@
         <p>Buscando en la base de datos...</p>
       </div>
 
-      <div class="respuesta" id="respuesta" style="display:none;"></div>
+      <div class="respuesta" id="respuesta"></div>
       <div class="resultados" id="resultados"></div>
     </div>
-    <button class="btn-volver" type="button" onclick="terminarSesion()">🛑 Terminar</button>
   </div>
 
   <script>
-    // Guard: verifica pase de lista
-    (function () {
-      const hoy = new Date().toISOString().slice(0, 10);
-      const pase = localStorage.getItem("pase_ok_fecha");
-      if (pase !== hoy) window.location.replace("./pase-lista.html");
-    })();
-
     const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
     
     const MAQUINAS_GID = {
@@ -254,12 +522,7 @@
       rec.onend = () => mostrarCargando(false);
       rec.start();
     }
-
-    function terminarSesion(){
-      localStorage.removeItem("pase_ok_fecha");
-      localStorage.removeItem("pase_ok_boleta");
-      window.location.replace("./pase-lista.html");
-    }
   </script>
+
 </body>
 </html>
