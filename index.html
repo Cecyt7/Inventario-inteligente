@@ -64,7 +64,30 @@
   }
   .btn:hover { background-color: black; color: white; transform: scale(1.05); }
   .btn:active { transform: scale(0.95); }
+.btn-navegar {
+  /* Estilo base */
+  background-color: transparent; /* Fondo transparente */
+  color: black;                  /* Texto negro */
+  border: 2px solid black;       /* Contorno negro */
+  padding: 10px 20px;            /* Espacio interno para que no esté apretado */
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;               /* Para que salga la manita */
+  transition: all 0.3s ease;     /* Esto hace que el cambio no sea de golpe */
+  border-radius: 5px;            /* Un poquito redondeado, opcional */
+}
 
+/* Cuando pasas el mouse por encima */
+.btn-navegar:hover {
+  background-color: black;       /* Se rellena de negro */
+  color: white;                  /* El texto cambia a blanco para que se vea */
+}
+
+/* Cuando le das clic (se queda presionado un momento) */
+.btn-navegar:active {
+  transform: scale(0.95);        /* Se hace un poquito chiquito para simular el clic */
+  background-color: #333;        /* Un negro un poquito más grisáceo */
+}
   /* Footer */
   footer {
     padding: 18px 20px 26px;
