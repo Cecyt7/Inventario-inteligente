@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GUINDA - Gestión de Taller CECyT 7</title>
 
-  <style>
+<style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -76,6 +76,40 @@
       border-left: 4px solid #FFD700; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     }
 
+    /* FICHA TÉCNICA PRO */
+    .ficha-tecnica {
+      background: #2c3e50;
+      color: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 5px;
+      border-left: 5px solid #640328; /* Guinda */
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      width: 100%;
+    }
+
+    .ficha-header {
+      border-bottom: 1px solid #7f8c8d;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #FFD700; /* Oro */
+      text-transform: uppercase;
+    }
+
+    .ficha-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      font-size: 0.85em;
+    }
+
+    .dato-label { color: #bdc3c7; font-size: 0.75em; text-transform: uppercase; display: block; margin-bottom: 2px; }
+    .dato-valor { color: #ecf0f1; font-weight: bold; }
+
     /* Entrada de datos */
     .input-group {
       display: flex; gap: 8px; background: white;
@@ -95,7 +129,7 @@
     /* MODAL DE REGISTRO GUINDA */
     .jarvis-modal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); display: none; /* Oculto por defecto */
+      background: rgba(0,0,0,0.85); display: none;
       justify-content: center; align-items: center; z-index: 2000;
     }
 
@@ -300,23 +334,59 @@
       }
     }
 
-    function procesarRespuestaTecnica(item, maqNombre, id) {
-      let respuestaIA = "";
+function procesarRespuestaTecnica(item, maqNombre, id) {
       if (!item) {
-        respuestaIA = `No se encontró registro para **${maqNombre} ${id || ''}**. Verifique el número de unidad.`;
-      } else {
-        const estado = (item["ESTADO"] || "SIN REPORTE").toUpperCase();
-        const ubicacion = item["UBICACION"] || "Zona de Talleres";
-        
-        if (estado.includes("BUEN") || estado.includes("OPERATIVO")) {
-          respuestaIA = `**REPORTE:** El ${maqNombre} ${id} está **OPERATIVO**. Ubicación: ${ubicacion}. Recuerde usar careta y bata.`;
-        } else if (estado.includes("MANTENIMIENTO")) {
-          respuestaIA = `**ALERTA:** El ${maqNombre} ${id} está en **MANTENIMIENTO**. No encender el equipo.`;
-        } else {
-          respuestaIA = `**ESTADO:** ${maqNombre} ${id} - ${estado}. Ubicación: ${ubicacion}.`;
-        }
+        imprimirBot(`No se encontró registro para **${maqNombre} ${id || ''}**. Verifique el número de unidad.`);
+        return;
       }
-      imprimirBot(respuestaIA);
+
+      const estado = (item["ESTADO"] || "SIN REPORTE").toUpperCase();
+      const ubicacion = item["UBICACION"] || "Zona de Talleres";
+      const marca = item["MARCA"] || item["MODELO"] || "Genérico";
+      const especificaciones = item["ESPECIFICACIONES"] || item["NOTAS"] || "Sin datos técnicos adicionales.";
+
+      // 1. Definimos el diseño de la FICHA PRO
+      const fichaHTML = `
+        <div class="ficha-tecnica">
+          <div class="ficha-header">🛠️ FICHA TÉCNICA: ${maqNombre} ${id}</div>
+          <div class="ficha-grid">
+            <div>
+              <span class="dato-label">Estado actual:</span><br>
+              <span class="dato-valor" style="color: ${estado.includes('OPERATIVO') ? '#2ecc71' : '#e74c3c'}">${estado}</span>
+            </div>
+            <div>
+              <span class="dato-label">Ubicación:</span><br>
+              <span class="dato-valor">${ubicacion}</span>
+            </div>
+            <div>
+              <span class="dato-label">Marca/Modelo:</span><br>
+              <span class="dato-valor">${marca}</span>
+            </div>
+            <div>
+              <span class="dato-label">ID de Unidad:</span><br>
+              <span class="dato-valor">${id}</span>
+            </div>
+          </div>
+          <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed #7f8c8d; font-size: 0.85em;">
+            <span class="dato-label">Especificaciones Técnicas:</span><br>
+            <span style="color: #f1c40f;">${especificaciones}</span>
+          </div>
+        </div>
+      `;
+
+      // 2. Respuesta rápida de voz o texto corto para el bot
+      let resumenVoz = "";
+      if (estado.includes("OPERATIVO") || estado.includes("BUEN")) {
+        resumenVoz = `El ${maqNombre} ${id} está operativo en ${ubicacion}.`;
+      } else {
+        resumenVoz = `Atención: El ${maqNombre} ${id} reporta: ${estado}.`;
+      }
+
+      // Imprimimos la ficha técnica (HTML)
+      imprimirBot(fichaHTML);
+      
+      // Si tienes la voz activa, que solo diga el resumen corto para no marear
+      if (VOZ_ACTIVA) hablarFormal(resumenVoz);
     }
 
     // --- FUNCIONES GUINDA (MODAL) ---
