@@ -24,26 +24,81 @@
       overflow-x: hidden;
     }
 
-    /* BARRA SUPERIOR PREMIUM */
-    .barra-superior {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      height: 90px;
-      background-color: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 5px solid var(--oro);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 40px;
-      z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    }
+     .barra-superior {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 120px; /* Agrandamos la barra blanca considerablemente */
+            background-color: rgba(255, 255, 255, 0.98); /* Casi opaco para resaltar logos */
+            backdrop-filter: blur(10px);
+            border-bottom: 6px solid var(--oro); /* Borde de oro más grueso */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 60px; /* Más espacio a los lados */
+            z-index: 1000;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.5); /* Sombra más profunda */
+        }
 
-    .logo-izq { height: 75px; transition: transform 0.3s; }
-    .logo-der { height: 70px; transition: transform 0.3s; }
-    .logo-izq:hover, .logo-der:hover { transform: scale(1.05); }
+        .logo { 
+            height: 100px; /* ¡LOGOS MUCHO MÁS GRANDES! */
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+        .logo:hover { transform: scale(1.05); }
+
+        /* Título de la escuela en la barra (opcional, si lo usas) */
+        .titulo-escuela-barra {
+            color: var(--guinda);
+            font-weight: 900;
+            font-size: 1.4em;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* =========================================
+           CONTENIDO (Ajustado para la nueva barra)
+           ========================================= */
+        .contenedor {
+            margin-top: 150px; /* Más espacio arriba por la barra más alta */
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Glassmorphism en el fondo del contenido */
+        .glass-container {
+            background: var(--blanco-glass);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: clamp(30px, 6vw, 48px);
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 19px;
+            margin-bottom: 50px;
+            color: var(--oro);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
 
     /* CONTENIDO CON EFECTO GLASS */
     .contenido {
