@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mantenimiento Industrial - CECyT 7</title>
+  <title>GUINDA - Gestión de Taller CECyT 7</title>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: Arial, sans-serif;
-      background-color: #640328;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #640328; /* Guinda IPN */
       color: white;
       min-height: 100vh;
       display: flex;
@@ -20,123 +20,119 @@
     /* Barra superior */
     .barra-superior {
       position: fixed;
-      top: 0;
-      width: 100%;
-      height: 80px;
+      top: 0; width: 100%; height: 80px;
       background-color: white;
       border-bottom: 4px solid #FFD700; /* Oro */
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 30px;
-      z-index: 1000;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 30px; z-index: 900;
     }
 
-    .logo { height: 60px; }
+    .logo { height: 50px; }
 
-    /* Contenedor */
+    /* Contenedor Principal */
     .contenedor {
       margin-top: 100px;
       flex: 1;
       max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-left: auto; margin-right: auto;
       width: 95%;
       padding-bottom: 40px;
     }
 
     .btn-volver {
-      padding: 10px 20px;
-      background-color: white;
-      color: #640328;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-bottom: 20px;
+      padding: 8px 15px; background-color: white; color: #640328;
+      border: none; border-radius: 5px; cursor: pointer;
+      font-weight: bold; margin-bottom: 15px;
     }
 
-    h1 { text-align: center; margin-bottom: 20px; font-size: 28px; }
+    h1 { text-align: center; margin-bottom: 20px; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
 
     /* Chat Estilo */
     .chat-container {
-      background-color: #f9f9f9;
-      border-radius: 15px;
-      height: 400px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      overflow: hidden;
-      margin-bottom: 15px;
+      background-color: #ececec;
+      border-radius: 10px;
+      height: 450px;
+      display: flex; flex-direction: column;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      overflow: hidden; margin-bottom: 15px;
     }
 
     #chat-messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      flex: 1; padding: 20px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 12px;
     }
 
     .msg-user {
-      align-self: flex-end;
-      background-color: #640328;
-      color: white;
-      padding: 8px 15px;
-      border-radius: 15px 15px 0 15px;
-      max-width: 80%;
-      font-size: 14px;
+      align-self: flex-end; background-color: #4a4a4a; color: white;
+      padding: 10px 15px; border-radius: 10px 10px 0 10px;
+      max-width: 80%; font-size: 14px; font-weight: bold;
+      border-right: 4px solid #640328;
     }
 
     .msg-bot {
-      align-self: flex-start;
-      background-color: #e0e0e0;
-      color: #333;
-      padding: 8px 15px;
-      border-radius: 15px 15px 15px 0;
-      max-width: 80%;
-      font-size: 14px;
-      border-left: 4px solid #FFD700;
+      align-self: flex-start; background-color: white; color: #2c3e50;
+      padding: 12px 18px; border-radius: 10px 10px 10px 0;
+      max-width: 85%; font-size: 14px; line-height: 1.5;
+      border-left: 4px solid #FFD700; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     }
 
     /* Entrada de datos */
     .input-group {
-      display: flex;
-      gap: 8px;
-      background: white;
-      padding: 10px;
-      border-radius: 10px;
+      display: flex; gap: 8px; background: white;
+      padding: 12px; border-radius: 10px;
     }
 
     #pregunta {
-      flex: 1;
-      padding: 12px;
-      border: 2px solid #ddd;
-      border-radius: 5px;
-      outline: none;
-      color: black;
+      flex: 1; padding: 12px; border: 2px solid #ddd;
+      border-radius: 5px; outline: none; color: black; font-size: 16px;
     }
 
     .botones button {
-      padding: 10px 15px;
-      background-color: #640328;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
+      padding: 10px 15px; background-color: #640328; color: white;
+      border: none; border-radius: 5px; cursor: pointer; font-weight: bold;
     }
 
-    .cargando { text-align: center; color: #FFD700; display: none; margin-top: 10px; }
-
-    @media (max-width: 600px) {
-      .barra-superior { padding: 0 10px; }
-      .logo { height: 40px; }
+    /* MODAL DE REGISTRO GUINDA */
+    .jarvis-modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); display: none; /* Oculto por defecto */
+      justify-content: center; align-items: center; z-index: 2000;
     }
+
+    .modal-content {
+      background: #f4f4f4; padding: 30px; border-radius: 8px;
+      border-left: 10px solid #640328; width: 350px; text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6); color: #333;
+    }
+
+    .modal-content h3 { color: #640328; margin-bottom: 15px; }
+    .modal-content input {
+      width: 100%; padding: 12px; margin: 8px 0;
+      border: 1px solid #ccc; border-radius: 4px;
+    }
+
+    .btn-confirmar {
+      background: #640328; color: white; border: none;
+      padding: 12px 25px; cursor: pointer; font-weight: bold;
+      width: 100%; margin-top: 15px; border-radius: 4px;
+    }
+
+    .cargando { text-align: center; color: #FFD700; display: none; margin-top: 10px; font-weight: bold; }
   </style>
 </head>
 <body>
+
+  <!-- Modal de Registro -->
+  <div id="modal-registro" class="jarvis-modal">
+    <div class="modal-content">
+      <h3>📋 REGISTRO DE USO</h3>
+      <p id="info-maquina-registro" style="font-weight:bold; margin-bottom:10px;"></p>
+      <input type="text" id="nombre-alumno" placeholder="Nombre completo">
+      <input type="text" id="boleta-alumno" placeholder="Número de Boleta">
+      <button class="btn-confirmar" onclick="confirmarRegistro()">AUTORIZAR INICIO</button>
+      <button onclick="cerrarModal()" style="margin-top:15px; background:none; border:none; color:gray; cursor:pointer;">Cancelar</button>
+    </div>
+  </div>
 
   <div class="barra-superior">
     <img src="../img/logo_ipn.png" class="logo" alt="IPN">
@@ -144,18 +140,18 @@
   </div>
 
   <div class="contenedor">
-    <button class="btn-volver" onclick="window.location.href='./carreras.html'">← Volver</button>
+    <button class="btn-volver" onclick="window.location.href='./carreras.html'">← Panel Principal</button>
     
-    <h1>🔧 Inventario Inteligente</h1>
+    <h1>SISTEMA GUINDA: Gestión Técnica</h1>
 
     <div class="chat-container">
       <div id="chat-messages">
-        <div class="msg-bot">Que tal soy Guinda, ¿En que te puedo ayudar?</div>
+        <div class="msg-bot">Sistema GUINDA en línea. Ingrese el equipo para consulta o indique si desea registrar una operación.</div>
       </div>
     </div>
 
     <div class="input-group">
-      <input type="text" id="pregunta" placeholder="Ej: Torno 17" onkeypress="if(event.key === 'Enter') hacerPregunta()">
+      <input type="text" id="pregunta" placeholder="Ej: Usar Torno 5 o Consultar Fresa 2" onkeypress="if(event.key === 'Enter') hacerPregunta()">
       <div class="botones">
         <button onclick="hacerPregunta()">Enviar</button>
         <button id="btnVoz" onclick="toggleVoz()">🔊 OFF</button>
@@ -163,16 +159,25 @@
       </div>
     </div>
 
-    <div id="cargando" class="cargando">Buscando en la base de datos...</div>
+    <div id="cargando" class="cargando">PROCESANDO SOLICITUD...</div>
   </div>
 
   <script>
+    // --- CONFIGURACIÓN ---
     const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
-    const MAQUINAS_GID = { 'torno': 0, 'fresadora': 406685106, 'mesa': 675907642, 'esmeril': 1328099769, 'soldadora': 1403892581, 'taladradora': 583489325, 'cepillo': 639087492, 'comparador': 737994113, 'cnc': 123325945 };
+    const URL_GUINDA_GATEWAY = "https://script.google.com/macros/s/AKfycbyTMuxpiXM33VND6vFOZvZVeRjAEpSGt9p66egu8UvRJie1eSgyf1nCUl_Fm6wYjqsF/exec"; 
+    
+    const MAQUINAS_GID = {
+      'torno': 0, 'fresadora': 406685106, 'mesa': 675907642, 'esmeril': 1328099769, 
+      'soldadora': 1403892581, 'taladradora': 583489325, 'cepillo': 639087492, 
+      'comparador': 737994113, 'cnc': 123325945 
+    };
 
     let CACHE = {};
     let VOZ_ACTIVA = false;
+    let estadoSesion = { maquinaPendiente: null, idPendiente: null };
 
+    // --- LÓGICA DE DETECCIÓN ---
     function detectarMaquina(pregunta) {
       const q = pregunta.toLowerCase();
       const dicc = {
@@ -191,6 +196,137 @@
       return m ? m[1] : null;
     }
 
+    // --- MANEJO DE DATOS ---
+    async function hacerPregunta() {
+      const input = document.getElementById('pregunta');
+      const pregunta = input.value.trim();
+      if (!pregunta) return;
+      
+      // 1. Mostrar mensaje del usuario
+      const chat = document.getElementById('chat-messages');
+      chat.innerHTML += `<div class="msg-user">${pregunta}</div>`;
+      input.value = "";
+      chat.scrollTop = chat.scrollHeight;
+
+      // 2. Detectar si es Registro o Consulta
+      const maq = detectarMaquina(pregunta);
+      const id = detectarID(pregunta);
+
+      if (!maq) {
+        imprimirBot("No reconozco el equipo solicitado. Por favor, especifique (Torno, Fresa, etc.)");
+        return;
+      }
+
+      // PROTOCOLO DE REGISTRO
+      if (pregunta.toLowerCase().match(/(usar|registrar|ocupar|voy a)/)) {
+        abrirModalRegistro(maq.nombre, id || "S/N");
+        return;
+      }
+
+      // PROTOCOLO DE CONSULTA
+      document.getElementById('cargando').style.display = 'block';
+      try {
+        if (!CACHE[maq.key]) {
+          CACHE[maq.key] = await cargarDatosSheet(MAQUINAS_GID[maq.key]);
+        }
+        
+        const data = CACHE[maq.key];
+        const resultado = id ? data.find(x => x["IDENTIFICACION"] === id) : null;
+        
+        // Simular "Escribiendo"
+        const tempId = "temp-" + Date.now();
+        chat.innerHTML += `<div class="msg-bot" id="${tempId}">Analizando base de datos...</div>`;
+        
+        setTimeout(() => {
+          document.getElementById(tempId).remove();
+          procesarRespuestaTecnica(resultado, maq.nombre, id);
+        }, 600);
+
+      } catch (e) {
+        imprimirBot("Error al conectar con el inventario.");
+      } finally {
+        document.getElementById('cargando').style.display = 'none';
+      }
+    }
+
+    function procesarRespuestaTecnica(item, maqNombre, id) {
+      let respuestaIA = "";
+      if (!item) {
+        respuestaIA = `No se encontró registro para **${maqNombre} ${id || ''}**. Verifique el número de unidad.`;
+      } else {
+        const estado = (item["ESTADO"] || "SIN REPORTE").toUpperCase();
+        const ubicacion = item["UBICACION"] || "Zona de Talleres";
+        
+        if (estado.includes("BUEN") || estado.includes("OPERATIVO")) {
+          respuestaIA = `**REPORTE:** El ${maqNombre} ${id} está **OPERATIVO**. Ubicación: ${ubicacion}. Recuerde usar careta y bata.`;
+        } else if (estado.includes("MANTENIMIENTO")) {
+          respuestaIA = `**ALERTA:** El ${maqNombre} ${id} está en **MANTENIMIENTO**. No encender el equipo.`;
+        } else {
+          respuestaIA = `**ESTADO:** ${maqNombre} ${id} - ${estado}. Ubicación: ${ubicacion}.`;
+        }
+      }
+      imprimirBot(respuestaIA);
+    }
+
+    // --- FUNCIONES GUINDA (MODAL) ---
+    function abrirModalRegistro(maquina, id) {
+      estadoSesion.maquinaPendiente = maquina;
+      estadoSesion.idPendiente = id;
+      document.getElementById('info-maquina-registro').innerText = `${maquina} - UNIDAD ${id}`;
+      document.getElementById('modal-registro').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-registro').style.display = 'none';
+    }
+
+    async function confirmarRegistro() {
+      const nombre = document.getElementById('nombre-alumno').value;
+      const boleta = document.getElementById('boleta-alumno').value;
+
+      if (!nombre || !boleta) return alert("Datos incompletos");
+
+      cerrarModal();
+      imprimirBot(`Procesando registro para ${nombre}...`);
+
+      try {
+        await fetch(URL_GUINDA_GATEWAY, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre: nombre, boleta: boleta,
+            equipo: estadoSesion.maquinaPendiente, id: estadoSesion.idPendiente,
+            accion: "INICIO DE OPERACIÓN"
+          })
+        });
+        imprimirBot(`✅ **REGISTRO EXITOSO.** Operador ${nombre} autorizado. Bitácora actualizada.`);
+      } catch (e) {
+        imprimirBot("❌ Error al registrar en la bitácora.");
+      }
+    }
+
+    // --- UTILIDADES ---
+    function imprimirBot(texto) {
+      const chat = document.getElementById('chat-messages');
+      chat.innerHTML += `<div class="msg-bot">${texto}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+      if (VOZ_ACTIVA) hablarFormal(texto);
+    }
+
+    async function cargarDatosSheet(gid) {
+      const url = `${SHEET_BASE}?gid=${gid}&single=true&output=csv`;
+      const res = await fetch(url, { cache: "no-store" });
+      const csv = await res.text();
+      const rows = parseCSV(csv);
+      const headers = rows[0].map(h => String(h || '').trim().toUpperCase());
+      return rows.slice(1).map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
+        return obj;
+      });
+    }
+
     function parseCSV(text) {
       const rows = []; let row = []; let cur = ''; let inQuotes = false;
       for (let i = 0; i < text.length; i++) {
@@ -207,127 +343,16 @@
       return rows;
     }
 
-    async function cargarDatosSheet(gid) {
-      const url = `${SHEET_BASE}?gid=${gid}&single=true&output=csv`;
-      const res = await fetch(url, { cache: "no-store" });
-      const csv = await res.text();
-      const rows = parseCSV(csv);
-      const headers = rows[0].map(h => String(h || '').trim());
-      return rows.slice(1).map(r => {
-        const obj = {};
-        headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
-        return obj;
-      });
-    }
-
-    function mostrarRespuestas(datos, maqNombre, queryUsuario) {
-      const chatMessages = document.getElementById('chat-messages');
-      chatMessages.innerHTML += `<div class="msg-user">${queryUsuario}</div>`;
-
-      let respuestaIA = "";
-      if (!datos || datos.cantidad === 0) {
-        respuestaIA = "Híjole paps, no encontré nada de eso en el inventario.";
-      } else {
-        const item = datos.resultados[0].item;
-        // Ajusta estos nombres según tus columnas del Excel
-        const id = item["IDENTIFICACION"] || "N/A";
-        const estado = item["ESTADO"] || "sin reporte";
-        respuestaIA = `¡Simón! El ${maqNombre} (ID: ${id}) está en estado: **${estado}**.`;
-      }
-
-      chatMessages.innerHTML += `<div class="msg-bot">${respuestaIA}</div>`;
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      if (VOZ_ACTIVA) hablar(respuestaIA);
-    }
-
- async function hacerPregunta() {
-      const input = document.getElementById('pregunta');
-      const pregunta = input.value.trim();
-      if (!pregunta) return;
-      
-      document.getElementById('cargando').style.display = 'block';
-      try {
-        const maq = detectarMaquina(pregunta); // Aquí detecta si dijiste "Torno" o "Fresa"
-        if (!maq) throw new Error('No detecté qué máquina buscas. Prueba decir: Torno 5 o Fresadora 2.');
-        
-        const gid = MAQUINAS_GID[maq.key]; // Obtiene el ID de la pestaña correcta
-        
-        // Si no tenemos los datos de esa pestaña en memoria, los descarga
-        if (!CACHE[maq.key]) {
-          console.log(`Cargando datos de la pestaña: ${maq.key} (GID: ${gid})`);
-          CACHE[maq.key] = await cargarDatosSheet(gid);
-        }
-        
-        const data = CACHE[maq.key];
-        const id = detectarID(pregunta); // Busca el número (ID) en tu pregunta
-        
-        let resultados = [];
-        if (id) {
-          // Busca en la columna "IDENTIFICACION" de esa hoja específica
-          const row = data.find(x => String(x["IDENTIFICACION"]).trim() === String(id));
-          if (row) resultados.push({ item: row });
-        } else {
-          // Búsqueda general por texto en toda la hoja
-          resultados = data.filter(item => 
-            Object.values(item).some(v => String(v).toLowerCase().includes(pregunta.toLowerCase()))
-          ).map(r => ({ item: r }));
-        }
-        
-        if (resultados.length === 0) throw new Error(`No encontré el ${maq.nombre} con ese número.`);
-        // Dentro de hacerPregunta(), antes de mostrarRespuestas:
-const chatMessages = document.getElementById('chat-messages');
-const tempId = "temp-" + Date.now();
-chatMessages.innerHTML += `<div class="msg-bot" id="${tempId}">Escribiendo...</div>`;
-
-setTimeout(() => {
-    document.getElementById(tempId).remove(); // Quitamos el "Escribiendo"
-    mostrarRespuestas(datosFiltrados, maq.nombre, pregunta);
-}, 800); // 800ms de retraso para que parezca que piensa
-
-       function mostrarRespuestas(datos, maqNombre, queryUsuario) {
-  const chatMessages = document.getElementById('chat-messages');
-  chatMessages.innerHTML += `<div class="msg-user">${queryUsuario}</div>`;
-
-  let respuestaIA = "";
-  
-  if (!datos || datos.resultados.length === 0) {
-    respuestaIA = `No se encontró registro para el equipo **${maqNombre}**. Por favor, verifique el número de identificación o el nombre de la categoría.`;
-  } else {
-    const item = datos.resultados[0].item;
-    const id = item["IDENTIFICACION"] || "No especificado";
-    const estado = (item["ESTADO"] || "Sin reporte").toUpperCase();
-    const nombre = item["NOMBRE"] || maqNombre;
-    const ubicacion = item["UBICACION"] || "Área General";
-
-    // Lógica de respuesta profesional
-    if (estado.includes("BUEN") || estado.includes("OPERATIVO") || estado.includes("EXCELENTE")) {
-      respuestaIA = `**REPORTE DE ESTADO:** El equipo **${nombre} (ID: ${id})** se encuentra **OPERATIVO**. Está disponible para su uso bajo las normas de seguridad vigentes en el taller.`;
-    } else if (estado.includes("MANTENIMIENTO") || estado.includes("REVISIÓN") || estado.includes("CALIBRACIÓN")) {
-      respuestaIA = `**ALERTA TÉCNICA:** El equipo **${nombre} (${id})** se encuentra actualmente en **PROCESO DE MANTENIMIENTO**. Su uso está restringido hasta nuevo aviso por parte del jefe de taller.`;
-    } else if (estado.includes("MAL") || estado.includes("DAÑADO") || estado.includes("FUERA DE SERVICIO")) {
-      respuestaIA = `**ESTADO CRÍTICO:** El equipo **${nombre}** está reportado como **FUERA DE SERVICIO**. Se recomienda no intentar operarlo y verificar el reporte de daños en la bitácora de mantenimiento.`;
-    } else {
-      respuestaIA = `**INFORMACIÓN DEL EQUIPO:** ${nombre} (ID: ${id}). Estado actual: **${estado}**. Ubicación registrada: ${ubicacion}.`;
-    }
-  }
-
-  // Insertar respuesta en el chat
-  chatMessages.innerHTML += `<div class="msg-bot">${respuestaIA}</div>`;
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-
-  // Ajuste de voz: más lenta y formal
-  if (VOZ_ACTIVA) hablarFormal(respuestaIA);
-}
     function toggleVoz() {
       VOZ_ACTIVA = !VOZ_ACTIVA;
       document.getElementById("btnVoz").textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
     }
 
-    function hablar(texto) {
-      if (!VOZ_ACTIVA || !window.speechSynthesis) return;
+    function hablarFormal(texto) {
+      if (!window.speechSynthesis) return;
       window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(texto);
-      u.lang = "es-MX";
+      const u = new SpeechSynthesisUtterance(texto.replace(/\*/g, ''));
+      u.lang = "es-MX"; u.rate = 0.9; u.pitch = 1;
       window.speechSynthesis.speak(u);
     }
 
