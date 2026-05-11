@@ -163,15 +163,21 @@
     <div id="cargando" class="cargando">PROCESANDO SOLICITUD...</div>
   </div>
 
-  <script>
+<script>
     // --- CONFIGURACIÓN ---
     const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
     const URL_GUINDA_GATEWAY = "https://script.google.com/macros/s/AKfycbzrMi2HyJEXezEUCrq3Roe3r9h5R5yagUtOcF3BhX9_S6kje-tj5H30GbsKNUnThpaH/exec"; 
     
-    const MAQUINAS_GID = {
-      'torno': 0, 'fresadora': 406685106, 'mesa': 675907642, 'esmeril': 1328099769, 
-      'soldadora': 1403892581, 'taladradora': 583489325, 'cepillo': 639087492, 
-      'comparador': 737994113, 'cnc': 123325945 
+    const MAQUINAS_GID = { 
+      'torno': 0, 
+      'fresadora': 406685106, 
+      'mesa': 675907642, 
+      'esmeril': 1328099769, 
+      'soldadora': 1403892581, 
+      'taladradora': 583489325, 
+      'cepillo': 639087492, 
+      'comparador': 737994113, 
+      'cnc': 123325945 
     };
 
     let CACHE = {};
@@ -197,19 +203,62 @@
       return m ? m[1] : null;
     }
 
+    // --- NUEVA FUNCIÓN DE RESUMEN GENERAL ---
+    async function generarResumenGeneral() {
+        imprimirBot("Iniciando escaneo de todas las unidades... Por favor, espera.");
+        document.getElementById('cargando').style.display = 'block';
+
+        let reporteFinal = "📋 **RESUMEN DE ESTADO GENERAL**\n\n";
+        
+        try {
+            for (const [nombre, gid] of Object.entries(MAQUINAS_GID)) {
+                if (!CACHE[nombre]) {
+                    CACHE[nombre] = await cargarDatosSheet(gid);
+                }
+                const data = CACHE[nombre];
+                const total = data.length;
+                
+                const operativos = data.filter(item => {
+                    const estado = (item["ESTADO"] || "").toUpperCase();
+                    return estado.includes("BUEN") || estado.includes("OPERATIVO") || estado.includes("EXCELENTE");
+                }).length;
+                
+                const mantenimiento = data.filter(item => {
+                    const estado = (item["ESTADO"] || "").toUpperCase();
+                    return estado.includes("MANTENIMIENTO") || estado.includes("REVISIÓN") || estado.includes("FALLA");
+                }).length;
+
+                reporteFinal += `🔹 **${nombre.toUpperCase()}:** ${total} unidades (${operativos} ✅ / ${mantenimiento} 🛠️)\n`;
+            }
+            reporteFinal += "\n*Reporte generado exitosamente.*";
+            imprimirBot(reporteFinal);
+        } catch (error) {
+            imprimirBot("❌ Error: No pude conectar con todas las hojas del inventario.");
+            console.error(error);
+        } finally {
+            document.getElementById('cargando').style.display = 'none';
+        }
+    }
+
     // --- MANEJO DE DATOS ---
     async function hacerPregunta() {
       const input = document.getElementById('pregunta');
       const pregunta = input.value.trim();
       if (!pregunta) return;
-      
-      // 1. Mostrar mensaje del usuario
+
+      // 1. Mostrar mensaje del usuario de forma única
       const chat = document.getElementById('chat-messages');
       chat.innerHTML += `<div class="msg-user">${pregunta}</div>`;
       input.value = "";
       chat.scrollTop = chat.scrollHeight;
 
-      // 2. Detectar si es Registro o Consulta
+      // 2. DETECTOR DE RESUMEN
+      if (pregunta.toLowerCase().match(/(resumen|estado general|reporte de todo)/)) {
+          await generarResumenGeneral();
+          return; 
+      } 
+
+      // 3. Detectar si es Registro o Consulta
       const maq = detectarMaquina(pregunta);
       const id = detectarID(pregunta);
 
@@ -232,14 +281,15 @@
         }
         
         const data = CACHE[maq.key];
-        const resultado = id ? data.find(x => x["IDENTIFICACION"] === id) : null;
+        const resultado = id ? data.find(x => String(x["IDENTIFICACION"]).trim() === String(id)) : null;
         
-        // Simular "Escribiendo"
         const tempId = "temp-" + Date.now();
         chat.innerHTML += `<div class="msg-bot" id="${tempId}">Analizando base de datos...</div>`;
-        
+        chat.scrollTop = chat.scrollHeight;
+
         setTimeout(() => {
-          document.getElementById(tempId).remove();
+          const tempElem = document.getElementById(tempId);
+          if(tempElem) tempElem.remove();
           procesarRespuestaTecnica(resultado, maq.nombre, id);
         }, 600);
 
@@ -281,45 +331,42 @@
       document.getElementById('modal-registro').style.display = 'none';
     }
 
-   async function confirmarRegistro() {
-    const nombre = document.getElementById('nombre-alumno').value;
-    const boleta = document.getElementById('boleta-alumno').value;
-    const grupo = document.getElementById('grupo-alumno').value; // <-- Capturar grupo
+    async function confirmarRegistro() {
+      const nombre = document.getElementById('nombre-alumno').value;
+      const boleta = document.getElementById('boleta-alumno').value;
+      const grupo = document.getElementById('grupo-alumno').value;
 
-    if (!nombre || !boleta || !grupo) {
-        alert("Por favor, llena todos los campos (Nombre, Boleta y Grupo).");
-        return;
+      if (!nombre || !boleta || !grupo) {
+          alert("Por favor, llena todos los campos (Nombre, Boleta y Grupo).");
+          return;
+      }
+      cerrarModal();
+      imprimirBot(`Procesando registro para ${nombre} del grupo ${grupo}...`);
+
+      const datos = {
+          nombre: nombre,
+          boleta: boleta,
+          grupo: grupo,
+          equipo: estadoSesion.maquinaPendiente,
+          id: estadoSesion.idPendiente,
+          accion: "INICIO DE OPERACIÓN"
+      };
+
+      try {
+          await fetch(URL_GUINDA_GATEWAY, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(datos)
+          });
+          imprimirBot(`✅ **REGISTRO EXITOSO.** Operador autorizado. Bitácora actualizada.`);
+          document.getElementById('nombre-alumno').value = "";
+          document.getElementById('boleta-alumno').value = "";
+          document.getElementById('grupo-alumno').value = "";
+      } catch (e) {
+          imprimirBot("❌ Error al registrar en la bitácora.");
+      }
     }
-  cerrarModal();
-    imprimirBot(`Procesando registro para ${nombre} del grupo ${grupo}...`);
-
-    const datos = {
-        nombre: nombre,
-        boleta: boleta,
-        grupo: grupo, // <-- Enviar grupo
-        equipo: estadoSesion.maquinaPendiente,
-        id: estadoSesion.idPendiente,
-        accion: "INICIO DE OPERACIÓN"
-    };
-
-    try {
-        await fetch(URL_GUINDA_GATEWAY, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-        });
-        
-        imprimirBot(`✅ **REGISTRO EXITOSO.** Operador autorizado. Bitácora actualizada.`);
-        
-        // Limpiar campos
-        document.getElementById('nombre-alumno').value = "";
-        document.getElementById('boleta-alumno').value = "";
-        document.getElementById('grupo-alumno').value = "";
-    } catch (e) {
-        imprimirBot("❌ Error al registrar en la bitácora.");
-    }
-}
 
     // --- UTILIDADES ---
     function imprimirBot(texto) {
