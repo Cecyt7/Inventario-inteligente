@@ -150,12 +150,12 @@
 
     <div class="chat-container">
       <div id="chat-messages">
-        <div class="msg-bot">¡Qué onda, paps! Soy la IA del taller. ¿Qué máquina quieres consultar hoy?</div>
+        <div class="msg-bot">Que tal soy Guinda, ¿En que te puedo ayudar?</div>
       </div>
     </div>
 
     <div class="input-group">
-      <input type="text" id="pregunta" placeholder="Ej: Torno 2" onkeypress="if(event.key === 'Enter') hacerPregunta()">
+      <input type="text" id="pregunta" placeholder="Ej: Torno 17" onkeypress="if(event.key === 'Enter') hacerPregunta()">
       <div class="botones">
         <button onclick="hacerPregunta()">Enviar</button>
         <button id="btnVoz" onclick="toggleVoz()">🔊 OFF</button>
@@ -274,16 +274,50 @@
         }
         
         if (resultados.length === 0) throw new Error(`No encontré el ${maq.nombre} con ese número.`);
+        // Dentro de hacerPregunta(), antes de mostrarRespuestas:
+const chatMessages = document.getElementById('chat-messages');
+const tempId = "temp-" + Date.now();
+chatMessages.innerHTML += `<div class="msg-bot" id="${tempId}">Escribiendo...</div>`;
 
-        mostrarRespuestas({ cantidad: resultados.length, resultados: resultados }, maq.nombre, pregunta);
-        input.value = "";
-      } catch (e) {
-        // ... (manejo de error igual al anterior)
-      } finally {
-        document.getElementById('cargando').style.display = 'none';
-      }
+setTimeout(() => {
+    document.getElementById(tempId).remove(); // Quitamos el "Escribiendo"
+    mostrarRespuestas(datosFiltrados, maq.nombre, pregunta);
+}, 800); // 800ms de retraso para que parezca que piensa
+
+       function mostrarRespuestas(datos, maqNombre, queryUsuario) {
+  const chatMessages = document.getElementById('chat-messages');
+  chatMessages.innerHTML += `<div class="msg-user">${queryUsuario}</div>`;
+
+  let respuestaIA = "";
+  
+  if (!datos || datos.resultados.length === 0) {
+    respuestaIA = `No se encontró registro para el equipo **${maqNombre}**. Por favor, verifique el número de identificación o el nombre de la categoría.`;
+  } else {
+    const item = datos.resultados[0].item;
+    const id = item["IDENTIFICACION"] || "No especificado";
+    const estado = (item["ESTADO"] || "Sin reporte").toUpperCase();
+    const nombre = item["NOMBRE"] || maqNombre;
+    const ubicacion = item["UBICACION"] || "Área General";
+
+    // Lógica de respuesta profesional
+    if (estado.includes("BUEN") || estado.includes("OPERATIVO") || estado.includes("EXCELENTE")) {
+      respuestaIA = `**REPORTE DE ESTADO:** El equipo **${nombre} (ID: ${id})** se encuentra **OPERATIVO**. Está disponible para su uso bajo las normas de seguridad vigentes en el taller.`;
+    } else if (estado.includes("MANTENIMIENTO") || estado.includes("REVISIÓN") || estado.includes("CALIBRACIÓN")) {
+      respuestaIA = `**ALERTA TÉCNICA:** El equipo **${nombre} (${id})** se encuentra actualmente en **PROCESO DE MANTENIMIENTO**. Su uso está restringido hasta nuevo aviso por parte del jefe de taller.`;
+    } else if (estado.includes("MAL") || estado.includes("DAÑADO") || estado.includes("FUERA DE SERVICIO")) {
+      respuestaIA = `**ESTADO CRÍTICO:** El equipo **${nombre}** está reportado como **FUERA DE SERVICIO**. Se recomienda no intentar operarlo y verificar el reporte de daños en la bitácora de mantenimiento.`;
+    } else {
+      respuestaIA = `**INFORMACIÓN DEL EQUIPO:** ${nombre} (ID: ${id}). Estado actual: **${estado}**. Ubicación registrada: ${ubicacion}.`;
     }
+  }
 
+  // Insertar respuesta en el chat
+  chatMessages.innerHTML += `<div class="msg-bot">${respuestaIA}</div>`;
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  // Ajuste de voz: más lenta y formal
+  if (VOZ_ACTIVA) hablarFormal(respuestaIA);
+}
     function toggleVoz() {
       VOZ_ACTIVA = !VOZ_ACTIVA;
       document.getElementById("btnVoz").textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
