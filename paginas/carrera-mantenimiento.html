@@ -166,7 +166,7 @@
   <script>
     // --- CONFIGURACIÓN ---
     const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
-    const URL_GUINDA_GATEWAY = "https://script.google.com/macros/s/AKfycbyTMuxpiXM33VND6vFOZvZVeRjAEpSGt9p66egu8UvRJie1eSgyf1nCUl_Fm6wYjqsF/exec"; 
+    const URL_GUINDA_GATEWAY = "https://script.google.com/macros/s/AKfycbzrMi2HyJEXezEUCrq3Roe3r9h5R5yagUtOcF3BhX9_S6kje-tj5H30GbsKNUnThpaH/exec"; 
     
     const MAQUINAS_GID = {
       'torno': 0, 'fresadora': 406685106, 'mesa': 675907642, 'esmeril': 1328099769, 
@@ -278,7 +278,7 @@
     }
 
     function cerrarModal() {
-      document.getElementById('modal-registro').style.display = 'flex';
+      document.getElementById('modal-registro').style.display = 'none';
     }
 
    async function confirmarRegistro() {
@@ -290,6 +290,8 @@
         alert("Por favor, llena todos los campos (Nombre, Boleta y Grupo).");
         return;
     }
+  cerrarModal();
+    imprimirBot(`Procesando registro para ${nombre} del grupo ${grupo}...`);
 
     const datos = {
         nombre: nombre,
@@ -299,9 +301,6 @@
         id: estadoSesion.idPendiente,
         accion: "INICIO DE OPERACIÓN"
     };
-
-    cerrarModal();
-    imprimirBot(`Procesando registro para ${nombre} del grupo ${grupo}...`);
 
     try {
         await fetch(URL_GUINDA_GATEWAY, {
