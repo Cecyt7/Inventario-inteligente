@@ -5,68 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carreras - CECyT 7</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* VARIABLES UNIFICADAS */
+        :root {
+            --guinda: #640328;
+            --guinda-deep: #2c0112;
+            --oro: #FFD700;
+            --blanco-glass: rgba(255, 255, 255, 0.1);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+
         body {
-            background: linear-gradient(135deg, #640328 0%, #8B0A38 100%);
+            background: linear-gradient(135deg, var(--guinda) 0%, var(--guinda-deep) 100%);
             color: white;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Barra superior */
+        /* Barra superior unificada */
         .barra-superior {
             position: fixed;
             top: 0;
             width: 100%;
-            height: 12vh;
-            min-height: 80px;
-            background-color: white;
-            border-bottom: 4px solid #640328;
+            height: 90px;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 5px solid var(--oro);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 30px;
+            padding: 0 40px;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
-        .logo {
-            height: 80px;
-        }
+        .logo { height: 75px; }
 
-        /* Contenedor principal */
         .contenedor {
-            margin-top: 140px;
+            margin-top: 120px;
             flex: 1;
-            padding: 50px 20px;
-            max-width: 1300px;
+            padding: 40px 20px;
+            max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
             width: 100%;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Glassmorphism en el fondo del contenido */
+        .glass-container {
+            background: var(--blanco-glass);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .titulo {
             text-align: center;
-            font-size: 42px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
-            letter-spacing: 1px;
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: white;
         }
 
         .subtitulo {
             text-align: center;
-            font-size: 16px;
-            margin-bottom: 50px;
-            opacity: 0.9;
-            letter-spacing: 0.5px;
+            font-size: 18px;
+            margin-bottom: 40px;
+            color: var(--oro);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         /* Grid de carreras */
@@ -74,352 +84,158 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
-            margin-bottom: 40px;
         }
 
         .tarjeta-carrera {
-            background: rgba(255, 255, 255, 0.95);
-            color: #640328;
+            background: white;
+            color: var(--guinda);
             padding: 35px 25px;
-            border-radius: 18px;
+            border-radius: 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border: 3px solid transparent;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border: 4px solid transparent;
         }
 
-        /* Efecto de fondo antes del hover */
-        .tarjeta-carrera::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-            z-index: 1;
-        }
-
-        .tarjeta-carrera:hover::before {
-            left: 100%;
-        }
-
-        .icono-carrera {
-            font-size: 60px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-            position: relative;
-            z-index: 2;
-        }
-
-        .tarjeta-carrera:hover .icono-carrera {
-            transform: scale(1.15) rotate(5deg);
-        }
-
-        .nombre-carrera {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 2;
-            letter-spacing: 0.5px;
-        }
-
-        .descripcion-carrera {
-            font-size: 14px;
-            opacity: 0.75;
-            margin-bottom: 15px;
-            position: relative;
-            z-index: 2;
-            line-height: 1.5;
+        /* Carreras desactivadas */
+        .tarjeta-carrera.desactiva {
+            background: rgba(255, 255, 255, 0.6);
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: scale(0.95);
         }
 
         /* Carrera ACTIVA */
         .tarjeta-carrera.activa {
-            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
-            border: 3px solid #FFD700;
-            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.3);
+            border-color: var(--oro);
+            position: relative;
         }
 
         .tarjeta-carrera.activa:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 18px 40px rgba(255, 215, 0, 0.5);
-            background: linear-gradient(135deg, #640328 0%, #8B0A38 100%);
-            color: white;
-            border-color: white;
+            transform: translateY(-12px) scale(1.03);
+            background: var(--oro);
+            color: black;
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
         }
 
-        .tarjeta-carrera.activa:hover .nombre-carrera,
-        .tarjeta-carrera.activa:hover .descripcion-carrera {
-            color: white;
-        }
-
-        .tarjeta-carrera.activa:hover .descripcion-carrera {
-            opacity: 0.95;
-        }
+        .icono-carrera { font-size: 55px; margin-bottom: 15px; }
+        .nombre-carrera { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+        .descripcion-carrera { font-size: 14px; line-height: 1.4; }
 
         .badge-disponible {
             display: inline-block;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #640328;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 12px;
-            font-weight: 700;
-            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
-            position: relative;
-            z-index: 2;
-            letter-spacing: 0.5px;
-        }
-
-        /* Carrera DESACTIVA */
-        .tarjeta-carrera.desactiva {
-            background: rgba(200, 200, 200, 0.7);
-            color: rgba(255, 255, 255, 0.85);
-            cursor: not-allowed;
-            opacity: 0.75;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .tarjeta-carrera.desactiva:hover {
-            transform: none;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            background: rgba(200, 200, 200, 0.75);
-        }
-
-        .badge-proximamente {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.25);
+            background: var(--guinda);
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 12px;
-            font-weight: 700;
-            position: relative;
-            z-index: 2;
-            letter-spacing: 0.5px;
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 15px;
         }
 
-        /* Botón volver */
+        /* Botón Volver Pro */
         .btn-volver {
-            padding: 12px 28px;
-            font-size: 16px;
-            background-color: white;
-            color: #640328;
-            border: 3px solid white;
-            border-radius: 10px;
+            background: white;
+            color: var(--guinda);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 800;
             cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            letter-spacing: 0.5px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .btn-volver:hover {
-            background-color: #640328;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            background: var(--oro);
+            color: black;
+            transform: translateX(-5px);
         }
 
-        .btn-volver:active {
-            transform: translateY(0);
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
+        /* Footer Memorial Unificado */
+        footer {
             padding: 30px 20px;
-            border-top: 2px solid rgba(255, 255, 255, 0.3);
-            margin-top: auto;
-            font-size: 14px;
-            opacity: 0.9;
+            background: rgba(0,0,0,0.2);
+            text-align: center;
+            margin-top: 40px;
         }
 
-        .footer p {
-            margin: 8px 0;
-            letter-spacing: 0.5px;
+        .memorial-box {
+            font-style: italic;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
         }
 
-        .footer p:first-child {
-            font-weight: 700;
-            font-size: 16px;
+        .nombres-resaltados {
+            color: white;
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .titulo {
-                font-size: 32px;
-                margin-bottom: 10px;
-            }
-
-            .subtitulo {
-                font-size: 14px;
-                margin-bottom: 30px;
-            }
-
-            .grid-carreras {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .contenedor {
-                margin-top: 140px;
-                padding: 30px 10px;
-            }
-
-            .tarjeta-carrera {
-                padding: 28px 20px;
-            }
-
-            .icono-carrera {
-                font-size: 48px;
-            }
-
-            .nombre-carrera {
-                font-size: 20px;
-            }
-
-            .tarjeta-carrera.activa:hover {
-                transform: translateY(-10px);
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 480px) {
-            .barra-superior {
-                height: 10vh;
-                min-height: 70px;
-                padding: 0 15px;
-            }
-
-            .logo {
-                height: 60px;
-            }
-
-            .titulo {
-                font-size: 26px;
-            }
-
-            .subtitulo {
-                font-size: 12px;
-            }
-
-            .contenedor {
-                margin-top: 120px;
-                padding: 20px 8px;
-            }
-
-            .tarjeta-carrera {
-                padding: 25px 15px;
-            }
-
-            .icono-carrera {
-                font-size: 42px;
-            }
-
-            .nombre-carrera {
-                font-size: 18px;
-            }
-
-            .btn-volver {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
+        @media (max-width: 600px) {
+            .barra-superior { height: 75px; padding: 0 20px; }
+            .logo { height: 55px; }
+            .glass-container { padding: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Barra superior -->
     <div class="barra-superior">
-        <img src="./img/logo_ipn.png" alt="IPN" class="logo">
-        <img src="./img/logo_cecyt7.png" alt="CECyT 7" class="logo">
+        <img src="../img/logo_ipn.png" alt="IPN" class="logo">
+        <img src="../img/logo_cecyt7.png" alt="CECyT 7" class="logo">
     </div>
 
-    <!-- Contenedor principal -->
     <div class="contenedor">
+        <button class="btn-volver" onclick="window.location.href='../index.html'">← VOLVER AL INICIO</button>
         
-        <!-- Botón volver -->
-        <button class="btn-volver" onclick="window.location.href='../index.html'">← Volver al Inicio</button>
+        <div class="glass-container">
+            <h1 class="titulo">Carreras Técnicas</h1>
+            <p class="subtitulo">Selecciona una especialidad</p>
 
-        <h1 class="titulo">🎓 Carreras Disponibles</h1>
-        <p class="subtitulo">Explora nuestros programas de formación técnica</p>
+            <div class="grid-carreras">
+                <div class="tarjeta-carrera desactiva">
+                    <div class="icono-carrera">✈️</div>
+                    <div class="nombre-carrera">Aeronáutica</div>
+                    <div class="descripcion-carrera">Mantenimiento de aeronaves y sistemas de vuelo.</div>
+                </div>
 
-        <!-- Grid de carreras -->
-        <div class="grid-carreras">
+                <div class="tarjeta-carrera desactiva">
+                    <div class="icono-carrera">🚗</div>
+                    <div class="nombre-carrera">Automotriz</div>
+                    <div class="descripcion-carrera">Sistemas de combustión interna y electromovilidad.</div>
+                </div>
 
-            <!-- Aeronáutica (DESACTIVA) -->
-            <div class="tarjeta-carrera desactiva">
-                <div class="icono-carrera">✈️</div>
-                <div class="nombre-carrera">Aeronáutica</div>
-                <div class="descripcion-carrera">Formación en técnicas aeronáuticas y aviación</div>
-                <div class="badge-proximamente">⏳ Próximamente</div>
+                <div class="tarjeta-carrera activa" onclick="window.location.href='./carrera-mantenimiento.html'">
+                    <div class="icono-carrera">🔧</div>
+                    <div class="nombre-carrera">Mantenimiento Industrial</div>
+                    <div class="descripcion-carrera">Gestión de activos e infraestructura de taller.</div>
+                    <div class="badge-disponible">SISTEMA ACTIVO</div>
+                </div>
+
+                <div class="tarjeta-carrera desactiva">
+                    <div class="icono-carrera">🏗️</div>
+                    <div class="nombre-carrera">Construcción</div>
+                    <div class="descripcion-carrera">Diseño estructural y procesos constructivos.</div>
+                </div>
             </div>
-
-            <!-- Automotriz (DESACTIVA) -->
-            <div class="tarjeta-carrera desactiva">
-                <div class="icono-carrera">🚗</div>
-                <div class="nombre-carrera">Automotriz</div>
-                <div class="descripcion-carrera">Especialización en sistemas automotrices</div>
-                <div class="badge-proximamente">⏳ Próximamente</div>
-            </div>
-
-            <!-- Construcción (DESACTIVA) -->
-            <div class="tarjeta-carrera desactiva">
-                <div class="icono-carrera">🏗️</div>
-                <div class="nombre-carrera">Construcción</div>
-                <div class="descripcion-carrera">Técnicas y métodos de construcción</div>
-                <div class="badge-proximamente">⏳ Próximamente</div>
-            </div>
-
-            <!-- Energías Sustentables (DESACTIVA) -->
-            <div class="tarjeta-carrera desactiva">
-                <div class="icono-carrera">⚡</div>
-                <div class="nombre-carrera">Energías Sustentables</div>
-                <div class="descripcion-carrera">Tecnologías sostenibles y limpias</div>
-                <div class="badge-proximamente">⏳ Próximamente</div>
-            </div>
-
-            <!-- Electricidad (DESACTIVA) -->
-            <div class="tarjeta-carrera desactiva">
-                <div class="icono-carrera">💡</div>
-                <div class="nombre-carrera">Electricidad</div>
-                <div class="descripcion-carrera">Sistemas eléctricos e instalaciones</div>
-                <div class="badge-proximamente">⏳ Próximamente</div>
-            </div>
-
-            <!-- Mantenimiento Industrial (ACTIVA) -->
-            <div class="tarjeta-carrera activa" onclick="window.location.href='./carrera-mantenimiento.html'">
-                <div class="icono-carrera">🔧</div>
-                <div class="nombre-carrera">Mantenimiento Industrial</div>
-                <div class="descripcion-carrera">Mantenimiento de maquinaria industrial</div>
-                <div class="badge-disponible">✅ Disponible</div>
-            </div>
-
-            <!-- Soldadura (DESACTIVA) -->
-            <div class="tarjeta-carrera desactiva">
-                <div class="icono-carrera">🔥</div>
-                <div class="nombre-carrera">Soldadura</div>
-                <div class="descripcion-carrera">Técnicas avanzadas de soldadura</div>
-                <div class="badge-proximamente">⏳ Próximamente</div>
-            </div>
-
         </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p>CECyT 7 "Cuauhtémoc" - Instituto Politécnico Nacional</p>
-            <p>Todas las carreras con excelencia académica y formación práctica</p>
-        </div>
-
     </div>
+
+    <footer>
+        <div class="memorial-box">
+            "En memoria de <span class="nombres-resaltados">José Gabriel Hernández Méndez y Alí Yael Gonzales Aranda</span>
+            Siempre vivos en nuestros corazones. Con amor, sus amigos."
+        </div>
+    </footer>
 
 </body>
 </html>
