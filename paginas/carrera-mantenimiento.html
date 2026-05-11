@@ -376,9 +376,13 @@
       if (VOZ_ACTIVA) hablarFormal(texto);
     }
 
-    async function cargarDatosSheet(gid) {
-      const url = `${SHEET_BASE}?gid=${gid}&single=true&output=csv`;
-      const res = await fetch(url, { cache: "no-store" });
+async function cargarDatosSheet(gid) {
+  
+  const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub?gid=${gid}&single=true&output=csv`;
+  
+  try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("No se pudo obtener el CSV");
       const csv = await res.text();
       const rows = parseCSV(csv);
       const headers = rows[0].map(h => String(h || '').trim().toUpperCase());
@@ -387,7 +391,11 @@
         headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
         return obj;
       });
-    }
+  } catch (err) {
+      console.error("Error cargando GID " + gid, err);
+      throw err;
+  }
+}
 
     function parseCSV(text) {
       const rows = []; let row = []; let cur = ''; let inQuotes = false;
