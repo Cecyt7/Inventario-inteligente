@@ -6,214 +6,250 @@
   <title>GUINDA - Gestión de Taller CECyT 7</title>
 
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* VARIABLES DE DISEÑO PREMIUM */
+    :root {
+      --guinda: #640328;
+      --guinda-luz: #8a0b3d;
+      --oro: #FFD700;
+      --fondo: #f0f2f5;
+      --bot-bg: #ffffff;
+      --user-bg: #34495e;
+      --card-bg: #1e272e;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
 
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background-color: #640328; /* Guinda IPN */
+      background: linear-gradient(135deg, var(--guinda) 0%, #2c0112 100%);
       color: white;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* Barra superior */
+    /* BARRA SUPERIOR */
     .barra-superior {
       position: fixed;
-      top: 0; width: 100%; height: 80px;
-      background-color: white;
-      border-bottom: 4px solid #FFD700; /* Oro */
+      top: 0; width: 100%; height: 70px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 4px solid var(--oro);
       display: flex; justify-content: space-between; align-items: center;
-      padding: 0 30px; z-index: 900;
+      padding: 0 5%; z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
-    .logo { height: 50px; }
+    .logo { height: 45px; transition: transform 0.3s; }
+    .logo:hover { transform: scale(1.05); }
 
-    /* Contenedor Principal */
+    /* CONTENEDOR */
     .contenedor {
-      margin-top: 100px;
+      margin-top: 90px;
       flex: 1;
-      max-width: 800px;
+      max-width: 900px;
       margin-left: auto; margin-right: auto;
       width: 95%;
-      padding-bottom: 40px;
+      padding: 20px;
     }
 
     .btn-volver {
-      padding: 8px 15px; background-color: white; color: #640328;
-      border: none; border-radius: 5px; cursor: pointer;
-      font-weight: bold; margin-bottom: 15px;
+      padding: 10px 20px; background: white; color: var(--guinda);
+      border: none; border-radius: 50px; cursor: pointer;
+      font-weight: bold; margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+    .btn-volver:hover { background: var(--oro); transform: translateX(-5px); }
+
+    h1 { 
+      text-align: center; margin-bottom: 25px; font-size: 26px; 
+      text-transform: uppercase; letter-spacing: 3px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
-    h1 { text-align: center; margin-bottom: 20px; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
-
-    /* Chat Estilo */
+    /* CHAT CONTAINER - GLASSMORPHISM */
     .chat-container {
-      background-color: #ececec;
-      border-radius: 10px;
-      height: 450px;
+      background: rgba(236, 240, 241, 0.9);
+      border-radius: 15px;
+      height: 500px;
       display: flex; flex-direction: column;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-      overflow: hidden; margin-bottom: 15px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      overflow: hidden; margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     #chat-messages {
-      flex: 1; padding: 20px; overflow-y: auto;
-      display: flex; flex-direction: column; gap: 12px;
+      flex: 1; padding: 25px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 15px;
+      scroll-behavior: smooth;
     }
 
+    /* MENSAJES */
     .msg-user {
-      align-self: flex-end; background-color: #4a4a4a; color: white;
-      padding: 10px 15px; border-radius: 10px 10px 0 10px;
-      max-width: 80%; font-size: 14px; font-weight: bold;
-      border-right: 4px solid #640328;
+      align-self: flex-end; background: var(--user-bg); color: white;
+      padding: 12px 18px; border-radius: 15px 15px 0 15px;
+      max-width: 80%; font-size: 14px; font-weight: 500;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      animation: messageIn 0.3s ease-out;
     }
 
     .msg-bot {
-      align-self: flex-start; background-color: white; color: #2c3e50;
-      padding: 12px 18px; border-radius: 10px 10px 10px 0;
-      max-width: 85%; font-size: 14px; line-height: 1.5;
-      border-left: 4px solid #FFD700; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      align-self: flex-start; background: white; color: #2c3e50;
+      padding: 15px 20px; border-radius: 15px 15px 15px 0;
+      max-width: 85%; font-size: 14px; line-height: 1.6;
+      border-left: 5px solid var(--oro);
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+      animation: messageIn 0.3s ease-out;
     }
 
-/* --- ESTILOS DE LA FICHA TÉCNICA DINÁMICA --- */
+    @keyframes messageIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FICHA TÉCNICA PRO */
     .ficha-tecnica {
-      background: #2c3e50;
-      color: white;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 5px;
-      border-left: 5px solid #640328; /* Guinda */
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-      width: 100%;
+      background: var(--card-bg);
+      color: #ecf0f1;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 10px;
+      border-left: 6px solid var(--guinda);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    .ficha-header {
+      border-bottom: 1px solid #444;
+      margin-bottom: 15px; padding-bottom: 10px;
+      text-align: center; font-weight: bold;
+      font-size: 1.2em; color: var(--oro);
+      text-transform: uppercase; letter-spacing: 1px;
     }
 
     .ficha-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* Dos columnas para que quepan más datos */
-        gap: 12px;
-        font-size: 0.85em;
-        align-items: start;
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 12px; font-size: 0.9em;
     }
 
-    .dato-label { 
-        color: #bdc3c7; 
-        font-size: 0.75em; 
-        text-transform: uppercase; 
-        display: block; 
-        margin-bottom: 2px; 
-    }
+    .dato-label { color: #95a5a6; font-size: 0.7em; text-transform: uppercase; font-weight: bold; }
+    .dato-valor { color: #fff; font-weight: 600; display: block; word-break: break-word; }
 
-    .dato-valor { 
-        color: #ecf0f1; 
-        font-weight: bold; 
-        display: block;
-        word-break: break-word; /* Si el texto es muy largo, lo rompe para que no se salga de la ficha */
-    }
-
-    /* Entrada de datos (lo que ya tenías) */
+    /* INPUT GROUP */
     .input-group {
-      display: flex; gap: 8px; background: white;
-      padding: 12px; border-radius: 10px;
-    }ing: 12px; border-radius: 10px;
+      display: flex; gap: 10px; background: rgba(255,255,255,0.1);
+      padding: 15px; border-radius: 15px; backdrop-filter: blur(5px);
     }
 
     #pregunta {
-      flex: 1; padding: 12px; border: 2px solid #ddd;
-      border-radius: 5px; outline: none; color: black; font-size: 16px;
+      flex: 1; padding: 15px; border: none;
+      border-radius: 10px; outline: none; font-size: 16px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
     }
 
+    .botones { display: flex; gap: 8px; }
     .botones button {
-      padding: 10px 15px; background-color: #640328; color: white;
-      border: none; border-radius: 5px; cursor: pointer; font-weight: bold;
+      padding: 10px 18px; border: none; border-radius: 10px;
+      cursor: pointer; font-weight: bold; transition: 0.3s;
     }
 
-    /* MODAL DE REGISTRO GUINDA */
+    .btn-enviar { background: var(--guinda); color: white; }
+    .btn-enviar:hover { background: var(--guinda-luz); transform: translateY(-2px); }
+    .btn-voz { background: #34495e; color: white; min-width: 60px; }
+    .btn-micro { background: #e67e22; color: white; }
+
+    /* MODAL TIPO ACCESO SEGURIDAD */
     .jarvis-modal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); display: none;
+      background: rgba(0,0,0,0.9); display: none;
       justify-content: center; align-items: center; z-index: 2000;
+      backdrop-filter: blur(8px);
     }
 
     .modal-content {
-      background: #f4f4f4; padding: 30px; border-radius: 8px;
-      border-left: 10px solid #640328; width: 350px; text-align: center;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.6); color: #333;
+      background: white; padding: 40px; border-radius: 20px;
+      border-top: 15px solid var(--guinda); width: 400px; text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5); color: #333;
     }
 
-    .modal-content h3 { color: #640328; margin-bottom: 15px; }
+    .modal-content h3 { color: var(--guinda); margin-bottom: 20px; font-size: 1.5em; }
     .modal-content input {
-      width: 100%; padding: 12px; margin: 8px 0;
-      border: 1px solid #ccc; border-radius: 4px;
+      width: 100%; padding: 15px; margin: 10px 0;
+      border: 2px solid #eee; border-radius: 10px; font-size: 1em;
     }
+    .modal-content input:focus { border-color: var(--guinda); outline: none; }
 
     .btn-confirmar {
-      background: #640328; color: white; border: none;
-      padding: 12px 25px; cursor: pointer; font-weight: bold;
-      width: 100%; margin-top: 15px; border-radius: 4px;
+      background: var(--guinda); color: white; border: none;
+      padding: 15px; cursor: pointer; font-weight: bold;
+      width: 100%; margin-top: 20px; border-radius: 10px;
+      font-size: 1.1em; transition: 0.3s;
     }
+    .btn-confirmar:hover { background: #2ecc71; letter-spacing: 1px; }
 
-    .cargando { text-align: center; color: #FFD700; display: none; margin-top: 10px; font-weight: bold; }
-  </style>
+    .cargando { text-align: center; color: var(--oro); display: none; margin-top: 15px; font-weight: bold; letter-spacing: 2px; }
+
+    /* SCROLLBAR CUSTOM */
+    #chat-messages::-webkit-scrollbar { width: 6px; }
+    #chat-messages::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+</style>
 </head>
 <body>
 
-  <!-- Modal de Registro -->
-  <div id="modal-registro" class="jarvis-modal" style="display: none;">
+  <div id="modal-registro" class="jarvis-modal">
     <div class="modal-content">
-      <h3>📋 REGISTRO DE USO</h3>
-      <p id="info-maquina-registro" style="font-weight:bold; margin-bottom:10px;"></p>
-      <input type="text" id="nombre-alumno" placeholder="Nombre completo">
+      <h3>🔐 ACCESO AUTORIZADO</h3>
+      <p id="info-maquina-registro" style="font-weight:bold; color:#666; margin-bottom:20px;"></p>
+      <input type="text" id="nombre-alumno" placeholder="Nombre del Operador">
       <input type="text" id="boleta-alumno" placeholder="Número de Boleta">
-      <input type="text" id="grupo-alumno" placeholder="Grupo (Ej: 4IM1)">
-      <button class="btn-confirmar" onclick="confirmarRegistro()">AUTORIZAR INICIO</button>
-      <button onclick="cerrarModal()" style="margin-top:15px; background:none; border:none; color:gray; cursor:pointer;">Cancelar</button>
+      <input type="text" id="grupo-alumno" placeholder="Grupo Académico">
+      <button class="btn-confirmar" onclick="confirmarRegistro()">CONFIRMAR INICIO</button>
+      <button onclick="cerrarModal()" style="margin-top:15px; background:none; border:none; color:gray; cursor:pointer; text-decoration:underline;">Abortar operación</button>
     </div>
   </div>
 
   <div class="barra-superior">
     <img src="../img/logo_ipn.png" class="logo" alt="IPN">
+    <div style="color:var(--guinda); font-weight:900; font-size:1.2em;">CECyT 7 "Cuauhtémoc"</div>
     <img src="../img/logo_cecyt7.png" class="logo" alt="CECyT 7">
   </div>
 
   <div class="contenedor">
-    <button class="btn-volver" onclick="window.location.href='./carreras.html'">← Panel Principal</button>
+    <button class="btn-volver" onclick="window.location.href='./carreras.html'">← VOLVER AL PANEL</button>
     
-    <h1>SISTEMA GUINDA: Gestión Técnica</h1>
+    <h1>SISTEMA GUINDA V2.0</h1>
 
     <div class="chat-container">
       <div id="chat-messages">
-        <div class="msg-bot">Sistema GUINDA en línea. Ingrese el equipo para consulta o indique si desea registrar una operación.</div>
+        <div class="msg-bot">🤖 **Bienvenido, Técnico.**<br>Soy GUINDA, tu asistente de gestión de taller. ¿Qué equipo deseas consultar o registrar hoy?</div>
       </div>
     </div>
 
     <div class="input-group">
-      <input type="text" id="pregunta" placeholder="Ej: Usar Torno 5 o Consultar Torno 2" onkeypress="if(event.key === 'Enter') hacerPregunta()">
+      <input type="text" id="pregunta" placeholder="Ej: 'Ficha del Torno 3' o 'Usar Fresadora 1'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
       <div class="botones">
-        <button onclick="hacerPregunta()">Enviar</button>
-        <button id="btnVoz" onclick="toggleVoz()">🔊 OFF</button>
-        <button onclick="dictarPregunta()">🎤</button>
+        <button class="btn-enviar" onclick="hacerPregunta()">ENVIAR</button>
+        <button id="btnVoz" class="btn-voz" onclick="toggleVoz()">🔊 OFF</button>
+        <button class="btn-micro" onclick="dictarPregunta()">🎤</button>
       </div>
     </div>
 
-    <div id="cargando" class="cargando">PROCESANDO SOLICITUD...</div>
+    <div id="cargando" class="cargando">🛰️ SINCRONIZANDO CON NUBE...</div>
   </div>
 
 <script>
-    // --- CONFIGURACIÓN ---
-    const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
+    const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/ PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
     const URL_GUINDA_GATEWAY = "https://script.google.com/macros/s/AKfycbzrMi2HyJEXezEUCrq3Roe3r9h5R5yagUtOcF3BhX9_S6kje-tj5H30GbsKNUnThpaH/exec"; 
     
     const MAQUINAS_GID = { 
       'torno': 0, 
-      'fresadora': 406685106, 
-      'mesa': 675907642, 
+      'fresadora': 406685106,
+      'mesa': 675907642,
       'esmeril': 1328099769, 
-      'soldadora': 1403892581, 
-      'taladradora': 583489325, 
+      'soldadora': 1403892581,
+      'taladradora': 583489325,
       'cepillo': 639087492, 
-      'comparador': 737994113, 
+      'comparador': 737994113,
       'cnc': 123325945 
     };
 
@@ -221,7 +257,7 @@
     let VOZ_ACTIVA = false;
     let estadoSesion = { maquinaPendiente: null, idPendiente: null };
 
-    // --- LÓGICA DE DETECCIÓN ---
+    // --- DETECTORES ---
     function detectarMaquina(pregunta) {
       const q = pregunta.toLowerCase();
       const dicc = {
@@ -240,216 +276,141 @@
       return m ? m[1] : null;
     }
 
-    // --- NUEVA FUNCIÓN DE RESUMEN GENERAL ---
-    async function generarResumenGeneral() {
-        imprimirBot("Iniciando escaneo de todas las unidades... Por favor, espera.");
-        document.getElementById('cargando').style.display = 'block';
-
-        let reporteFinal = "📋 **RESUMEN DE ESTADO GENERAL**\n\n";
-        
-        try {
-            for (const [nombre, gid] of Object.entries(MAQUINAS_GID)) {
-                if (!CACHE[nombre]) {
-                    CACHE[nombre] = await cargarDatosSheet(gid);
-                }
-                const data = CACHE[nombre];
-                const total = data.length;
-                
-                const operativos = data.filter(item => {
-                    const estado = (item["ESTADO"] || "").toUpperCase();
-                    return estado.includes("BUEN") || estado.includes("OPERATIVO") || estado.includes("EXCELENTE");
-                }).length;
-                
-                const mantenimiento = data.filter(item => {
-                    const estado = (item["ESTADO"] || "").toUpperCase();
-                    return estado.includes("MANTENIMIENTO") || estado.includes("REVISIÓN") || estado.includes("FALLA");
-                }).length;
-
-                reporteFinal += `🔹 **${nombre.toUpperCase()}:** ${total} unidades (${operativos} ✅ / ${mantenimiento} 🛠️)\n`;
-            }
-            reporteFinal += "\n*Reporte generado exitosamente.*";
-            imprimirBot(reporteFinal);
-        } catch (error) {
-            imprimirBot("❌ Error: No pude conectar con todas las hojas del inventario.");
-            console.error(error);
-        } finally {
-            document.getElementById('cargando').style.display = 'none';
-        }
-    }
-
-    // --- MANEJO DE DATOS ---
+    // --- CORE LOGIC ---
     async function hacerPregunta() {
       const input = document.getElementById('pregunta');
       const pregunta = input.value.trim();
       if (!pregunta) return;
 
-      // 1. Mostrar mensaje del usuario de forma única
       const chat = document.getElementById('chat-messages');
       chat.innerHTML += `<div class="msg-user">${pregunta}</div>`;
       input.value = "";
       chat.scrollTop = chat.scrollHeight;
 
-      // 2. DETECTOR DE RESUMEN
-      if (pregunta.toLowerCase().match(/(resumen|estado general|reporte de todo)/)) {
+      // Detector de Resumen
+      if (pregunta.toLowerCase().match(/(resumen|estado general|reporte)/)) {
           await generarResumenGeneral();
           return; 
       } 
 
-      // 3. Detectar si es Registro o Consulta
       const maq = detectarMaquina(pregunta);
       const id = detectarID(pregunta);
 
       if (!maq) {
-        imprimirBot("No reconozco el equipo solicitado. Por favor, especifique (Torno, Fresa, etc.)");
+        imprimirBot("⚠️ No reconozco el equipo. Intenta con: Torno, Fresadora, Esmeril, etc.");
         return;
       }
 
-      // PROTOCOLO DE REGISTRO
       if (pregunta.toLowerCase().match(/(usar|registrar|ocupar|voy a)/)) {
         abrirModalRegistro(maq.nombre, id || "S/N");
         return;
       }
 
-      // PROTOCOLO DE CONSULTA
-      document.getElementById('cargando').style.display = 'block';
+      // Consulta de Ficha
+      const tempId = "temp-" + Date.now();
+      chat.innerHTML += `<div class="msg-bot" id="${tempId}">🔍 Buscando en inventario...</div>`;
+      chat.scrollTop = chat.scrollHeight;
+
       try {
         if (!CACHE[maq.key]) {
           CACHE[maq.key] = await cargarDatosSheet(MAQUINAS_GID[maq.key]);
         }
-        
         const data = CACHE[maq.key];
         const resultado = id ? data.find(x => String(x["IDENTIFICACION"]).trim() === String(id)) : null;
         
-        const tempId = "temp-" + Date.now();
-        chat.innerHTML += `<div class="msg-bot" id="${tempId}">Analizando base de datos...</div>`;
-        chat.scrollTop = chat.scrollHeight;
-
         setTimeout(() => {
           const tempElem = document.getElementById(tempId);
           if(tempElem) tempElem.remove();
           procesarRespuestaTecnica(resultado, maq.nombre, id);
-        }, 600);
+        }, 800);
 
       } catch (e) {
-        imprimirBot("Error al conectar con el inventario.");
-      } finally {
-        document.getElementById('cargando').style.display = 'none';
+        imprimirBot("❌ Error de enlace con la base de datos.");
       }
     }
 
-function procesarRespuestaTecnica(item, maqNombre, id) {
+    async function generarResumenGeneral() {
+        const chat = document.getElementById('chat-messages');
+        const tempId = "temp-" + Date.now();
+        chat.innerHTML += `<div class="msg-bot" id="${tempId}">🛰️ Iniciando escaneo global...</div>`;
+        chat.scrollTop = chat.scrollHeight;
+        
+        let reporteFinal = "📋 **REPORTE DE ESTADO GLOBAL**\n\n";
+        
+        try {
+            for (const [nombre, gid] of Object.entries(MAQUINAS_GID)) {
+                document.getElementById(tempId).innerText = `📡 Escaneando: ${nombre.toUpperCase()}...`;
+                if (!CACHE[nombre]) CACHE[nombre] = await cargarDatosSheet(gid);
+                
+                const data = CACHE[nombre];
+                const operativos = data.filter(item => (item["ESTADO"]||"").toUpperCase().includes("OPERATIVO") || (item["ESTADO"]||"").toUpperCase().includes("BUEN")).length;
+                reporteFinal += `🔹 **${nombre.toUpperCase()}:** ${data.length} u. (${operativos} OK ✅ / ${data.length - operativos} Mantto 🛠️)\n`;
+            }
+            document.getElementById(tempId).remove();
+            imprimirBot(reporteFinal + "\n*Sincronización completa.*");
+        } catch (e) {
+            document.getElementById(tempId).remove();
+            imprimirBot("❌ Error en el escaneo general.");
+        }
+    }
+
+    function procesarRespuestaTecnica(item, maqNombre, id) {
       if (!item) {
-        imprimirBot(`No se encontró registro para **${maqNombre} ${id || ''}**. Verifique el número de unidad.`);
+        imprimirBot(`❌ No existe registro para **${maqNombre} ${id || ''}**.`);
         return;
       }
 
-      // 1. Columnas que NO queremos repetir en la rejilla técnica (porque ya van arriba o abajo)
       const omitir = ["IDENTIFICACION", "UBICACION", "ESTADO", "MARCA", "MODELO", "NOTAS", "ESPECIFICACIONES"];
-      
-      // 2. Mapeo Automático: Generamos los datos técnicos que existan en el Excel
       let gridDinamico = "";
       Object.keys(item).forEach(col => {
           const valor = item[col];
-          // Solo agrega si la columna tiene texto y no está en la lista de omitir
           if (!omitir.includes(col) && valor && valor.trim() !== "" && valor !== "0") {
-              gridDinamico += `
-                  <div style="background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
-                      <span class="dato-label">${col.replace(/_/g, ' ')}:</span>
-                      <span class="dato-valor">${valor}</span>
-                  </div>`;
+              gridDinamico += `<div><span class="dato-label">${col.replace(/_/g, ' ')}:</span><span class="dato-valor">${valor}</span></div>`;
           }
       });
 
-      const estado = (item["ESTADO"] || "SIN REPORTE").toUpperCase();
+      const estado = (item["ESTADO"] || "S/D").toUpperCase();
       const colorEstado = (estado.includes('OPERATIVO') || estado.includes('BUEN')) ? '#2ecc71' : '#e74c3c';
-      const notas = item["NOTAS"] || item["ESPECIFICACIONES"] || "Sin observaciones adicionales de seguridad.";
 
-      // 3. El diseño Pro-Industrial
       const fichaHTML = `
         <div class="ficha-tecnica">
-          <div class="ficha-header">🛠️ FICHA TÉCNICA: ${maqNombre} ${id}</div>
-          
-          <div style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <span class="dato-label">Estado de la Unidad:</span>
-              <span class="dato-valor" style="color: ${colorEstado}; font-size: 1.1em;">● ${estado}</span>
-            </div>
-            <div style="text-align: right;">
-              <span class="dato-label">Marca/Modelo:</span>
-              <span class="dato-valor">${item["MARCA"] || item["MODELO"] || 'Genérico'}</span>
-            </div>
+          <div class="ficha-header">🛠️ ESPECIFICACIONES: ${maqNombre} ${id}</div>
+          <div style="margin-bottom:15px; display:flex; justify-content:space-between;">
+            <div><span class="dato-label">STATUS:</span><span class="dato-valor" style="color:${colorEstado}">● ${estado}</span></div>
+            <div style="text-align:right"><span class="dato-label">UBICACIÓN:</span><span class="dato-valor">${item["UBICACION"] || 'Taller'}</span></div>
           </div>
-
-          <div class="ficha-grid">
-            <div style="background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
-              <span class="dato-label">Ubicación:</span>
-              <span class="dato-valor">${item["UBICACION"] || 'Área de Máquinas'}</span>
-            </div>
-            ${gridDinamico} 
+          <div class="ficha-grid">${gridDinamico}</div>
+          <div style="margin-top:15px; padding:10px; background:rgba(0,0,0,0.3); border-radius:5px; border-left:3px solid var(--oro);">
+            <span class="dato-label" style="color:var(--oro)">Observaciones:</span>
+            <p style="font-size:0.85em; font-style:italic;">${item["NOTAS"] || "Sin notas de seguridad."}</p>
           </div>
-
-          <div style="margin-top: 15px; padding: 10px; background: rgba(100, 3, 40, 0.2); border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.3);">
-            <span class="dato-label" style="color: #FFD700;">Manual / Notas Técnicas:</span><br>
-            <span style="color: #ecf0f1; font-size: 0.85em; font-style: italic;">${notas}</span>
-          </div>
-        </div>
-      `;
-
+        </div>`;
       imprimirBot(fichaHTML);
-
-      // Respuesta de voz simplificada para no aburrir al profe
-      if (VOZ_ACTIVA) {
-          hablarFormal(`Ficha del ${maqNombre} ${id} lista. Reporta un estado ${estado.toLowerCase()}.`);
-      }
     }
 
-    // --- FUNCIONES GUINDA (MODAL) ---
+    // --- FUNCIONES MODAL ---
     function abrirModalRegistro(maquina, id) {
       estadoSesion.maquinaPendiente = maquina;
       estadoSesion.idPendiente = id;
       document.getElementById('info-maquina-registro').innerText = `${maquina} - UNIDAD ${id}`;
       document.getElementById('modal-registro').style.display = 'flex';
     }
-
-    function cerrarModal() {
-      document.getElementById('modal-registro').style.display = 'none';
-    }
+    function cerrarModal() { document.getElementById('modal-registro').style.display = 'none'; }
 
     async function confirmarRegistro() {
-      const nombre = document.getElementById('nombre-alumno').value;
-      const boleta = document.getElementById('boleta-alumno').value;
-      const grupo = document.getElementById('grupo-alumno').value;
-
-      if (!nombre || !boleta || !grupo) {
-          alert("Por favor, llena todos los campos (Nombre, Boleta y Grupo).");
-          return;
-      }
+      const n = document.getElementById('nombre-alumno').value;
+      const b = document.getElementById('boleta-alumno').value;
+      const g = document.getElementById('grupo-alumno').value;
+      if (!n || !b || !g) return alert("Completa el registro de seguridad.");
+      
       cerrarModal();
-      imprimirBot(`Procesando registro para ${nombre} del grupo ${grupo}...`);
-
-      const datos = {
-          nombre: nombre,
-          boleta: boleta,
-          grupo: grupo,
-          equipo: estadoSesion.maquinaPendiente,
-          id: estadoSesion.idPendiente,
-          accion: "INICIO DE OPERACIÓN"
-      };
-
+      imprimirBot(`🚀 **Autorizando a ${n}...**`);
+      
       try {
-          await fetch(URL_GUINDA_GATEWAY, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(datos)
-          });
-          imprimirBot(`✅ **REGISTRO EXITOSO.** Operador autorizado. Bitácora actualizada.`);
-          document.getElementById('nombre-alumno').value = "";
-          document.getElementById('boleta-alumno').value = "";
-          document.getElementById('grupo-alumno').value = "";
-      } catch (e) {
-          imprimirBot("❌ Error al registrar en la bitácora.");
-      }
+          await fetch(URL_GUINDA_GATEWAY, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nombre:n, boleta:b, grupo:g, equipo:estadoSesion.maquinaPendiente, id:estadoSesion.idPendiente, accion:"INICIO"})});
+          imprimirBot(`✅ **ACCESO CONCEDIDO.** Registro guardado en bitácora.`);
+          document.querySelectorAll('.modal-content input').forEach(i => i.value = "");
+      } catch (e) { imprimirBot("❌ Error en servidor de bitácora."); }
     }
 
     // --- UTILIDADES ---
@@ -460,13 +421,9 @@ function procesarRespuestaTecnica(item, maqNombre, id) {
       if (VOZ_ACTIVA) hablarFormal(texto);
     }
 
-async function cargarDatosSheet(gid) {
-  
-  const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub?gid=${gid}&single=true&output=csv`;
-  
-  try {
+    async function cargarDatosSheet(gid) {
+      const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub?gid=${gid}&single=true&output=csv`;
       const res = await fetch(url);
-      if (!res.ok) throw new Error("No se pudo obtener el CSV");
       const csv = await res.text();
       const rows = parseCSV(csv);
       const headers = rows[0].map(h => String(h || '').trim().toUpperCase());
@@ -475,11 +432,7 @@ async function cargarDatosSheet(gid) {
         headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
         return obj;
       });
-  } catch (err) {
-      console.error("Error cargando GID " + gid, err);
-      throw err;
-  }
-}
+    }
 
     function parseCSV(text) {
       const rows = []; let row = []; let cur = ''; let inQuotes = false;
@@ -497,30 +450,22 @@ async function cargarDatosSheet(gid) {
       return rows;
     }
 
-    function toggleVoz() {
-      VOZ_ACTIVA = !VOZ_ACTIVA;
-      document.getElementById("btnVoz").textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF";
-    }
-
+    function toggleVoz() { VOZ_ACTIVA = !VOZ_ACTIVA; document.getElementById("btnVoz").textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF"; }
     function hablarFormal(texto) {
       if (!window.speechSynthesis) return;
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(texto.replace(/\*/g, ''));
-      u.lang = "es-MX"; u.rate = 0.9; u.pitch = 1;
+      u.lang = "es-MX"; u.rate = 1;
       window.speechSynthesis.speak(u);
     }
-
     function dictarPregunta() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) return alert('Navegador no soportado');
       const rec = new SpeechRecognition();
       rec.lang = 'es-MX';
-      rec.onresult = (e) => {
-        document.getElementById('pregunta').value = e.results[0][0].transcript;
-        hacerPregunta();
-      };
+      rec.onresult = (e) => { document.getElementById('pregunta').value = e.results[0][0].transcript; hacerPregunta(); };
       rec.start();
     }
-  </script>
+</script>
 </body>
 </html>
