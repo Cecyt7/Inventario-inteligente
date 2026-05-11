@@ -1,145 +1,195 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inventario Inteligente</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GUINDA - Inventario Inteligente</title>
+  <style>
+    /* VARIABLES DE DISEÑO (Iguales a tu Chat para que combinen) */
+    :root {
+      --guinda: #640328;
+      --guinda-deep: #2c0112;
+      --oro: #FFD700;
+      --blanco-glass: rgba(255, 255, 255, 0.1);
+    }
 
-  body {
-    background-color: #640328;
-    color: white;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; }
 
-  /* Barra superior fija */
-  .barra-superior {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 12vh;
-    min-height: 80px;
-    max-height: 120px;
-    background-color: white;
-    border-bottom: 4px solid #640328;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 30px;
-    z-index: 1000;
-  }
+    body {
+      background: linear-gradient(135deg, var(--guinda) 0%, var(--guinda-deep) 100%);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
 
-  .logo-izq { height: 100px; }
-  .logo-der { height: 90px; }
+    /* BARRA SUPERIOR PREMIUM */
+    .barra-superior {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 90px;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 5px solid var(--oro);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
 
-  /* Contenido (deja espacio para la barra fija) */
-  .contenido {
-    text-align: center;
-    margin-top: 140px;
-    flex: 1; /* empuja el footer al fondo */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
+    .logo-izq { height: 75px; transition: transform 0.3s; }
+    .logo-der { height: 70px; transition: transform 0.3s; }
+    .logo-izq:hover, .logo-der:hover { transform: scale(1.05); }
 
-  .contenido h1 { font-size: 36px; margin-bottom: 10px; }
-  .contenido h2 { font-size: 22px; font-weight: normal; margin-bottom: 20px; }
-  .contenido h3 { font-size: 20px; font-weight: normal; margin-bottom: 30px; }
- 
-.btn-navegar {
-  background-color: white; /* Fondo transparente */
-  color: black;                  /* Texto negro */
-  border: 2px solid black;       /* Contorno negro */
-  padding: 10px 20px;            /* Espacio interno para que no esté apretado */
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;               /* Para que salga la manita */
-  transition: all 0.3s ease;     /* Esto hace que el cambio no sea de golpe */
-  border-radius: 5px;            /* Un poquito redondeado, opcional */
-}
+    /* CONTENIDO CON EFECTO GLASS */
+    .contenido {
+      text-align: center;
+      margin-top: 120px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      animation: fadeIn 1s ease-out;
+    }
 
-/* Cuando pasas el mouse por encima */
-.btn-navegar:hover {
-  background-color: black;       /* Se rellena de negro */
-  color: white;                  /* El texto cambia a blanco para que se vea */
-}
+    .glass-card {
+      background: var(--blanco-glass);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 50px;
+      border-radius: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      max-width: 800px;
+    }
 
-/* Cuando le das clic (se queda presionado un momento) */
-.btn-navegar:active {
-  transform: scale(0.95);        /* Se hace un poquito chiquito para simular el clic */
-  background-color: #333;        /* Un negro un poquito más grisáceo */
-}
- 
-  footer {
-    padding: 18px 20px 26px;
-    text-align: center;
-  }
+    .contenido h1 { 
+      font-size: clamp(24px, 5vw, 42px); 
+      margin-bottom: 15px; 
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    }
 
-  .footer-linea {
-    width: min(620px, 88%);
-    height: 2px;
-    background: white;
-    margin: 0 auto 14px;
-    border-radius: 2px;
-    opacity: 0.9;
-  }
+    .contenido h2 { 
+      font-size: clamp(18px, 3vw, 24px); 
+      font-weight: 300; 
+      margin-bottom: 10px; 
+      opacity: 0.9;
+    }
 
-  .footer-titulo {
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    margin-bottom: 10px;
-  }
+    .contenido h3 { 
+      font-size: clamp(16px, 2.5vw, 20px); 
+      font-weight: bold; 
+      margin-bottom: 40px; 
+      color: var(--oro);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+    }
 
-  .footer-lista {
-    list-style: none;
-    padding: 0;
-    margin: 0 auto;
-    max-width: 720px;
-    opacity: 0.95;
-    line-height: 1.55;
-    font-size: 14px;
-  }
+    /* BOTÓN NAVEGAR ESTILO PRO */
+    .btn-navegar {
+      background: white;
+      color: var(--guinda);
+      border: none;
+      padding: 18px 50px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
 
-  /* Responsivo */
-  @media (max-width: 600px){
-    .logo-izq, .logo-der { height: 70px; }
-    .contenido h1 { font-size: 28px; }
-    .contenido h2 { font-size: 18px; }
-    .contenido h3 { font-size: 16px; }
-    .footer-lista { font-size: 12.5px; }
-  }
-</style>
+    .btn-navegar:hover {
+      background: var(--oro);
+      color: black;
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-navegar:active {
+      transform: scale(0.95);
+    }
+
+    /* FOOTER MEMORIAL */
+    footer {
+      padding: 30px 20px;
+      background: rgba(0,0,0,0.2);
+      margin-top: 40px;
+    }
+
+    .footer-linea {
+      width: 150px;
+      height: 3px;
+      background: var(--oro);
+      margin: 0 auto 20px;
+      border-radius: 5px;
+      opacity: 0.8;
+    }
+
+    .memorial-box {
+      max-width: 700px;
+      margin: 0 auto;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 0.5px;
+    }
+
+    .nombres-resaltados {
+      color: white;
+      font-weight: bold;
+      display: block;
+      margin-top: 5px;
+      font-size: 16px;
+      font-style: normal;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsivo */
+    @media (max-width: 600px){
+      .barra-superior { height: 70px; padding: 0 15px; }
+      .logo-izq, .logo-der { height: 50px; }
+      .glass-card { padding: 30px 20px; border-radius: 20px; }
+      .contenido { margin-top: 100px; }
+    }
+  </style>
 </head>
 <body>
 
   <div class="barra-superior">
     <img src="./img/logo_ipn.png" alt="IPN" class="logo-izq">
+    <div style="color:var(--guinda); font-weight:800; font-size:1.1em; text-align:center;" class="nom-escuela">CECyT 7</div>
     <img src="./img/logo_cecyt7.png" alt="CECyT 7" class="logo-der">
   </div>
 
-<div class="contenido">
-  <h1>Instituto Politécnico Nacional</h1>
-  <h2>Centro de Estudios Científicos y Tecnológicos<br>Número 7 "Cuauhtémoc"</h2>
-  <h3>Inventario inteligente del taller</h3>
-  <button class="btn-navegar" onclick="window.location.href='./paginas/carreras.html'">Navegar</button>
-</div>
+  <div class="contenido">
+    <div class="glass-card">
+      <h1>Instituto Politécnico Nacional</h1>
+      <h2>Centro de Estudios Científicos y Tecnológicos<br>Número 7 "Cuauhtémoc"</h2>
+      <h3>Gestión de Taller Industrial</h3>
+      <button class="btn-navegar" onclick="window.location.href='./paginas/carreras.html'">Ingresar al Sistema</button>
+    </div>
+  </div>
+
   <footer>
     <div class="footer-linea"></div>
-    <div class="footer-titulo">Creado por alumnos del 6IM3</div>
-    <ul class="footer-lista">
-      <li>ALVAREZ VUDOYRA HECTOR MIGUEL</li>
-      <li>BAUTISTA MARTINEZ ANA JANETTE</li>
-      <li>CRUZ RODRIGUEZ ALEXIS</li>
-      <li>CRUZ REYES VALENTINA</li>
-      <li>FERREIRO JURADO RAUL</li>
-      <li>MONSALVO CORONADO BRENDA VIRIDIANA</li>
-      <li>PERES SALIINAS MATEO</li>
-    </ul>
+    <div class="memorial-box">
+      "En memoria de <span class="nombres-resaltados">José Gabriel Hernández Méndez y Alí Yael Gonzales Aranda</span>
+      Siempre vivos en nuestros corazones. Con amor, sus amigos."
+    </div>
   </footer>
 
 </body>
