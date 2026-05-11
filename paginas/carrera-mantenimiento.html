@@ -202,40 +202,49 @@
       border: 2px solid #da190b;
     }
 
-    /* Resultados */
-    .resultados {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
+ /* Reemplaza .resultados y .resultado-item por esto: */
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      height: 450px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      margin: 20px auto;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      overflow: hidden;
     }
 
-    .resultado-item {
-      background-color: rgba(255, 255, 255, 0.15);
+    #chat-messages {
+      flex: 1;
       padding: 20px;
-      border-radius: 10px;
-      border-left: 4px solid #FFD700;
-      color: white;
-      overflow-x: auto;
-    }
-
-    .resultado-item strong {
-      color: #FFD700;
-    }
-
-    .resultado-pre {
-      background-color: rgba(0, 0, 0, 0.3);
-      padding: 12px;
-      border-radius: 6px;
-      margin-top: 10px;
-      font-size: 13px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-family: 'Courier New', monospace;
-      max-height: 300px;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
+    .msg-user {
+      align-self: flex-end;
+      background-color: #640328; /* Guinda */
+      color: white;
+      padding: 10px 15px;
+      border-radius: 15px 15px 0 15px;
+      max-width: 80%;
+      font-size: 14px;
+    }
+
+    .msg-bot {
+      align-self: flex-start;
+      background-color: #f1f1f1;
+      color: #333;
+      padding: 10px 15px;
+      border-radius: 15px 15px 15px 0;
+      max-width: 80%;
+      font-size: 14px;
+      border-left: 4px solid #FFD700; /* Oro */
+    }
     /* Responsivo */
     @media (max-width: 768px) {
       h1 {
@@ -270,34 +279,15 @@
         min-width: 80px;
       }
 
-      .resultados {
-        grid-template-columns: 1fr;
-      }
-    }
-    #resultados {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-}
 
-.resultado-item {
-  background: white;
-  color: #333;
-  padding: 15px;
-  border-radius: 15px 15px 15px 0; /* Estilo burbuja */
-  border-left: 5px solid #640328;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-  max-width: 90%;
-  align-self: flex-start;
-}
-
-.resultado-pre {
-  background: #f4f4f4;
-  padding: 8px;
-  font-size: 12px;
-  border-radius: 5px;
-  white-space: pre-wrap; /* Para que no se salga el texto */
+    .msg-user {
+  align-self: flex-end;
+  background: #640328;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 15px 15px 0 15px;
+  max-width: 80%;
+  font-size: 14px;
 }
   </style>
 </head>
@@ -327,21 +317,25 @@
           placeholder="Ejemplo: Torno 18"
           onkeypress="if(event.key === 'Enter') hacerPregunta()"
         >
+        
+     <div class="contenido">
+  <h1>Inventario Inteligente</h1>
+  
+  <div class="chat-container">
+    <div id="chat-messages">
+      <div class="msg-bot">¡Qué onda, paps! Soy la IA del taller. ¿En qué máquina te puedo ayudar?</div>
+    </div>
+  </div>
 
-        <div class="botones">
-          <button type="button" onclick="hacerPregunta()">🔍 Buscar</button>
-          <button type="button" class="btn-voz" onclick="dictarPregunta()" title="Hablar (dictado)">🎤</button>
-          <button type="button" class="btn-voz" onclick="toggleVoz()" id="btnVoz" title="Activar/Desactivar voz">🔊 OFF</button>
-        </div>
-      </div>
-
-      <div class="cargando" id="cargando">
-        <div class="spinner"></div>
-        <p>Buscando en la base de datos...</p>
-      </div>
-
-      <div class="respuesta" id="respuesta"></div>
-      <div class="resultados" id="resultados"></div>
+  <div class="input-group">
+    <input type="text" id="pregunta" placeholder="Ej: ¿Cómo está el torno 1?">
+    <div class="botones">
+      <button onclick="hacerPregunta()">Preguntar</button>
+      <button id="btnVoz" onclick="toggleVoz()" class="btn-voz">🔊 OFF</button>
+      <button onclick="dictarPregunta()" class="btn-voz">🎤</button>
+    </div>
+  </div>
+</div>
     </div>
   </div>
 
@@ -436,29 +430,37 @@
       return data;
     }
 
-    function mostrarRespuestas(datos) {
-      const respuestasDiv = document.getElementById('respuesta');
-      const resultadosDiv = document.getElementById('resultados');
-      if (!datos || !Array.isArray(datos.resultados) || datos.cantidad === 0) {
-        respuestasDiv.className = 'respuesta error';
-        respuestasDiv.textContent = '❌ No se encontraron resultados.';
-        respuestasDiv.style.display = 'block';
-        resultadosDiv.innerHTML = '';
-        hablar('No se encontraron resultados.');
-        return;
-      }
-      respuestasDiv.className = 'respuesta exito';
-      respuestasDiv.textContent = `✅ Se encontraron ${datos.cantidad} resultado(s)`;
-      respuestasDiv.style.display = 'block';
-      hablar(`Se encontraron ${datos.cantidad} resultado(s).`);
-      resultadosDiv.innerHTML = datos.resultados.map((r, i) => `
-        <div class="resultado-item">
-          <strong>${i + 1}. Coincidencia:</strong> ${r.coincidencia}<br>
-          <strong>Valor:</strong> ${r.valor}<br><br>
-          <div class="resultado-pre"><strong>Registro:</strong>\n${Object.entries(r.item || {}).map(([k,v]) => `${k}: ${v}`).join('\n')}</div>
-        </div>
-      `).join('');
-    }
+function mostrarRespuestas(datos) {
+  const chatMessages = document.getElementById('chat-messages');
+  const inputPregunta = document.getElementById('pregunta');
+  const userText = inputPregunta.value;
+
+  if (!userText) return;
+
+  // 1. Poner lo que tú dijiste
+  chatMessages.innerHTML += `<div class="msg-user">${userText}</div>`;
+
+  // 2. Preparar respuesta de la IA
+  let respuestaIA = "";
+  if (!datos || datos.cantidad === 0) {
+    respuestaIA = "Híjole paps, no encontré nada con esos datos. ¿Seguro que está en el taller?";
+  } else {
+    // Si encuentra algo, armamos una frase chida
+    const item = datos.resultados[0].item;
+    const nombre = item["NOMBRE"] || "la máquina";
+    const estado = item["ESTADO"] || "sin reporte";
+    respuestaIA = `Simón, chequé el dato: El ${nombre} está en estado **${estado}**.`;
+  }
+
+  // 3. Poner lo que dice la IA
+  chatMessages.innerHTML += `<div class="msg-bot">${respuestaIA}</div>`;
+
+  // Limpiar y bajar el scroll solito
+  inputPregunta.value = "";
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  
+  if (VOZ_ACTIVA) hablar(respuestaIA);
+}
 
     function mostrarError(mensaje) {
       const respuestasDiv = document.getElementById('respuesta');
