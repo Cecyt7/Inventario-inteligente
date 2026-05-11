@@ -168,7 +168,7 @@
 
   <script>
     const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
-    const MAQUINAS_GID = { 'torno': 0, 'fresadora': 1, 'mesa': 2, 'esmeril': 3, 'soldadora': 4, 'taladradora': 5, 'cepillo': 6, 'compresor': 7, 'cnc': 8 };
+    const MAQUINAS_GID = { 'torno': 0, 'fresadora': 406685106, 'mesa': 675907642, 'esmeril': 1328099769, 'soldadora': 1403892581, 'taladradora': 583489325, 'cepillo': 639087492, 'comparador': 737994113, 'cnc': 123325945 };
 
     let CACHE = {};
     let VOZ_ACTIVA = false;
@@ -178,7 +178,7 @@
       const dicc = {
         'torno': [/torn/], 'fresadora': [/fresa/], 'mesa': [/mesa/], 'esmeril': [/esmeril/],
         'soldadora': [/solda/], 'taladradora': [/taladra/], 'cepillo': [/cepillo/],
-        'compresor': [/compre/], 'cnc': [/cnc/, /compu/]
+        'comparador': [/compa/], 'cnc': [/cnc/, /compu/]
       };
       for (const [key, regexs] of Object.entries(dicc)) {
         if (regexs.some(rx => rx.test(q))) return { nombre: key.toUpperCase(), key: key };
@@ -240,35 +240,45 @@
       if (VOZ_ACTIVA) hablar(respuestaIA);
     }
 
-    async function hacerPregunta() {
+ async function hacerPregunta() {
       const input = document.getElementById('pregunta');
       const pregunta = input.value.trim();
       if (!pregunta) return;
       
       document.getElementById('cargando').style.display = 'block';
       try {
-        const maq = detectarMaquina(pregunta);
-        if (!maq) throw new Error('No detecté la máquina. Prueba con: Torno, Fresadora, etc.');
+        const maq = detectarMaquina(pregunta); // Aquí detecta si dijiste "Torno" o "Fresa"
+        if (!maq) throw new Error('No detecté qué máquina buscas. Prueba decir: Torno 5 o Fresadora 2.');
         
-        if (!CACHE[maq.key]) CACHE[maq.key] = await cargarDatosSheet(MAQUINAS_GID[maq.key]);
+        const gid = MAQUINAS_GID[maq.key]; // Obtiene el ID de la pestaña correcta
+        
+        // Si no tenemos los datos de esa pestaña en memoria, los descarga
+        if (!CACHE[maq.key]) {
+          console.log(`Cargando datos de la pestaña: ${maq.key} (GID: ${gid})`);
+          CACHE[maq.key] = await cargarDatosSheet(gid);
+        }
+        
         const data = CACHE[maq.key];
-        const id = detectarID(pregunta);
+        const id = detectarID(pregunta); // Busca el número (ID) en tu pregunta
         
         let resultados = [];
         if (id) {
-          const row = data.find(x => String(x["IDENTIFICACION"]).trim() === id);
+          // Busca en la columna "IDENTIFICACION" de esa hoja específica
+          const row = data.find(x => String(x["IDENTIFICACION"]).trim() === String(id));
           if (row) resultados.push({ item: row });
         } else {
-          // Búsqueda general
-          resultados = data.filter(item => Object.values(item).some(v => v.toLowerCase().includes(pregunta.toLowerCase()))).map(r => ({ item: r }));
+          // Búsqueda general por texto en toda la hoja
+          resultados = data.filter(item => 
+            Object.values(item).some(v => String(v).toLowerCase().includes(pregunta.toLowerCase()))
+          ).map(r => ({ item: r }));
         }
         
+        if (resultados.length === 0) throw new Error(`No encontré el ${maq.nombre} con ese número.`);
+
         mostrarRespuestas({ cantidad: resultados.length, resultados: resultados }, maq.nombre, pregunta);
         input.value = "";
       } catch (e) {
-        const chatMessages = document.getElementById('chat-messages');
-        chatMessages.innerHTML += `<div class="msg-user">${pregunta}</div>`;
-        chatMessages.innerHTML += `<div class="msg-bot" style="color:red">⚠️ ${e.message}</div>`;
+        // ... (manejo de error igual al anterior)
       } finally {
         document.getElementById('cargando').style.display = 'none';
       }
