@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GUINDA - Gestión de Taller CECyT 7</title>
+  <title>GUINDA V2.0 - Asistente de Taller</title>
 
 <style>
-    /* VARIABLES DE DISEÑO PREMIUM */
+    /* VARIABLES UNIFICADAS PRO */
     :root {
       --guinda: #640328;
-      --guinda-luz: #8a0b3d;
+      --guinda-deep: #2c0112;
       --oro: #FFD700;
-      --fondo: #f0f2f5;
-      --bot-bg: #ffffff;
+      --blanco-glass: rgba(255, 255, 255, 0.1);
       --user-bg: #34495e;
       --card-bg: #1e272e;
     }
@@ -20,452 +19,651 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
 
     body {
-      background: linear-gradient(135deg, var(--guinda) 0%, #2c0112 100%);
+      background: linear-gradient(135deg, var(--guinda) 0%, var(--guinda-deep) 100%);
       color: white;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* BARRA SUPERIOR */
+    /* BARRA SUPERIOR UNIFICADA */
     .barra-superior {
       position: fixed;
-      top: 0; width: 100%; height: 70px;
+      top: 0; width: 100%; height: 90px;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
-      border-bottom: 4px solid var(--oro);
+      border-bottom: 5px solid var(--oro);
       display: flex; justify-content: space-between; align-items: center;
-      padding: 0 5%; z-index: 1000;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      padding: 0 40px; z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
 
-    .logo { height: 45px; transition: transform 0.3s; }
-    .logo:hover { transform: scale(1.05); }
+    .logo { height: 75px; transition: transform 0.3s; }
 
-    /* CONTENEDOR */
+    /* CONTENEDOR CON GLASSMORPHISM */
     .contenedor {
-      margin-top: 90px;
+      margin-top: 110px;
       flex: 1;
       max-width: 900px;
       margin-left: auto; margin-right: auto;
       width: 95%;
       padding: 20px;
+      animation: fadeIn 0.8s ease-out;
     }
 
     .btn-volver {
-      padding: 10px 20px; background: white; color: var(--guinda);
+      padding: 12px 25px; background: white; color: var(--guinda);
       border: none; border-radius: 50px; cursor: pointer;
-      font-weight: bold; margin-bottom: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      font-weight: 800; margin-bottom: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
       transition: 0.3s;
     }
-    .btn-volver:hover { background: var(--oro); transform: translateX(-5px); }
+    .btn-volver:hover { background: var(--oro); color: black; transform: translateX(-5px); }
 
     h1 { 
-      text-align: center; margin-bottom: 25px; font-size: 26px; 
-      text-transform: uppercase; letter-spacing: 3px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      text-align: center; margin-bottom: 25px; font-size: 28px; 
+      text-transform: uppercase; letter-spacing: 4px;
+      font-weight: 900;
     }
 
-    /* CHAT CONTAINER - GLASSMORPHISM */
+    /* CHAT CONTAINER - PREMIUM */
     .chat-container {
-      background: rgba(236, 240, 241, 0.9);
-      border-radius: 15px;
-      height: 500px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 25px;
+      height: 550px;
       display: flex; flex-direction: column;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-      overflow: hidden; margin-bottom: 20px;
-      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      overflow: hidden; margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.3);
     }
 
     #chat-messages {
-      flex: 1; padding: 25px; overflow-y: auto;
-      display: flex; flex-direction: column; gap: 15px;
-      scroll-behavior: smooth;
+      flex: 1; padding: 30px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 18px;
     }
 
-    /* MENSAJES */
+    /* BURBUJAS DE MENSAJE */
     .msg-user {
       align-self: flex-end; background: var(--user-bg); color: white;
-      padding: 12px 18px; border-radius: 15px 15px 0 15px;
-      max-width: 80%; font-size: 14px; font-weight: 500;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      animation: messageIn 0.3s ease-out;
+      padding: 14px 22px; border-radius: 20px 20px 0 20px;
+      max-width: 80%; font-size: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
     .msg-bot {
-      align-self: flex-start; background: white; color: #2c3e50;
-      padding: 15px 20px; border-radius: 15px 15px 15px 0;
-      max-width: 85%; font-size: 14px; line-height: 1.6;
-      border-left: 5px solid var(--oro);
-      box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
-      animation: messageIn 0.3s ease-out;
+      align-self: flex-start; background: white; color: #1a1a1a;
+      padding: 18px 25px; border-radius: 20px 20px 20px 0;
+      max-width: 85%; font-size: 15px; line-height: 1.6;
+      border-left: 6px solid var(--guinda);
+      box-shadow: 5px 10px 20px rgba(0,0,0,0.1);
     }
 
-    @keyframes messageIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* FICHA TÉCNICA PRO */
+    /* FICHA TÉCNICA DARK MODE */
     .ficha-tecnica {
       background: var(--card-bg);
-      color: #ecf0f1;
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 10px;
-      border-left: 6px solid var(--guinda);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-      animation: fadeInUp 0.5s ease-out;
+      color: #fff; border-radius: 15px; padding: 25px;
+      margin-top: 10px; border-left: 6px solid var(--oro);
     }
 
     .ficha-header {
       border-bottom: 1px solid #444;
-      margin-bottom: 15px; padding-bottom: 10px;
-      text-align: center; font-weight: bold;
-      font-size: 1.2em; color: var(--oro);
-      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 15px; padding-bottom: 12px;
+      color: var(--oro); font-weight: 900;
+      text-transform: uppercase; letter-spacing: 2px;
     }
 
-    .ficha-grid {
-        display: grid; grid-template-columns: 1fr 1fr;
-        gap: 12px; font-size: 0.9em;
-    }
-
-    .dato-label { color: #95a5a6; font-size: 0.7em; text-transform: uppercase; font-weight: bold; }
-    .dato-valor { color: #fff; font-weight: 600; display: block; word-break: break-word; }
+    .ficha-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .dato-label { color: #888; font-size: 11px; text-transform: uppercase; font-weight: bold; }
+    .dato-valor { color: #fff; font-weight: 600; display: block; font-size: 14px; }
 
     /* INPUT GROUP */
     .input-group {
-      display: flex; gap: 10px; background: rgba(255,255,255,0.1);
-      padding: 15px; border-radius: 15px; backdrop-filter: blur(5px);
+      display: flex; gap: 12px; background: var(--blanco-glass);
+      padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
     }
 
     #pregunta {
-      flex: 1; padding: 15px; border: none;
-      border-radius: 10px; outline: none; font-size: 16px;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+      flex: 1; padding: 18px; border: none;
+      border-radius: 15px; outline: none; font-size: 16px;
+      background: white; color: #333;
     }
 
-    .botones { display: flex; gap: 8px; }
-    .botones button {
-      padding: 10px 18px; border: none; border-radius: 10px;
-      cursor: pointer; font-weight: bold; transition: 0.3s;
-    }
+    .btn-enviar { background: var(--oro); color: black; font-weight: 900; border: none; padding: 0 25px; border-radius: 15px; cursor: pointer; transition: 0.3s; }
+    .btn-enviar:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,215,0,0.4); }
 
-    .btn-enviar { background: var(--guinda); color: white; }
-    .btn-enviar:hover { background: var(--guinda-luz); transform: translateY(-2px); }
-    .btn-voz { background: #34495e; color: white; min-width: 60px; }
-    .btn-micro { background: #e67e22; color: white; }
+    .btn-micro { background: #e67e22; color: white; border: none; padding: 0 20px; border-radius: 15px; cursor: pointer; font-size: 20px; }
 
-    /* MODAL TIPO ACCESO SEGURIDAD */
-    .jarvis-modal {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9); display: none;
-      justify-content: center; align-items: center; z-index: 2000;
-      backdrop-filter: blur(8px);
-    }
-
+    /* MODAL SEGURIDAD */
     .modal-content {
-      background: white; padding: 40px; border-radius: 20px;
-      border-top: 15px solid var(--guinda); width: 400px; text-align: center;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5); color: #333;
+      background: white; padding: 40px; border-radius: 30px;
+      border-top: 15px solid var(--guinda); text-align: center;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.8);
     }
 
-    .modal-content h3 { color: var(--guinda); margin-bottom: 20px; font-size: 1.5em; }
-    .modal-content input {
-      width: 100%; padding: 15px; margin: 10px 0;
-      border: 2px solid #eee; border-radius: 10px; font-size: 1em;
+    /* FOOTER MEMORIAL (Igual a las otras páginas) */
+    footer {
+      padding: 30px 20px;
+      background: rgba(0,0,0,0.3);
+      text-align: center;
+      margin-top: 40px;
     }
-    .modal-content input:focus { border-color: var(--guinda); outline: none; }
 
-    .btn-confirmar {
-      background: var(--guinda); color: white; border: none;
-      padding: 15px; cursor: pointer; font-weight: bold;
-      width: 100%; margin-top: 20px; border-radius: 10px;
-      font-size: 1.1em; transition: 0.3s;
+    .memorial-box { font-style: italic; font-size: 13px; color: rgba(255, 255, 255, 0.7); }
+    .nombres-resaltados { color: white; font-weight: bold; display: block; margin-top: 5px; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    @media (max-width: 600px) {
+      .barra-superior { height: 75px; padding: 0 20px; }
+      .logo { height: 55px; }
+      .contenedor { margin-top: 90px; }
+      .ficha-grid { grid-template-columns: 1fr; }
     }
-    .btn-confirmar:hover { background: #2ecc71; letter-spacing: 1px; }
-
-    .cargando { text-align: center; color: var(--oro); display: none; margin-top: 15px; font-weight: bold; letter-spacing: 2px; }
-
-    /* SCROLLBAR CUSTOM */
-    #chat-messages::-webkit-scrollbar { width: 6px; }
-    #chat-messages::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
 </style>
 </head>
 <body>
 
   <div id="modal-registro" class="jarvis-modal">
     <div class="modal-content">
-      <h3>🔐 ACCESO AUTORIZADO</h3>
+      <h3 style="color:var(--guinda); font-weight:900;">🔐 ACCESO AUTORIZADO</h3>
       <p id="info-maquina-registro" style="font-weight:bold; color:#666; margin-bottom:20px;"></p>
-      <input type="text" id="nombre-alumno" placeholder="Nombre del Operador">
-      <input type="text" id="boleta-alumno" placeholder="Número de Boleta">
-      <input type="text" id="grupo-alumno" placeholder="Grupo Académico">
-      <button class="btn-confirmar" onclick="confirmarRegistro()">CONFIRMAR INICIO</button>
-      <button onclick="cerrarModal()" style="margin-top:15px; background:none; border:none; color:gray; cursor:pointer; text-decoration:underline;">Abortar operación</button>
+      <input type="text" id="nombre-alumno" placeholder="Nombre del Operador" style="width:100%; padding:15px; margin:8px 0; border:2px solid #eee; border-radius:10px;">
+      <input type="text" id="boleta-alumno" placeholder="Número de Boleta" style="width:100%; padding:15px; margin:8px 0; border:2px solid #eee; border-radius:10px;">
+      <input type="text" id="grupo-alumno" placeholder="Grupo Académico" style="width:100%; padding:15px; margin:8px 0; border:2px solid #eee; border-radius:10px;">
+      <button class="btn-confirmar" onclick="confirmarRegistro()" style="background:var(--guinda); color:white; border:none; width:100%; padding:18px; border-radius:10px; font-weight:900; cursor:pointer; margin-top:15px;">CONFIRMAR INICIO</button>
+      <p onclick="cerrarModal()" style="margin-top:15px; color:gray; cursor:pointer; font-size:12px; text-decoration:underline;">Abortar operación</p>
     </div>
   </div>
 
   <div class="barra-superior">
     <img src="../img/logo_ipn.png" class="logo" alt="IPN">
-    <div style="color:var(--guinda); font-weight:900; font-size:1.2em;">CECyT 7 "Cuauhtémoc"</div>
+    <div style="color:var(--guinda); font-weight:900; font-size:1.1em; text-align:center;">SISTEMA GUINDA<br><small style="font-size:0.6em; opacity:0.7;">CECyT 7</small></div>
     <img src="../img/logo_cecyt7.png" class="logo" alt="CECyT 7">
   </div>
 
   <div class="contenedor">
     <button class="btn-volver" onclick="window.location.href='./carreras.html'">← VOLVER AL PANEL</button>
     
-    <h1>SISTEMA GUINDA V2.0</h1>
+    <h1>GESTIÓN INTELIGENTE</h1>
 
     <div class="chat-container">
       <div id="chat-messages">
-        <div class="msg-bot">🤖 **Bienvenido, Técnico.**<br>Soy GUINDA, tu asistente de gestión de taller. ¿Qué equipo deseas consultar o registrar hoy?</div>
+        <div class="msg-bot">🤖 **Bienvenido, Técnico.**<br>Soy GUINDA, el núcleo de gestión de este taller. ¿Qué equipo necesitas operar o consultar?</div>
       </div>
     </div>
 
     <div class="input-group">
-      <input type="text" id="pregunta" placeholder="Ej: 'Ficha del Torno 3' o 'Usar Fresadora 1'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
-      <div class="botones">
-        <button class="btn-enviar" onclick="hacerPregunta()">ENVIAR</button>
-        <button id="btnVoz" class="btn-voz" onclick="toggleVoz()">🔊 OFF</button>
-        <button class="btn-micro" onclick="dictarPregunta()">🎤</button>
-      </div>
+      <input type="text" id="pregunta" placeholder="Ej: 'Ficha del Torno 2' o 'Usar Fresadora'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
+      <button class="btn-enviar" onclick="hacerPregunta()">ENVIAR</button>
+      <button class="btn-micro" onclick="dictarPregunta()">🎤</button>
     </div>
-
-    <div id="cargando" class="cargando">🛰️ SINCRONIZANDO CON NUBE...</div>
   </div>
 
-<script>
-    const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/ PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
+  <footer>
+    <div class="memorial-box">
+        "En memoria de <span class="nombres-resaltados">José Gabriel Hernández Méndez y Alí Yael Gonzales Aranda</span>
+        Siempre vivos en nuestros corazones. Con amor, sus amigos."
+    </div>
+  </footer>
+
+  <script>
+      const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/ PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
+
     const URL_GUINDA_GATEWAY = "https://script.google.com/macros/s/AKfycbzrMi2HyJEXezEUCrq3Roe3r9h5R5yagUtOcF3BhX9_S6kje-tj5H30GbsKNUnThpaH/exec"; 
+
     
+
     const MAQUINAS_GID = { 
+
       'torno': 0, 
+
       'fresadora': 406685106,
+
       'mesa': 675907642,
+
       'esmeril': 1328099769, 
+
       'soldadora': 1403892581,
+
       'taladradora': 583489325,
+
       'cepillo': 639087492, 
+
       'comparador': 737994113,
+
       'cnc': 123325945 
+
     };
 
+
+
     let CACHE = {};
+
     let VOZ_ACTIVA = false;
+
     let estadoSesion = { maquinaPendiente: null, idPendiente: null };
 
+
+
     // --- DETECTORES ---
+
     function detectarMaquina(pregunta) {
+
       const q = pregunta.toLowerCase();
+
       const dicc = {
+
         'torno': [/torn/], 'fresadora': [/fresa/], 'mesa': [/mesa/], 'esmeril': [/esmeril/],
+
         'soldadora': [/solda/], 'taladradora': [/taladra/], 'cepillo': [/cepillo/],
+
         'comparador': [/compa/], 'cnc': [/cnc/, /compu/]
+
       };
+
       for (const [key, regexs] of Object.entries(dicc)) {
+
         if (regexs.some(rx => rx.test(q))) return { nombre: key.toUpperCase(), key: key };
+
       }
+
       return null;
+
     }
+
+
 
     function detectarID(pregunta) {
+
       const m = pregunta.match(/\b(\d+)\b/);
+
       return m ? m[1] : null;
+
     }
+
+
 
     // --- CORE LOGIC ---
+
     async function hacerPregunta() {
+
       const input = document.getElementById('pregunta');
+
       const pregunta = input.value.trim();
+
       if (!pregunta) return;
 
+
+
       const chat = document.getElementById('chat-messages');
+
       chat.innerHTML += `<div class="msg-user">${pregunta}</div>`;
+
       input.value = "";
+
       chat.scrollTop = chat.scrollHeight;
+
+
 
       // Detector de Resumen
+
       if (pregunta.toLowerCase().match(/(resumen|estado general|reporte)/)) {
+
           await generarResumenGeneral();
+
           return; 
+
       } 
 
+
+
       const maq = detectarMaquina(pregunta);
+
       const id = detectarID(pregunta);
 
+
+
       if (!maq) {
+
         imprimirBot("⚠️ No reconozco el equipo. Intenta con: Torno, Fresadora, Esmeril, etc.");
+
         return;
+
       }
+
+
 
       if (pregunta.toLowerCase().match(/(usar|registrar|ocupar|voy a)/)) {
+
         abrirModalRegistro(maq.nombre, id || "S/N");
+
         return;
+
       }
+
+
 
       // Consulta de Ficha
+
       const tempId = "temp-" + Date.now();
+
       chat.innerHTML += `<div class="msg-bot" id="${tempId}">🔍 Buscando en inventario...</div>`;
+
       chat.scrollTop = chat.scrollHeight;
 
+
+
       try {
+
         if (!CACHE[maq.key]) {
+
           CACHE[maq.key] = await cargarDatosSheet(MAQUINAS_GID[maq.key]);
+
         }
+
         const data = CACHE[maq.key];
+
         const resultado = id ? data.find(x => String(x["IDENTIFICACION"]).trim() === String(id)) : null;
+
         
+
         setTimeout(() => {
+
           const tempElem = document.getElementById(tempId);
+
           if(tempElem) tempElem.remove();
+
           procesarRespuestaTecnica(resultado, maq.nombre, id);
+
         }, 800);
 
+
+
       } catch (e) {
+
         imprimirBot("❌ Error de enlace con la base de datos.");
+
       }
+
     }
+
+
 
     async function generarResumenGeneral() {
+
         const chat = document.getElementById('chat-messages');
+
         const tempId = "temp-" + Date.now();
+
         chat.innerHTML += `<div class="msg-bot" id="${tempId}">🛰️ Iniciando escaneo global...</div>`;
+
         chat.scrollTop = chat.scrollHeight;
+
         
+
         let reporteFinal = "📋 **REPORTE DE ESTADO GLOBAL**\n\n";
+
         
+
         try {
+
             for (const [nombre, gid] of Object.entries(MAQUINAS_GID)) {
+
                 document.getElementById(tempId).innerText = `📡 Escaneando: ${nombre.toUpperCase()}...`;
+
                 if (!CACHE[nombre]) CACHE[nombre] = await cargarDatosSheet(gid);
+
                 
+
                 const data = CACHE[nombre];
+
                 const operativos = data.filter(item => (item["ESTADO"]||"").toUpperCase().includes("OPERATIVO") || (item["ESTADO"]||"").toUpperCase().includes("BUEN")).length;
+
                 reporteFinal += `🔹 **${nombre.toUpperCase()}:** ${data.length} u. (${operativos} OK ✅ / ${data.length - operativos} Mantto 🛠️)\n`;
+
             }
+
             document.getElementById(tempId).remove();
+
             imprimirBot(reporteFinal + "\n*Sincronización completa.*");
+
         } catch (e) {
+
             document.getElementById(tempId).remove();
+
             imprimirBot("❌ Error en el escaneo general.");
+
         }
+
     }
+
+
 
     function procesarRespuestaTecnica(item, maqNombre, id) {
+
       if (!item) {
+
         imprimirBot(`❌ No existe registro para **${maqNombre} ${id || ''}**.`);
+
         return;
+
       }
+
+
 
       const omitir = ["IDENTIFICACION", "UBICACION", "ESTADO", "MARCA", "MODELO", "NOTAS", "ESPECIFICACIONES"];
+
       let gridDinamico = "";
+
       Object.keys(item).forEach(col => {
+
           const valor = item[col];
+
           if (!omitir.includes(col) && valor && valor.trim() !== "" && valor !== "0") {
+
               gridDinamico += `<div><span class="dato-label">${col.replace(/_/g, ' ')}:</span><span class="dato-valor">${valor}</span></div>`;
+
           }
+
       });
+
+
 
       const estado = (item["ESTADO"] || "S/D").toUpperCase();
+
       const colorEstado = (estado.includes('OPERATIVO') || estado.includes('BUEN')) ? '#2ecc71' : '#e74c3c';
 
+
+
       const fichaHTML = `
+
         <div class="ficha-tecnica">
+
           <div class="ficha-header">🛠️ ESPECIFICACIONES: ${maqNombre} ${id}</div>
+
           <div style="margin-bottom:15px; display:flex; justify-content:space-between;">
+
             <div><span class="dato-label">STATUS:</span><span class="dato-valor" style="color:${colorEstado}">● ${estado}</span></div>
+
             <div style="text-align:right"><span class="dato-label">UBICACIÓN:</span><span class="dato-valor">${item["UBICACION"] || 'Taller'}</span></div>
+
           </div>
+
           <div class="ficha-grid">${gridDinamico}</div>
+
           <div style="margin-top:15px; padding:10px; background:rgba(0,0,0,0.3); border-radius:5px; border-left:3px solid var(--oro);">
+
             <span class="dato-label" style="color:var(--oro)">Observaciones:</span>
+
             <p style="font-size:0.85em; font-style:italic;">${item["NOTAS"] || "Sin notas de seguridad."}</p>
+
           </div>
+
         </div>`;
+
       imprimirBot(fichaHTML);
+
     }
+
+
 
     // --- FUNCIONES MODAL ---
+
     function abrirModalRegistro(maquina, id) {
+
       estadoSesion.maquinaPendiente = maquina;
+
       estadoSesion.idPendiente = id;
+
       document.getElementById('info-maquina-registro').innerText = `${maquina} - UNIDAD ${id}`;
+
       document.getElementById('modal-registro').style.display = 'flex';
+
     }
+
     function cerrarModal() { document.getElementById('modal-registro').style.display = 'none'; }
 
+
+
     async function confirmarRegistro() {
+
       const n = document.getElementById('nombre-alumno').value;
+
       const b = document.getElementById('boleta-alumno').value;
+
       const g = document.getElementById('grupo-alumno').value;
+
       if (!n || !b || !g) return alert("Completa el registro de seguridad.");
+
       
+
       cerrarModal();
+
       imprimirBot(`🚀 **Autorizando a ${n}...**`);
+
       
+
       try {
+
           await fetch(URL_GUINDA_GATEWAY, { method: 'POST', mode: 'no-cors', body: JSON.stringify({nombre:n, boleta:b, grupo:g, equipo:estadoSesion.maquinaPendiente, id:estadoSesion.idPendiente, accion:"INICIO"})});
+
           imprimirBot(`✅ **ACCESO CONCEDIDO.** Registro guardado en bitácora.`);
+
           document.querySelectorAll('.modal-content input').forEach(i => i.value = "");
+
       } catch (e) { imprimirBot("❌ Error en servidor de bitácora."); }
+
     }
+
+
 
     // --- UTILIDADES ---
+
     function imprimirBot(texto) {
+
       const chat = document.getElementById('chat-messages');
+
       chat.innerHTML += `<div class="msg-bot">${texto}</div>`;
+
       chat.scrollTop = chat.scrollHeight;
+
       if (VOZ_ACTIVA) hablarFormal(texto);
+
     }
+
+
 
     async function cargarDatosSheet(gid) {
+
       const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub?gid=${gid}&single=true&output=csv`;
+
       const res = await fetch(url);
+
       const csv = await res.text();
+
       const rows = parseCSV(csv);
+
       const headers = rows[0].map(h => String(h || '').trim().toUpperCase());
+
       return rows.slice(1).map(r => {
+
         const obj = {};
+
         headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
+
         return obj;
+
       });
+
     }
+
+
 
     function parseCSV(text) {
+
       const rows = []; let row = []; let cur = ''; let inQuotes = false;
+
       for (let i = 0; i < text.length; i++) {
+
         const c = text[i];
+
         if (c === '"') { inQuotes = !inQuotes; continue; }
+
         if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
+
         if ((c === '\n' || c === '\r') && !inQuotes) {
+
           row.push(cur); cur = ''; if (row.length > 1 || row[0] !== '') rows.push(row);
+
           row = []; continue;
+
         }
+
         cur += c;
+
       }
+
       row.push(cur); if (row.length > 1 || row[0] !== '') rows.push(row);
+
       return rows;
+
     }
 
+
+
     function toggleVoz() { VOZ_ACTIVA = !VOZ_ACTIVA; document.getElementById("btnVoz").textContent = VOZ_ACTIVA ? "🔊 ON" : "🔊 OFF"; }
+
     function hablarFormal(texto) {
+
       if (!window.speechSynthesis) return;
+
       window.speechSynthesis.cancel();
+
       const u = new SpeechSynthesisUtterance(texto.replace(/\*/g, ''));
+
       u.lang = "es-MX"; u.rate = 1;
+
       window.speechSynthesis.speak(u);
+
     }
+
     function dictarPregunta() {
+
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
       if (!SpeechRecognition) return alert('Navegador no soportado');
+
       const rec = new SpeechRecognition();
+
       rec.lang = 'es-MX';
+
       rec.onresult = (e) => { document.getElementById('pregunta').value = e.results[0][0].transcript; hacerPregunta(); };
+
       rec.start();
+
     }
-</script>
+  </script>
+
 </body>
 </html>
