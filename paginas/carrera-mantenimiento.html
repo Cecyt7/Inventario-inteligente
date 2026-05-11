@@ -76,7 +76,7 @@
       border-left: 4px solid #FFD700; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     }
 
-    /* FICHA TÉCNICA PRO */
+/* --- ESTILOS DE LA FICHA TÉCNICA DINÁMICA --- */
     .ficha-tecnica {
       background: #2c3e50;
       color: white;
@@ -89,31 +89,34 @@
       width: 100%;
     }
 
-    .ficha-header {
-      border-bottom: 1px solid #7f8c8d;
-      margin-bottom: 10px;
-      padding-bottom: 5px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.1em;
-      color: #FFD700; /* Oro */
-      text-transform: uppercase;
-    }
-
     .ficha-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      font-size: 0.85em;
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Dos columnas para que quepan más datos */
+        gap: 12px;
+        font-size: 0.85em;
+        align-items: start;
     }
 
-    .dato-label { color: #bdc3c7; font-size: 0.75em; text-transform: uppercase; display: block; margin-bottom: 2px; }
-    .dato-valor { color: #ecf0f1; font-weight: bold; }
+    .dato-label { 
+        color: #bdc3c7; 
+        font-size: 0.75em; 
+        text-transform: uppercase; 
+        display: block; 
+        margin-bottom: 2px; 
+    }
 
-    /* Entrada de datos */
+    .dato-valor { 
+        color: #ecf0f1; 
+        font-weight: bold; 
+        display: block;
+        word-break: break-word; /* Si el texto es muy largo, lo rompe para que no se salga de la ficha */
+    }
+
+    /* Entrada de datos (lo que ya tenías) */
     .input-group {
       display: flex; gap: 8px; background: white;
       padding: 12px; border-radius: 10px;
+    }ing: 12px; border-radius: 10px;
     }
 
     #pregunta {
@@ -340,53 +343,64 @@ function procesarRespuestaTecnica(item, maqNombre, id) {
         return;
       }
 
-      const estado = (item["ESTADO"] || "SIN REPORTE").toUpperCase();
-      const ubicacion = item["UBICACION"] || "Zona de Talleres";
-      const marca = item["MARCA"] || item["MODELO"] || "Genérico";
-      const especificaciones = item["ESPECIFICACIONES"] || item["NOTAS"] || "Sin datos técnicos adicionales.";
+      // 1. Columnas que NO queremos repetir en la rejilla técnica (porque ya van arriba o abajo)
+      const omitir = ["IDENTIFICACION", "UBICACION", "ESTADO", "MARCA", "MODELO", "NOTAS", "ESPECIFICACIONES"];
+      
+      // 2. Mapeo Automático: Generamos los datos técnicos que existan en el Excel
+      let gridDinamico = "";
+      Object.keys(item).forEach(col => {
+          const valor = item[col];
+          // Solo agrega si la columna tiene texto y no está en la lista de omitir
+          if (!omitir.includes(col) && valor && valor.trim() !== "" && valor !== "0") {
+              gridDinamico += `
+                  <div style="background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
+                      <span class="dato-label">${col.replace(/_/g, ' ')}:</span>
+                      <span class="dato-valor">${valor}</span>
+                  </div>`;
+          }
+      });
 
-      // 1. Definimos el diseño de la FICHA PRO
+      const estado = (item["ESTADO"] || "SIN REPORTE").toUpperCase();
+      const colorEstado = (estado.includes('OPERATIVO') || estado.includes('BUEN')) ? '#2ecc71' : '#e74c3c';
+      const notas = item["NOTAS"] || item["ESPECIFICACIONES"] || "Sin observaciones adicionales de seguridad.";
+
+      // 3. El diseño Pro-Industrial
       const fichaHTML = `
         <div class="ficha-tecnica">
           <div class="ficha-header">🛠️ FICHA TÉCNICA: ${maqNombre} ${id}</div>
-          <div class="ficha-grid">
+          
+          <div style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <span class="dato-label">Estado actual:</span><br>
-              <span class="dato-valor" style="color: ${estado.includes('OPERATIVO') ? '#2ecc71' : '#e74c3c'}">${estado}</span>
+              <span class="dato-label">Estado de la Unidad:</span>
+              <span class="dato-valor" style="color: ${colorEstado}; font-size: 1.1em;">● ${estado}</span>
             </div>
-            <div>
-              <span class="dato-label">Ubicación:</span><br>
-              <span class="dato-valor">${ubicacion}</span>
-            </div>
-            <div>
-              <span class="dato-label">Marca/Modelo:</span><br>
-              <span class="dato-valor">${marca}</span>
-            </div>
-            <div>
-              <span class="dato-label">ID de Unidad:</span><br>
-              <span class="dato-valor">${id}</span>
+            <div style="text-align: right;">
+              <span class="dato-label">Marca/Modelo:</span>
+              <span class="dato-valor">${item["MARCA"] || item["MODELO"] || 'Genérico'}</span>
             </div>
           </div>
-          <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed #7f8c8d; font-size: 0.85em;">
-            <span class="dato-label">Especificaciones Técnicas:</span><br>
-            <span style="color: #f1c40f;">${especificaciones}</span>
+
+          <div class="ficha-grid">
+            <div style="background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
+              <span class="dato-label">Ubicación:</span>
+              <span class="dato-valor">${item["UBICACION"] || 'Área de Máquinas'}</span>
+            </div>
+            ${gridDinamico} 
+          </div>
+
+          <div style="margin-top: 15px; padding: 10px; background: rgba(100, 3, 40, 0.2); border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.3);">
+            <span class="dato-label" style="color: #FFD700;">Manual / Notas Técnicas:</span><br>
+            <span style="color: #ecf0f1; font-size: 0.85em; font-style: italic;">${notas}</span>
           </div>
         </div>
       `;
 
-      // 2. Respuesta rápida de voz o texto corto para el bot
-      let resumenVoz = "";
-      if (estado.includes("OPERATIVO") || estado.includes("BUEN")) {
-        resumenVoz = `El ${maqNombre} ${id} está operativo en ${ubicacion}.`;
-      } else {
-        resumenVoz = `Atención: El ${maqNombre} ${id} reporta: ${estado}.`;
-      }
-
-      // Imprimimos la ficha técnica (HTML)
       imprimirBot(fichaHTML);
-      
-      // Si tienes la voz activa, que solo diga el resumen corto para no marear
-      if (VOZ_ACTIVA) hablarFormal(resumenVoz);
+
+      // Respuesta de voz simplificada para no aburrir al profe
+      if (VOZ_ACTIVA) {
+          hablarFormal(`Ficha del ${maqNombre} ${id} lista. Reporta un estado ${estado.toLowerCase()}.`);
+      }
     }
 
     // --- FUNCIONES GUINDA (MODAL) ---
