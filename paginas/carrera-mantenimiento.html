@@ -123,12 +123,13 @@
 <body>
 
   <!-- Modal de Registro -->
-  <div id="modal-registro" class="jarvis-modal">
+  <div id="modal-registro" class="guinda-modal">
     <div class="modal-content">
       <h3>📋 REGISTRO DE USO</h3>
       <p id="info-maquina-registro" style="font-weight:bold; margin-bottom:10px;"></p>
       <input type="text" id="nombre-alumno" placeholder="Nombre completo">
       <input type="text" id="boleta-alumno" placeholder="Número de Boleta">
+      <input type="text" id="grupo-alumno" placeholder="Grupo (Ej: 4IM1)">
       <button class="btn-confirmar" onclick="confirmarRegistro()">AUTORIZAR INICIO</button>
       <button onclick="cerrarModal()" style="margin-top:15px; background:none; border:none; color:gray; cursor:pointer;">Cancelar</button>
     </div>
@@ -151,7 +152,7 @@
     </div>
 
     <div class="input-group">
-      <input type="text" id="pregunta" placeholder="Ej: Usar Torno 5 o Consultar Fresa 2" onkeypress="if(event.key === 'Enter') hacerPregunta()">
+      <input type="text" id="pregunta" placeholder="Ej: Usar Torno 5 o Consultar Torno 2" onkeypress="if(event.key === 'Enter') hacerPregunta()">
       <div class="botones">
         <button onclick="hacerPregunta()">Enviar</button>
         <button id="btnVoz" onclick="toggleVoz()">🔊 OFF</button>
@@ -280,31 +281,46 @@
       document.getElementById('modal-registro').style.display = 'none';
     }
 
-    async function confirmarRegistro() {
-      const nombre = document.getElementById('nombre-alumno').value;
-      const boleta = document.getElementById('boleta-alumno').value;
+   async function confirmarRegistro() {
+    const nombre = document.getElementById('nombre-alumno').value;
+    const boleta = document.getElementById('boleta-alumno').value;
+    const grupo = document.getElementById('grupo-alumno').value; // <-- Capturar grupo
 
-      if (!nombre || !boleta) return alert("Datos incompletos");
-
-      cerrarModal();
-      imprimirBot(`Procesando registro para ${nombre}...`);
-
-      try {
-        await fetch(URL_GUINDA_GATEWAY, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nombre: nombre, boleta: boleta,
-            equipo: estadoSesion.maquinaPendiente, id: estadoSesion.idPendiente,
-            accion: "INICIO DE OPERACIÓN"
-          })
-        });
-        imprimirBot(`✅ **REGISTRO EXITOSO.** Operador ${nombre} autorizado. Bitácora actualizada.`);
-      } catch (e) {
-        imprimirBot("❌ Error al registrar en la bitácora.");
-      }
+    if (!nombre || !boleta || !grupo) {
+        alert("Por favor, llena todos los campos (Nombre, Boleta y Grupo).");
+        return;
     }
+
+    const datos = {
+        nombre: nombre,
+        boleta: boleta,
+        grupo: grupo, // <-- Enviar grupo
+        equipo: estadoSesion.maquinaPendiente,
+        id: estadoSesion.idPendiente,
+        accion: "INICIO DE OPERACIÓN"
+    };
+
+    cerrarModal();
+    imprimirBot(`Procesando registro para ${nombre} del grupo ${grupo}...`);
+
+    try {
+        await fetch(URL_GUINDA_GATEWAY, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+        
+        imprimirBot(`✅ **REGISTRO EXITOSO.** Operador autorizado. Bitácora actualizada.`);
+        
+        // Limpiar campos
+        document.getElementById('nombre-alumno').value = "";
+        document.getElementById('boleta-alumno').value = "";
+        document.getElementById('grupo-alumno').value = "";
+    } catch (e) {
+        imprimirBot("❌ Error al registrar en la bitácora.");
+    }
+}
 
     // --- UTILIDADES ---
     function imprimirBot(texto) {
