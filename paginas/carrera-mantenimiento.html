@@ -145,12 +145,47 @@
       box-shadow: 0 30px 60px rgba(0,0,0,0.8); max-width: 400px; width: 90%; color: #333;
     }
 
-    /* INPUTS Y BOTONES */
+    /* INPUTS Y BOTONES - REORGANIZADO VERTICALMENTE */
     .input-group {
-      display: flex; gap: 12px; background: var(--blanco-glass); padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
+      display: flex; 
+      flex-direction: column; /* Alineación en columna */
+      gap: 12px; 
+      background: var(--blanco-glass); 
+      padding: 20px; 
+      border-radius: 25px; 
+      border: 1px solid rgba(255,255,255,0.1);
     }
+    
+    .input-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
     #pregunta { flex: 1; padding: 18px; border: none; border-radius: 15px; outline: none; font-size: 16px; }
-    .btn-enviar { background: var(--oro); color: black; font-weight: 900; border: none; padding: 0 25px; border-radius: 15px; cursor: pointer; }
+    
+    /* BOTÓN ENVIAR - TOTALMENTE EXTENDIDOABAJO */
+    .btn-enviar { 
+      background: var(--oro); 
+      color: black; 
+      font-weight: 900; 
+      border: none; 
+      padding: 16px; 
+      border-radius: 15px; 
+      cursor: pointer; 
+      width: 100%; /* Ancho completo */
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .btn-enviar:hover { 
+      background: white; 
+      color: var(--guinda);
+      transform: translateY(-2px);
+    }
+    .btn-enviar:active { transform: translateY(0); }
     
     /* BOTÓN MICRÓFONO PRO */
     .btn-voz { background: #34495e; color: white; border: none; padding: 0 20px; border-radius: 15px; cursor: pointer; font-size: 20px; transition: 0.3s; }
@@ -197,9 +232,11 @@
     </div>
 
     <div class="input-group">
-      <button id="btn-voz" class="btn-voz" onclick="toggleVoz()">🎙️</button>
-      <input type="text" id="pregunta" placeholder="Ej: 'Usar Torno 1' o '/experiencia torno 1 vibra la bancada'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
-      <button class="btn-enviar" onclick="hacerPregunta()">ENVIAR</button>
+      <div class="input-row">
+        <button id="btn-voz" class="btn-voz" onclick="toggleVoz()">🎙️</button>
+        <input type="text" id="pregunta" placeholder="Ej: 'Usar Torno 1' o '/experiencia torno 1 vibra la bancada'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
+      </div>
+      <button class="btn-enviar" onclick="hacerPregunta()">ENVIAR COMANDO</button>
     </div>
   </div>
 
@@ -260,7 +297,6 @@
     }
 
     function hablar(texto) {
-        // Limpiamos etiquetas HTML y asteriscos para que la voz sea fluida
         let textoLimpio = texto.replace(/<[^>]*>/g, '').replace(/\*/g, '');
         const frase = new SpeechSynthesisUtterance(textoLimpio);
         frase.lang = 'es-MX';
@@ -354,7 +390,6 @@
             return;
         }
 
-        // Extraer el texto limpio quitando el comando inicial y la máquina
         let textoExperiencia = comandoCompleto.replace(/\/?[eE]xperiencia/g, '').replace(new RegExp(maq.key, 'gi'), '').replace(id, '').replace(/:/g, '').trim();
         
         if (textoExperiencia.length < 5) {
@@ -362,12 +397,10 @@
             return;
         }
 
-        // 1. Cargar caché de esa máquina si no existe
         if (!CACHE[maq.key]) {
             try { CACHE[maq.key] = await cargarDatosSheet(MAQUINAS_GID[maq.key]); } catch(e){}
         }
 
-        // 2. Insertar de manera reactiva en el CACHE de la app (Modificación en Caliente)
         const itemMaquina = CACHE[maq.key]?.find(x => String(x["IDENTIFICACION"]).trim() === String(id));
         if (itemMaquina) {
             if (!itemMaquina["EXPERIENCIAS_COMPARTIDAS"]) {
@@ -378,7 +411,6 @@
 
         imprimirBot(`🧠 **Sistema Auto-actualizado.** Guardé la experiencia para **${maq.nombre} ${id}**: "${textoExperiencia}". Ahora todos los usuarios verán esta nota de taller.`);
 
-        // 3. Mandar la actualización al Google App Script en la nube
         try {
             await fetch(URL_GUINDA_GATEWAY, {
                 method: 'POST',
@@ -416,7 +448,6 @@
             }
         });
 
-        // Revisar si hay experiencias inyectadas dinámicamente por los alumnos
         let bloqueExperiencias = "";
         if (item["EXPERIENCIAS_COMPARTIDAS"] && item["EXPERIENCIAS_COMPARTIDAS"].length > 0) {
             bloqueExperiencias = `<div style="margin-top:10px; background:rgba(255, 215, 0, 0.15); padding:10px; border-radius:8px; border-left:3px solid var(--oro);">
