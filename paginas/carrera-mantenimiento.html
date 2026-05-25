@@ -107,23 +107,13 @@
       box-shadow: 5px 10px 20px rgba(0,0,0,0.1);
     }
 
-    /* =========================================
-       ESTILOS DE LA FICHA TÉCNICA MUTABLE (NUEVO)
-       ========================================= */
+    /* 🔵 TEMA AZULITO RIKOTE */
     .ficha-tecnica {
-      border-radius: 18px; 
-      padding: 25px;
-      margin-top: 15px; 
-      transition: all 0.4s ease;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      width: 100%;
+      border-radius: 18px; padding: 25px; margin-top: 15px; 
+      transition: all 0.4s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.15); width: 100%;
     }
-
-    /* 🔵 TEMA AZULITO RIKOTE (Por defecto) */
     .ficha-tecnica.tema-azul {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-      color: #ffffff;
-      border-left: 6px solid #00d2ff;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #ffffff; border-left: 6px solid #00d2ff;
     }
     .tema-azul .ficha-header { color: #00d2ff; border-bottom: 1px solid rgba(255,255,255,0.2); }
     .tema-azul .dato-label { color: #a1c4fd; font-size: 11px; text-transform: uppercase; font-weight: bold; }
@@ -132,68 +122,40 @@
 
     /* 🕶️ TEMA OSCURO PREMIUM */
     .ficha-tecnica.tema-dark-ficha {
-      background: linear-gradient(135deg, #111723 0%, #1c2536 100%);
-      color: #f5f6fa;
-      border-left: 6px solid var(--oro);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      background: linear-gradient(135deg, #111723 0%, #1c2536 100%); color: #f5f6fa; border-left: 6px solid var(--oro);
     }
     .tema-dark-ficha .ficha-header { color: var(--oro); border-bottom: 1px solid #2c3a52; }
     .tema-dark-ficha .dato-label { color: #6b7c96; font-size: 11px; text-transform: uppercase; font-weight: bold; }
     .tema-dark-ficha .dato-valor { color: #ffffff; font-weight: 600; display: block; font-size: 14px; }
     .tema-dark-ficha .ficha-observaciones { background: rgba(0,0,0,0.3); border-left: 3px solid var(--oro); }
 
-    /* ESTRUCTURA INTERNA DE LA FICHA */
-    .ficha-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px; 
-      padding-bottom: 12px;
-      font-weight: 900;
-      text-transform: uppercase; 
-      letter-spacing: 1px;
-    }
+    .ficha-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 12px; font-weight: 900; text-transform: uppercase; }
     .ficha-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-    .ficha-observaciones { padding: 12px; border-radius: 8px; }
-
-    /* BOTÓN INTERNO DE MODO OSCURO */
-    .btn-toggle-dark {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      text-transform: uppercase;
-    }
+    .ficha-observaciones { padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+    .btn-toggle-dark { background: rgba(255, 255, 255, 0.2); border: none; color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.3s; }
     .btn-toggle-dark:hover { background: white; color: #1e3c72; transform: scale(1.05); }
 
     /* MODAL */
     .jarvis-modal {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      display: none; justify-content: center; align-items: center;
-      z-index: 2000; backdrop-filter: blur(8px);
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+      display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(8px);
     }
     .modal-content {
-      background: white; padding: 40px; border-radius: 30px;
-      border-top: 15px solid var(--guinda); text-align: center;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-      max-width: 400px; width: 90%; color: #333;
+      background: white; padding: 40px; border-radius: 30px; border-top: 15px solid var(--guinda); text-align: center;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.8); max-width: 400px; width: 90%; color: #333;
     }
 
     /* INPUTS Y BOTONES */
     .input-group {
-      display: flex; gap: 12px; background: var(--blanco-glass);
-      padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
+      display: flex; gap: 12px; background: var(--blanco-glass); padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
     }
     #pregunta { flex: 1; padding: 18px; border: none; border-radius: 15px; outline: none; font-size: 16px; }
     .btn-enviar { background: var(--oro); color: black; font-weight: 900; border: none; padding: 0 25px; border-radius: 15px; cursor: pointer; }
     
+    /* BOTÓN MICRÓFONO PRO */
+    .btn-voz { background: #34495e; color: white; border: none; padding: 0 20px; border-radius: 15px; cursor: pointer; font-size: 20px; transition: 0.3s; }
+    .btn-voz:hover { transform: scale(1.05); }
+
     footer { padding: 30px 20px; background: rgba(0,0,0,0.3); text-align: center; margin-top: 40px; }
     .memorial-box { font-style: italic; font-size: 13px; color: rgba(255, 255, 255, 0.7); }
     .nombres-resaltados { color: white; font-weight: bold; display: block; margin-top: 5px; }
@@ -230,23 +192,328 @@
 
     <div class="chat-container">
       <div id="chat-messages">
-        <div class="msg-bot">🤖 **Terminal Activa.**<br>Hola, técnico. ¿En qué equipo de mantenimiento vas a trabajar hoy o qué ficha técnica deseas consultar?</div>
+        <div class="msg-bot">🤖 **Terminal Activa.**<br>Hola, técnico. ¿En qué equipo vas a trabajar o qué ficha técnica deseas consultar? También puedes usar el botón de micrófono para hablarme.</div>
       </div>
     </div>
 
     <div class="input-group">
-      <input type="text" id="pregunta" placeholder="Ej: 'Usar Torno 1' o 'Ver ficha de Fresadora'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
+      <button id="btn-voz" class="btn-voz" onclick="toggleVoz()">🎙️</button>
+      <input type="text" id="pregunta" placeholder="Ej: 'Usar Torno 1' o '/experiencia torno 1 vibra la bancada'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
       <button class="btn-enviar" onclick="hacerPregunta()">ENVIAR</button>
     </div>
   </div>
 
   <footer>
     <div class="memorial-box">
-        "En memoria de <span class="nombres-resaltados">José Gabriel Hernández Méndez y Alí Yael Gonzales Aranda</span>
-        Siempre vivos en nuestros corazones. Con amor, sus amigos."
+        "En memoria de <span class="nombres-resaltados">José Gabriel Hernández Mendez y Alí Yael Gonzales Aranda</span> Siempre vivos en nuestros corazones. Con amor, sus amigos."
     </div>
   </footer>
 
 <script>
     // --- CONFIGURACIÓN DE DATOS ---
-    const SHEET_BASE = '
+    const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
+    const URL_GUINDA_GATEWAY = "https://script.google.com/macros/s/AKfycbzrMi2HyJEXezEUCrq3Roe3r9h5R5yagUtOcF3BhX9_S6kje-tj5H30GbsKNUnThpaH/exec"; 
+
+    const MAQUINAS_GID = { 
+        'torno': 0, 'fresadora': 406685106, 'mesa': 675907642, 
+        'esmeril': 1328099769, 'soldadora': 1403892581, 
+        'taladradora': 583489325, 'cepillo': 639087492, 
+        'comparador': 737994113, 'cnc': 123325945 
+    };
+
+    let CACHE = {};
+    let estadoSesion = { maquinaPendiente: null, idPendiente: null };
+    let recognition;
+    let vozActiva = false;
+
+    // --- RECONOCIMIENTO Y SÍNTESIS DE VOZ ---
+    function initVoz() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            alert("Tu navegador no soporta control por voz, pa. Usa Chrome o Edge.");
+            return;
+        }
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'es-MX';
+        recognition.continuous = false;
+
+        recognition.onstart = () => {
+            document.getElementById('btn-voz').style.background = '#e74c3c';
+            document.getElementById('btn-voz').innerText = '🛑';
+        };
+        recognition.onend = () => {
+            document.getElementById('btn-voz').style.background = '#34495e';
+            document.getElementById('btn-voz').innerText = '🎙️';
+            vozActiva = false;
+        };
+        recognition.onresult = (event) => {
+            const textoEscuchado = event.results[0][0].transcript;
+            document.getElementById('pregunta').value = textoEscuchado;
+            hacerPregunta();
+        };
+    }
+
+    function toggleVoz() {
+        if (!recognition) initVoz();
+        if (vozActiva) { recognition.stop(); vozActiva = false; } 
+        else { recognition.start(); vozActiva = true; }
+    }
+
+    function hablar(texto) {
+        // Limpiamos etiquetas HTML y asteriscos para que la voz sea fluida
+        let textoLimpio = texto.replace(/<[^>]*>/g, '').replace(/\*/g, '');
+        const frase = new SpeechSynthesisUtterance(textoLimpio);
+        frase.lang = 'es-MX';
+        window.speechSynthesis.speak(frase);
+    }
+
+    // --- DETECTORES INTELIGENTES ---
+    function detectarMaquina(pregunta) {
+        const q = pregunta.toLowerCase();
+        const dicc = {
+            'torno': [/torn/], 'fresadora': [/fresa/], 'mesa': [/mesa/], 'esmeril': [/esmeril/],
+            'soldadora': [/solda/], 'taladradora': [/taladra/], 'cepillo': [/cepillo/],
+            'comparador': [/compa/], 'cnc': [/cnc/, /compu/]
+        };
+        for (const [key, regexs] of Object.entries(dicc)) {
+            if (regexs.some(rx => rx.test(q))) return { nombre: key.toUpperCase(), key: key };
+        }
+        return null;
+    }
+
+    function detectarID(pregunta) {
+        const m = pregunta.match(/\b(\d+)\b/);
+        return m ? m[1] : null;
+    }
+
+    // --- LÓGICA PRINCIPAL ---
+    async function hacerPregunta() {
+        const input = document.getElementById('pregunta');
+        const pregunta = input.value.trim();
+        if (!pregunta) return;
+
+        const chat = document.getElementById('chat-messages');
+        chat.innerHTML += `<div class="msg-user">${pregunta}</div>`;
+        input.value = "";
+        chat.scrollTop = chat.scrollHeight;
+
+        // Comando de Auto-actualización de Experiencias
+        if (pregunta.toLowerCase().startsWith('experiencia') || pregunta.toLowerCase().startsWith('/experiencia')) {
+            await procesarNuevaExperiencia(pregunta);
+            return;
+        }
+
+        // Comando de Resumen General
+        if (pregunta.toLowerCase().match(/(resumen|estado general|reporte)/)) {
+            imprimirBot("📊 Generando el reporte de estado de los módulos...");
+            return; 
+        } 
+
+        const maq = detectarMaquina(pregunta);
+        const id = detectarID(pregunta);
+
+        if (!maq) {
+            imprimirBot("⚠️ No reconozco el equipo. Intenta con: Torno, Fresadora, Esmeril, etc.");
+            return;
+        }
+
+        if (pregunta.toLowerCase().match(/(usar|registrar|ocupar|voy a)/)) {
+            abrirModalRegistro(maq.nombre, id || "S/N");
+            return;
+        }
+
+        const tempId = "temp-" + Date.now();
+        chat.innerHTML += `<div class="msg-bot" id="${tempId}">🔍 Buscando en base de datos...</div>`;
+        chat.scrollTop = chat.scrollHeight;
+
+        try {
+            if (!CACHE[maq.key]) {
+                CACHE[maq.key] = await cargarDatosSheet(MAQUINAS_GID[maq.key]);
+            }
+            const data = CACHE[maq.key];
+            const resultado = id ? data.find(x => String(x["IDENTIFICACION"]).trim() === String(id)) : data[0];
+            
+            setTimeout(() => {
+                const tempElem = document.getElementById(tempId);
+                if(tempElem) tempElem.remove();
+                procesarRespuestaTecnica(resultado, maq.nombre, id, maq.key);
+            }, 600);
+
+        } catch (e) {
+            imprimirBot("❌ Error de enlace con la base de datos.");
+        }
+    }
+
+    // --- MOTOR DE AUTO-ACTUALIZACIÓN (APRENDIZAJE EN VIVO) ---
+    async function procesarNuevaExperiencia(comandoCompleto) {
+        const maq = detectarMaquina(comandoCompleto);
+        const id = detectarID(comandoCompleto) || "1";
+        
+        if (!maq) {
+            imprimirBot("⚠️ Especifica a qué máquina le vas a agregar la experiencia. Ej: `/experiencia torno 1 saca chispas`.");
+            return;
+        }
+
+        // Extraer el texto limpio quitando el comando inicial y la máquina
+        let textoExperiencia = comandoCompleto.replace(/\/?[eE]xperiencia/g, '').replace(new RegExp(maq.key, 'gi'), '').replace(id, '').replace(/:/g, '').trim();
+        
+        if (textoExperiencia.length < 5) {
+            imprimirBot("⚠️ El reporte de experiencia es muy corto, pa. Escribe un detalle real.");
+            return;
+        }
+
+        // 1. Cargar caché de esa máquina si no existe
+        if (!CACHE[maq.key]) {
+            try { CACHE[maq.key] = await cargarDatosSheet(MAQUINAS_GID[maq.key]); } catch(e){}
+        }
+
+        // 2. Insertar de manera reactiva en el CACHE de la app (Modificación en Caliente)
+        const itemMaquina = CACHE[maq.key]?.find(x => String(x["IDENTIFICACION"]).trim() === String(id));
+        if (itemMaquina) {
+            if (!itemMaquina["EXPERIENCIAS_COMPARTIDAS"]) {
+                itemMaquina["EXPERIENCIAS_COMPARTIDAS"] = [];
+            }
+            itemMaquina["EXPERIENCIAS_COMPARTIDAS"].push(textoExperiencia);
+        }
+
+        imprimirBot(`🧠 **Sistema Auto-actualizado.** Guardé la experiencia para **${maq.nombre} ${id}**: "${textoExperiencia}". Ahora todos los usuarios verán esta nota de taller.`);
+
+        // 3. Mandar la actualización al Google App Script en la nube
+        try {
+            await fetch(URL_GUINDA_GATEWAY, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ equipo: maq.nombre, id: id, accion: "GUARDAR_EXPERIENCIA", detalle: textoExperiencia, fecha: new Date().toLocaleDateString() })
+            });
+        } catch(e) { console.log("Guardado local exitoso, falla de red al sincronizar con la nube."); }
+    }
+
+    async function cargarDatosSheet(gid) {
+        const url = `${SHEET_BASE}?gid=${gid}&single=true&output=csv`;
+        const res = await fetch(url);
+        const csv = await res.text();
+        const rows = parseCSV(csv);
+        const headers = rows[0].map(h => String(h || '').trim().toUpperCase());
+        return rows.slice(1).map(r => {
+            const obj = {};
+            headers.forEach((h, i) => obj[h] = String(r[i] ?? '').trim());
+            return obj;
+        });
+    }
+
+    function procesarRespuestaTecnica(item, maqNombre, id, maqKey) {
+        if (!item) {
+            imprimirBot(`❌ No existe registro para **${maqNombre} ${id || ''}**.`);
+            return;
+        }
+
+        const omitir = ["IDENTIFICACION", "UBICACION", "ESTADO", "MARCA", "MODELO", "NOTAS", "ESPECIFICACIONES"];
+        let gridDinamico = "";
+        Object.keys(item).forEach(col => {
+            const valor = item[col];
+            if (!omitir.includes(col) && col !== "EXPERIENCIAS_COMPARTIDAS" && valor && valor.trim() !== "" && valor !== "0") {
+                gridDinamico += `<div><span class="dato-label">${col.replace(/_/g, ' ')}:</span><span class="dato-valor">${valor}</span></div>`;
+            }
+        });
+
+        // Revisar si hay experiencias inyectadas dinámicamente por los alumnos
+        let bloqueExperiencias = "";
+        if (item["EXPERIENCIAS_COMPARTIDAS"] && item["EXPERIENCIAS_COMPARTIDAS"].length > 0) {
+            bloqueExperiencias = `<div style="margin-top:10px; background:rgba(255, 215, 0, 0.15); padding:10px; border-radius:8px; border-left:3px solid var(--oro);">
+                <span class="dato-label" style="color:var(--oro);">⚠️ Experiencias de Alumnos:</span>
+                <ul style="font-size:0.85em; margin-left:15px; margin-top:5px; color:#fff;">
+                    ${item["EXPERIENCIAS_COMPARTIDAS"].map(exp => `<li>${exp}</li>`).join('')}
+                </ul>
+            </div>`;
+        }
+
+        const estado = (item["ESTADO"] || "S/D").toUpperCase();
+        const colorEstado = (estado.includes('OPERATIVO') || estado.includes('BUEN')) ? '#2ecc71' : '#e74c3c';
+        const idFichaUnico = 'ficha-' + Date.now();
+
+        const fichaHTML = `
+            <div class="ficha-tecnica tema-azul" id="${idFichaUnico}">
+                <div class="ficha-header">
+                    <span>🛠️ ${maqNombre} ${id || ''}</span>
+                    <button class="btn-toggle-dark" onclick="toggleFichaDark('${idFichaUnico}')">🌙 Modo Oscuro</button>
+                </div>
+                <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><span class="dato-label">STATUS:</span><span class="dato-valor" style="color:${colorEstado}">● ${estado}</span></div>
+                    <div style="text-align:right"><span class="dato-label">UBICACIÓN:</span><span class="dato-valor">${item["UBICACION"] || 'Taller'}</span></div>
+                </div>
+                <div class="ficha-grid">${gridDinamico}</div>
+                <div class="ficha-observaciones">
+                    <span class="dato-label" style="color:#00d2ff; font-weight:bold;">Manual / Notas:</span>
+                    <p style="font-size:0.85em; font-style:italic; margin-top:5px;">${item["NOTAS"] || "Sin notas adicionales."}</p>
+                </div>
+                ${bloqueExperiencias}
+            </div>`;
+        
+        imprimirBot(fichaHTML);
+        hablar(`Ficha técnica de ${maqNombre} unidad ${id || 'uno'} cargada. Su estado actual es ${estado}`);
+    }
+
+    function toggleFichaDark(idFicha) {
+        const ficha = document.getElementById(idFicha);
+        const boton = ficha.querySelector('.btn-toggle-dark');
+        if (ficha.classList.contains('tema-azul')) {
+            ficha.classList.remove('tema-azul'); ficha.classList.add('tema-dark-ficha');
+            boton.innerText = "☀️ Modo Azul";
+        } else {
+            ficha.classList.remove('tema-dark-ficha'); ficha.classList.add('tema-azul');
+            boton.innerText = "🌙 Modo Oscuro";
+        }
+    }
+
+    // --- FUNCIONES DEL MODAL ---
+    function abrirModalRegistro(maquina, id) {
+        estadoSesion.maquinaPendiente = maquina;
+        estadoSesion.idPendiente = id;
+        document.getElementById('info-maquina-registro').innerText = `${maquina} - UNIDAD ${id}`;
+        document.getElementById('modal-registro').style.display = 'flex';
+    }
+    function cerrarModal() { document.getElementById('modal-registro').style.display = 'none'; }
+
+    async function confirmarRegistro() {
+        const n = document.getElementById('nombre-alumno').value;
+        const b = document.getElementById('boleta-alumno').value;
+        const g = document.getElementById('grupo-alumno').value;
+        if (!n || !b || !g) return alert("Completa todos los campos.");
+        
+        cerrarModal();
+        imprimirBot(`🚀 **Autorizando a ${n}...**`);
+        
+        try {
+            await fetch(URL_GUINDA_GATEWAY, { 
+                method: 'POST', mode: 'no-cors', 
+                body: JSON.stringify({nombre:n, boleta:b, grupo:g, equipo:estadoSesion.maquinaPendiente, id:estadoSesion.idPendiente, accion:"INICIO"})
+            });
+            imprimirBot(`✅ **ACCESO CONCEDIDO.** Registro guardado en bitácora.`);
+            hablar(`Acceso concedido para ${n}. Operación registrada.`);
+        } catch (e) { imprimirBot("❌ Error al conectar con la bitácora."); }
+    }
+
+    function imprimirBot(texto) {
+        const chat = document.getElementById('chat-messages');
+        chat.innerHTML += `<div class="msg-bot">${texto}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function parseCSV(text) {
+        const rows = []; let row = []; let cur = ''; let inQuotes = false;
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if (c === '"') { inQuotes = !inQuotes; continue; }
+            if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
+            if ((c === '\n' || c === '\r') && !inQuotes) {
+                row.push(cur); cur = ''; if (row.length > 1 || row[0] !== '') rows.push(row);
+                row = []; continue;
+            }
+            cur += c;
+        }
+        row.push(cur); if (row.length > 1 || row[0] !== '') rows.push(row);
+        return rows;
+    }
+</script>
+</body>
+</html>
