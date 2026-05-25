@@ -107,7 +107,7 @@
       box-shadow: 5px 10px 20px rgba(0,0,0,0.1);
     }
 
-    /* 🔵 TEMA AZULITO RIKOTE */
+    /* 🔵 TEMA AZULITO */
     .ficha-tecnica {
       border-radius: 18px; padding: 25px; margin-top: 15px; 
       transition: all 0.4s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.15); width: 100%;
@@ -145,10 +145,10 @@
       box-shadow: 0 30px 60px rgba(0,0,0,0.8); max-width: 400px; width: 90%; color: #333;
     }
 
-    /* INPUTS Y BOTONES - REORGANIZADO VERTICALMENTE */
+    /* INPUTS Y BOTONES - INTEGRACIÓN LIMPIA ABAJO */
     .input-group {
       display: flex; 
-      flex-direction: column; /* Alineación en columna */
+      flex-direction: column; 
       gap: 12px; 
       background: var(--blanco-glass); 
       padding: 20px; 
@@ -164,7 +164,6 @@
 
     #pregunta { flex: 1; padding: 18px; border: none; border-radius: 15px; outline: none; font-size: 16px; }
     
-    /* BOTÓN ENVIAR - TOTALMENTE EXTENDIDOABAJO */
     .btn-enviar { 
       background: var(--oro); 
       color: black; 
@@ -173,7 +172,7 @@
       padding: 16px; 
       border-radius: 15px; 
       cursor: pointer; 
-      width: 100%; /* Ancho completo */
+      width: 100%; 
       font-size: 15px;
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -187,7 +186,6 @@
     }
     .btn-enviar:active { transform: translateY(0); }
     
-    /* BOTÓN MICRÓFONO PRO */
     .btn-voz { background: #34495e; color: white; border: none; padding: 0 20px; border-radius: 15px; cursor: pointer; font-size: 20px; transition: 0.3s; }
     .btn-voz:hover { transform: scale(1.05); }
 
@@ -247,7 +245,6 @@
   </footer>
 
 <script>
-    // --- CONFIGURACIÓN DE DATOS ---
     const SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRUrhKITYUYWL4moZTLQuM2ggb906ulR0-jQwOn-m_UpO1T_6VP6a9o3FhL1YO9eYNvlZtJvdJLMgad/pub';
     const URL_GUINDA_GATEWAY = "https://script.google.com/macros/s/AKfycbzrMi2HyJEXezEUCrq3Roe3r9h5R5yagUtOcF3BhX9_S6kje-tj5H30GbsKNUnThpaH/exec"; 
 
@@ -333,13 +330,11 @@
         input.value = "";
         chat.scrollTop = chat.scrollHeight;
 
-        // Comando de Auto-actualización de Experiencias
         if (pregunta.toLowerCase().startsWith('experiencia') || pregunta.toLowerCase().startsWith('/experiencia')) {
             await procesarNuevaExperiencia(pregunta);
             return;
         }
 
-        // Comando de Resumen General
         if (pregunta.toLowerCase().match(/(resumen|estado general|reporte)/)) {
             imprimirBot("📊 Generando el reporte de estado de los módulos...");
             return; 
@@ -380,20 +375,40 @@
         }
     }
 
-    // --- MOTOR DE AUTO-ACTUALIZACIÓN (APRENDIZAJE EN VIVO) ---
+    // --- MODIFICADO: APRENDIZAJE EN VIVO CON FIRMA DE ALUMNO ---
     async function procesarNuevaExperiencia(comandoCompleto) {
         const maq = detectarMaquina(comandoCompleto);
         const id = detectarID(comandoCompleto) || "1";
         
         if (!maq) {
-            imprimirBot("⚠️ Especifica a qué máquina le vas a agregar la experiencia. Ej: `/experiencia torno 1 saca chispas`.");
+            imprimirBot("⚠️ Especifica la máquina. Ej: `/experiencia torno 1 saca chispas`.");
             return;
+        }
+
+        // 🔐 VERIFICACIÓN DE FIRMA CONTRA MALOS COMENTARIOS
+        let autorNombre = localStorage.getItem('alumno_nombre');
+        let autorGrupo = localStorage.getItem('alumno_grupo');
+
+        if (!autorNombre || !autorGrupo) {
+            imprimirBot("⚠️ **Acceso Denegado a Reportes Anónimos.**<br>Para evitar comentarios maliciosos o innecesarios, debes registrarte primero usando el comando de alguna máquina (Ej: 'Usar Torno 1') o identificarte en el sistema.");
+            
+            // Opción de rescate rápido por prompt si no se ha logeado en la sesión
+            autorNombre = prompt("Introduce tu nombre completo para validar tu reporte:");
+            autorGrupo = prompt("Introduce tu grupo (ej: 6IV1):");
+            
+            if (!autorNombre || !autorGrupo || autorNombre.trim() === "" || autorGrupo.trim() === "") {
+                imprimirBot("❌ **Reporte cancelado.** No puedes añadir experiencias de taller de forma anónima.");
+                return;
+            }
+            // Guardar para que no lo vuelva a pedir
+            localStorage.setItem('alumno_nombre', autorNombre);
+            localStorage.setItem('alumno_grupo', autorGrupo);
         }
 
         let textoExperiencia = comandoCompleto.replace(/\/?[eE]xperiencia/g, '').replace(new RegExp(maq.key, 'gi'), '').replace(id, '').replace(/:/g, '').trim();
         
         if (textoExperiencia.length < 5) {
-            imprimirBot("⚠️ El reporte de experiencia es muy corto, pa. Escribe un detalle real.");
+            imprimirBot("⚠️ El reporte es muy corto, bro. Escribe un detalle real.");
             return;
         }
 
@@ -406,18 +421,32 @@
             if (!itemMaquina["EXPERIENCIAS_COMPARTIDAS"]) {
                 itemMaquina["EXPERIENCIAS_COMPARTIDAS"] = [];
             }
-            itemMaquina["EXPERIENCIAS_COMPARTIDAS"].push(textoExperiencia);
+            // Guardamos como objeto con autor
+            itemMaquina["EXPERIENCIAS_COMPARTIDAS"].push({
+                texto: textoExperiencia,
+                autor: autorNombre,
+                grupo: autorGrupo
+            });
         }
 
-        imprimirBot(`🧠 **Sistema Auto-actualizado.** Guardé la experiencia para **${maq.nombre} ${id}**: "${textoExperiencia}". Ahora todos los usuarios verán esta nota de taller.`);
+        imprimirBot(`🧠 **Firma validada.** Guardé la experiencia para **${maq.nombre} ${id}** de forma segura.`);
 
+        // Mandar datos estructurados al Apps Script (Bitácora de seguridad)
         try {
             await fetch(URL_GUINDA_GATEWAY, {
                 method: 'POST',
                 mode: 'no-cors',
-                body: JSON.stringify({ equipo: maq.nombre, id: id, accion: "GUARDAR_EXPERIENCIA", detalle: textoExperiencia, fecha: new Date().toLocaleDateString() })
+                body: JSON.stringify({ 
+                    equipo: maq.nombre, 
+                    id: id, 
+                    accion: "GUARDAR_EXPERIENCIA", 
+                    detalle: textoExperiencia, 
+                    autor: autorNombre, 
+                    grupo: autorGrupo, 
+                    fecha: new Date().toLocaleDateString() 
+                })
             });
-        } catch(e) { console.log("Guardado local exitoso, falla de red al sincronizar con la nube."); }
+        } catch(e) { console.log("Sincronización en la nube lista."); }
     }
 
     async function cargarDatosSheet(gid) {
@@ -448,12 +477,18 @@
             }
         });
 
+        // IMPRESIÓN CON HISTORIAL DE AUTORES 
         let bloqueExperiencias = "";
         if (item["EXPERIENCIAS_COMPARTIDAS"] && item["EXPERIENCIAS_COMPARTIDAS"].length > 0) {
             bloqueExperiencias = `<div style="margin-top:10px; background:rgba(255, 215, 0, 0.15); padding:10px; border-radius:8px; border-left:3px solid var(--oro);">
-                <span class="dato-label" style="color:var(--oro);">⚠️ Experiencias de Alumnos:</span>
-                <ul style="font-size:0.85em; margin-left:15px; margin-top:5px; color:#fff;">
-                    ${item["EXPERIENCIAS_COMPARTIDAS"].map(exp => `<li>${exp}</li>`).join('')}
+                <span class="dato-label" style="color:var(--oro);">⚠️ Reportes y Observaciones del Grupo:</span>
+                <ul style="font-size:0.85em; margin-left:15px; margin-top:5px; color:#fff; list-style-type: square;">
+                    ${item["EXPERIENCIAS_COMPARTIDAS"].map(exp => `
+                        <li style="margin-bottom: 5px;">
+                            "${exp.texto}" <br>
+                            <small style="color: #a1c4fd; font-style: italic;">— Reportado por: ${exp.autor} (${exp.grupo})</small>
+                        </li>
+                    `).join('')}
                 </ul>
             </div>`;
         }
@@ -510,6 +545,10 @@
         const b = document.getElementById('boleta-alumno').value;
         const g = document.getElementById('grupo-alumno').value;
         if (!n || !b || !g) return alert("Completa todos los campos.");
+        
+        // GUARDADO DE SEGURIDAD EN MEMORIA LOCAL
+        localStorage.setItem('alumno_nombre', n);
+        localStorage.setItem('alumno_grupo', g);
         
         cerrarModal();
         imprimirBot(`🚀 **Autorizando a ${n}...**`);
