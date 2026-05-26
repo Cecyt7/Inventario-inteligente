@@ -225,7 +225,7 @@
 
     <div class="chat-container">
       <div id="chat-messages">
-        <div class="msg-bot">🤖 **Terminal Activa.**<br>Hola, técnico. ¿En qué equipo vas a trabajar o qué ficha técnica deseas consultar? También puedes usar el botón de micrófono para hablarme.</div>
+        <div class="msg-bot">🤖 Terminal Activa.<br>Hola, técnico. ¿En qué equipo vas a trabajar o qué ficha técnica deseas consultar? También puedes usar el botón de micrófono para hablarme.</div>
       </div>
     </div>
 
@@ -255,15 +255,24 @@
         'comparador': 737994113, 'cnc': 123325945 
     };
 
+    // 🛠️ NUEVO: DICCIONARIO DE HERRAMIENTAS ESPECÍFICAS
+    const HERRAMIENTAS_REQUERIDAS = {
+        'torno': 'Llave de tu torno, punto giratorio, portaherramientas, tornillos Allen, llave española, aceitera.',
+        'soldadora': 'Careta, peto, guantes, piqueta, pinzas.',
+        'fresadora': 'Llaves de apriete, boquillas, fresas, martillo de goma, brocha para virutas.',
+        'esmeril': 'Gafas de seguridad de impacto, pinzas de presión o tenazas, recipiente con agua para enfriamiento.'
+    };
+
+    const EPP_GLOBAL = "⚠️ **Protocolo de Seguridad:** Recuerda el uso de tu Equipo de Protección Personal, como botas de seguridad y bata. Tu integridad física es lo más importante.";
+
     let CACHE = {};
     let estadoSesion = { maquinaPendiente: null, idPendiente: null };
     let recognition;
     let vozActiva = false;
 
-    // --- RECONOCIMIENTO Y SÍNTESIS DE VOZ ---
     function initVoz() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            alert("Tu navegador no soporta control por voz, pa. Usa Chrome o Edge.");
+            alert("El navegador actual no soporta la API de reconocimiento de voz.");
             return;
         }
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -300,7 +309,6 @@
         window.speechSynthesis.speak(frase);
     }
 
-    // --- DETECTORES INTELIGENTES ---
     function detectarMaquina(pregunta) {
         const q = pregunta.toLowerCase();
         const dicc = {
@@ -319,7 +327,6 @@
         return m ? m[1] : null;
     }
 
-    // --- LÓGICA PRINCIPAL ---
     async function hacerPregunta() {
         const input = document.getElementById('pregunta');
         const pregunta = input.value.trim();
@@ -330,31 +337,27 @@
         input.value = "";
         chat.scrollTop = chat.scrollHeight;
 
-        if (pregunta.toLowerCase().startsWith('experiencia') || pregunta.toLowerCase().startsWith('/experiencia')) {
+        if (pregunta.toLowerCase().startsWith('experiencia') || pregunta.toLowerCase().startsWith('/experiencia') || 
+            pregunta.toLowerCase().startsWith('reporte') || pregunta.toLowerCase().startsWith('/reporte')) {
             await procesarNuevaExperiencia(pregunta);
             return;
         }
-
-        if (pregunta.toLowerCase().match(/(resumen|estado general|reporte)/)) {
-            imprimirBot("📊 Generando el reporte de estado de los módulos...");
-            return; 
-        } 
 
         const maq = detectarMaquina(pregunta);
         const id = detectarID(pregunta);
 
         if (!maq) {
-            imprimirBot("⚠️ No reconozco el equipo. Intenta con: Torno, Fresadora, Esmeril, etc.");
+            imprimirBot("⚠️ Unidad de equipo no identificada. Por favor, especifique un módulo válido (ej. Torno, Fresadora, Soldadora).");
             return;
         }
 
-        if (pregunta.toLowerCase().match(/(usar|registrar|ocupar|voy a)/)) {
+        if (pregunta.toLowerCase().match(/(usar|registrar|ocupar|asignar)/)) {
             abrirModalRegistro(maq.nombre, id || "S/N");
             return;
         }
 
         const tempId = "temp-" + Date.now();
-        chat.innerHTML += `<div class="msg-bot" id="${tempId}">🔍 Buscando en base de datos...</div>`;
+        chat.innerHTML += `<div class="msg-bot" id="${tempId}">🔍 Consultando el repositorio de datos...</div>`;
         chat.scrollTop = chat.scrollHeight;
 
         try {
@@ -367,48 +370,59 @@
             setTimeout(() => {
                 const tempElem = document.getElementById(tempId);
                 if(tempElem) tempElem.remove();
+                
+                // 🗣️ ASISTENTE FLUIDO: Imprime reglas de seguridad ANTES de la ficha
+                imprimirBot(EPP_GLOBAL);
+                
+                // Verifica si hay herramientas específicas para esta máquina
+                if (HERRAMIENTAS_REQUERIDAS[maq.key]) {
+                    imprimirBot(`🛠️ **Requisición de Materiales:** Para el uso de este equipo, deberás contar con: *${HERRAMIENTAS_REQUERIDAS[maq.key]}*`);
+                }
+
                 procesarRespuestaTecnica(resultado, maq.nombre, id, maq.key);
+                
+                // 🗣️ ASISTENTE FLUIDO: Pregunta de seguimiento para guiar al usuario
+                setTimeout(() => {
+                    imprimirBot(`¿Desea **registrar la operación** en este equipo (ej. "Voy a usar el ${maq.nombre} ${id || ''}") o registrar un **reporte técnico**?`);
+                }, 800);
+
             }, 600);
 
         } catch (e) {
-            imprimirBot("❌ Error de enlace con la base de datos.");
+            imprimirBot("❌ Error de enlace de red con la base de datos institucional.");
         }
     }
 
-    // --- MODIFICADO: APRENDIZAJE EN VIVO CON FIRMA DE ALUMNO ---
+    // --- RESTO DEL CÓDIGO INTACTO (REPORTES, CARGA DE DATOS, MODAL, ETC) ---
     async function procesarNuevaExperiencia(comandoCompleto) {
         const maq = detectarMaquina(comandoCompleto);
         const id = detectarID(comandoCompleto) || "1";
         
         if (!maq) {
-            imprimirBot("⚠️ Especifica la máquina. Ej: `/experiencia torno 1 saca chispas`.");
+            imprimirBot("⚠️ Estructura incorrecta. Especifique el módulo. Ejemplo: `/reporte torno 1 presenta anomalías en el motor`.");
             return;
         }
 
-        // 🔐 VERIFICACIÓN DE FIRMA CONTRA MALOS COMENTARIOS
         let autorNombre = localStorage.getItem('alumno_nombre');
         let autorGrupo = localStorage.getItem('alumno_grupo');
 
         if (!autorNombre || !autorGrupo) {
-            imprimirBot("⚠️ **Acceso Denegado a Reportes Anónimos.**<br>Para evitar comentarios maliciosos o innecesarios, debes registrarte primero usando el comando de alguna máquina (Ej: 'Usar Torno 1') o identificarte en el sistema.");
-            
-            // Opción de rescate rápido por prompt si no se ha logeado en la sesión
-            autorNombre = prompt("Introduce tu nombre completo para validar tu reporte:");
-            autorGrupo = prompt("Introduce tu grupo (ej: 6IV1):");
+            imprimirBot("⚠️ **Restricción de Seguridad.** Debe autenticar su identidad antes de registrar un reporte.");
+            autorNombre = prompt("Ingrese su nombre completo para validar el registro técnico:");
+            autorGrupo = prompt("Ingrese su grupo académico (ej. 6IV1):");
             
             if (!autorNombre || !autorGrupo || autorNombre.trim() === "" || autorGrupo.trim() === "") {
-                imprimirBot("❌ **Reporte cancelado.** No puedes añadir experiencias de taller de forma anónima.");
+                imprimirBot("❌ **Operación Cancelada.**");
                 return;
             }
-            // Guardar para que no lo vuelva a pedir
             localStorage.setItem('alumno_nombre', autorNombre);
             localStorage.setItem('alumno_grupo', autorGrupo);
         }
 
-        let textoExperiencia = comandoCompleto.replace(/\/?[eE]xperiencia/g, '').replace(new RegExp(maq.key, 'gi'), '').replace(id, '').replace(/:/g, '').trim();
+        let textoExperiencia = comandoCompleto.replace(/\/?[eE]xperiencia/g, '').replace(/\/?[rR]eporte/g, '').replace(new RegExp(maq.key, 'gi'), '').replace(id, '').replace(/:/g, '').trim();
         
         if (textoExperiencia.length < 5) {
-            imprimirBot("⚠️ El reporte es muy corto, bro. Escribe un detalle real.");
+            imprimirBot("⚠️ Descripción demasiado sucinta. Detalle el diagnóstico del equipo con precisión técnica.");
             return;
         }
 
@@ -421,32 +435,17 @@
             if (!itemMaquina["EXPERIENCIAS_COMPARTIDAS"]) {
                 itemMaquina["EXPERIENCIAS_COMPARTIDAS"] = [];
             }
-            // Guardamos como objeto con autor
-            itemMaquina["EXPERIENCIAS_COMPARTIDAS"].push({
-                texto: textoExperiencia,
-                autor: autorNombre,
-                grupo: autorGrupo
-            });
+            itemMaquina["EXPERIENCIAS_COMPARTIDAS"].push({ texto: textoExperiencia, autor: autorNombre, grupo: autorGrupo });
         }
 
-        imprimirBot(`🧠 **Firma validada.** Guardé la experiencia para **${maq.nombre} ${id}** de forma segura.`);
+        imprimirBot(`🧠 **Registro de Bitácora Validado.** Se ha anexado la observación técnica para el módulo **${maq.nombre} ${id}**.`);
 
-        // Mandar datos estructurados al Apps Script (Bitácora de seguridad)
         try {
             await fetch(URL_GUINDA_GATEWAY, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({ 
-                    equipo: maq.nombre, 
-                    id: id, 
-                    accion: "GUARDAR_EXPERIENCIA", 
-                    detalle: textoExperiencia, 
-                    autor: autorNombre, 
-                    grupo: autorGrupo, 
-                    fecha: new Date().toLocaleDateString() 
-                })
+                method: 'POST', mode: 'no-cors',
+                body: JSON.stringify({ equipo: maq.nombre, id: id, accion: "GUARDAR_EXPERIENCIA", detalle: textoExperiencia, autor: autorNombre, grupo: autorGrupo, fecha: new Date().toLocaleDateString() })
             });
-        } catch(e) { console.log("Sincronización en la nube lista."); }
+        } catch(e) { }
     }
 
     async function cargarDatosSheet(gid) {
@@ -464,7 +463,7 @@
 
     function procesarRespuestaTecnica(item, maqNombre, id, maqKey) {
         if (!item) {
-            imprimirBot(`❌ No existe registro para **${maqNombre} ${id || ''}**.`);
+            imprimirBot(`❌ No se localizaron registros vigentes para la unidad **${maqNombre} ${id || ''}**.`);
             return;
         }
 
@@ -477,46 +476,40 @@
             }
         });
 
-        // IMPRESIÓN CON HISTORIAL DE AUTORES 
         let bloqueExperiencias = "";
         if (item["EXPERIENCIAS_COMPARTIDAS"] && item["EXPERIENCIAS_COMPARTIDAS"].length > 0) {
             bloqueExperiencias = `<div style="margin-top:10px; background:rgba(255, 215, 0, 0.15); padding:10px; border-radius:8px; border-left:3px solid var(--oro);">
-                <span class="dato-label" style="color:var(--oro);">⚠️ Reportes y Observaciones del Grupo:</span>
+                <span class="dato-label" style="color:var(--oro);">⚠️ Historial de Observaciones Técnicas:</span>
                 <ul style="font-size:0.85em; margin-left:15px; margin-top:5px; color:#fff; list-style-type: square;">
-                    ${item["EXPERIENCIAS_COMPARTIDAS"].map(exp => `
-                        <li style="margin-bottom: 5px;">
-                            "${exp.texto}" <br>
-                            <small style="color: #a1c4fd; font-style: italic;">— Reportado por: ${exp.autor} (${exp.grupo})</small>
-                        </li>
-                    `).join('')}
+                    ${item["EXPERIENCIAS_COMPARTIDAS"].map(exp => `<li style="margin-bottom: 5px;">"${exp.texto}" <br><small style="color: #a1c4fd; font-style: italic;">— Registrado por: ${exp.autor} (Grupo: ${exp.grupo})</small></li>`).join('')}
                 </ul>
             </div>`;
         }
 
-        const estado = (item["ESTADO"] || "S/D").toUpperCase();
+        const estado = (item["ESTADO"] || "Sin Diagnóstico").toUpperCase();
         const colorEstado = (estado.includes('OPERATIVO') || estado.includes('BUEN')) ? '#2ecc71' : '#e74c3c';
         const idFichaUnico = 'ficha-' + Date.now();
 
         const fichaHTML = `
             <div class="ficha-tecnica tema-azul" id="${idFichaUnico}">
                 <div class="ficha-header">
-                    <span>🛠️ ${maqNombre} ${id || ''}</span>
-                    <button class="btn-toggle-dark" onclick="toggleFichaDark('${idFichaUnico}')">🌙 Modo Oscuro</button>
+                    <span>🛠️ CÉDULA TÉCNICA: ${maqNombre} ${id || ''}</span>
+                    <button class="btn-toggle-dark" onclick="toggleFichaDark('${idFichaUnico}')">🌙 Vista de Contraste</button>
                 </div>
                 <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-                    <div><span class="dato-label">STATUS:</span><span class="dato-valor" style="color:${colorEstado}">● ${estado}</span></div>
-                    <div style="text-align:right"><span class="dato-label">UBICACIÓN:</span><span class="dato-valor">${item["UBICACION"] || 'Taller'}</span></div>
+                    <div><span class="dato-label">CONDICIÓN OPERATIVA:</span><span class="dato-valor" style="color:${colorEstado}">● ${estado}</span></div>
+                    <div style="text-align:right"><span class="dato-label">ASIGNACIÓN DE ÁREA:</span><span class="dato-valor">${item["UBICACION"] || 'Área Central de Taller'}</span></div>
                 </div>
                 <div class="ficha-grid">${gridDinamico}</div>
                 <div class="ficha-observaciones">
-                    <span class="dato-label" style="color:#00d2ff; font-weight:bold;">Manual / Notas:</span>
-                    <p style="font-size:0.85em; font-style:italic; margin-top:5px;">${item["NOTAS"] || "Sin notas adicionales."}</p>
+                    <span class="dato-label" style="color:#00d2ff; font-weight:bold;">Manual de Referencia / Notas Técnicas:</span>
+                    <p style="font-size:0.85em; font-style:italic; margin-top:5px;">${item["NOTAS"] || "No se registran especificaciones."}</p>
                 </div>
                 ${bloqueExperiencias}
             </div>`;
         
         imprimirBot(fichaHTML);
-        hablar(`Ficha técnica de ${maqNombre} unidad ${id || 'uno'} cargada. Su estado actual es ${estado}`);
+        hablar(`Cédula técnica desplegada. Recuerda usar tu equipo de protección.`);
     }
 
     function toggleFichaDark(idFicha) {
@@ -524,43 +517,42 @@
         const boton = ficha.querySelector('.btn-toggle-dark');
         if (ficha.classList.contains('tema-azul')) {
             ficha.classList.remove('tema-azul'); ficha.classList.add('tema-dark-ficha');
-            boton.innerText = "☀️ Modo Azul";
+            boton.innerText = "☀️ Vista Clásica";
         } else {
             ficha.classList.remove('tema-dark-ficha'); ficha.classList.add('tema-azul');
-            boton.innerText = "🌙 Modo Oscuro";
+            boton.innerText = "🌙 Vista de Contraste";
         }
     }
 
-    // --- FUNCIONES DEL MODAL ---
     function abrirModalRegistro(maquina, id) {
         estadoSesion.maquinaPendiente = maquina;
         estadoSesion.idPendiente = id;
-        document.getElementById('info-maquina-registro').innerText = `${maquina} - UNIDAD ${id}`;
+        document.getElementById('info-maquina-registro').innerText = `${maquina} - UNIDAD UNIFICADA ${id}`;
         document.getElementById('modal-registro').style.display = 'flex';
     }
+    
     function cerrarModal() { document.getElementById('modal-registro').style.display = 'none'; }
 
     async function confirmarRegistro() {
         const n = document.getElementById('nombre-alumno').value;
         const b = document.getElementById('boleta-alumno').value;
         const g = document.getElementById('grupo-alumno').value;
-        if (!n || !b || !g) return alert("Completa todos los campos.");
+        if (!n || !b || !g) return alert("Favor de validar que todos los campos estén cubiertos.");
         
-        // GUARDADO DE SEGURIDAD EN MEMORIA LOCAL
         localStorage.setItem('alumno_nombre', n);
         localStorage.setItem('alumno_grupo', g);
         
         cerrarModal();
-        imprimirBot(`🚀 **Autorizando a ${n}...**`);
+        imprimirBot(`🚀 **Procesando autorización para ${n}...**`);
         
         try {
             await fetch(URL_GUINDA_GATEWAY, { 
                 method: 'POST', mode: 'no-cors', 
                 body: JSON.stringify({nombre:n, boleta:b, grupo:g, equipo:estadoSesion.maquinaPendiente, id:estadoSesion.idPendiente, accion:"INICIO"})
             });
-            imprimirBot(`✅ **ACCESO CONCEDIDO.** Registro guardado en bitácora.`);
-            hablar(`Acceso concedido para ${n}. Operación registrada.`);
-        } catch (e) { imprimirBot("❌ Error al conectar con la bitácora."); }
+            imprimirBot(`✅ **ACCESO CONCEDIDO.** Operación registrada en la bitácora institucional.`);
+            hablar(`Acceso concedido para ${n}.`);
+        } catch (e) { imprimirBot("❌ Error de comunicación con el servicio."); }
     }
 
     function imprimirBot(texto) {
@@ -585,5 +577,6 @@
         return rows;
     }
 </script>
+  
 </body>
 </html>
