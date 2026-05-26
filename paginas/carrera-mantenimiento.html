@@ -18,6 +18,12 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
 
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--guinda-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--oro); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ffea00; }
+
     body {
       background: linear-gradient(135deg, var(--guinda) 0%, var(--guinda-deep) 100%);
       color: white;
@@ -31,30 +37,41 @@
         position: fixed;
         top: 0;
         width: 100%;
-        height: 120px;
-        background-color: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(10px);
-        border-bottom: 6px solid var(--oro);
+        height: 100px;
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 4px solid var(--oro);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 60px;
+        padding: 0 5%;
         z-index: 1000;
-        box-shadow: 0 6px 25px rgba(0,0,0,0.5);
+        box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        transition: all 0.3s ease;
     }
 
     .logo { 
-        height: 100px;
+        height: 70px;
         width: auto;
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, filter 0.3s ease;
     }
-    .logo:hover { transform: scale(1.05); }
+    .logo:hover { transform: scale(1.08); filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.2)); }
 
-    /* CONTENEDOR PRINCIPAL */
+    .titulo-header {
+        color: var(--guinda); 
+        font-weight: 900; 
+        font-size: 1.4em; 
+        text-align: center; 
+        text-transform: uppercase;
+        line-height: 1.1;
+    }
+    .titulo-header small { font-size: 0.55em; letter-spacing: 2px; color: #555; }
+
+    /* CONTENEDOR PRINCIPAL - AHORA MÁS ANCHO PARA PC */
     .contenedor {
-      margin-top: 160px;
+      margin-top: 130px;
       flex: 1;
-      max-width: 900px;
+      max-width: 1100px; /* Abriendo el diseño */
       margin-left: auto; margin-right: auto;
       width: 95%;
       padding: 20px;
@@ -62,185 +79,225 @@
     }
 
     .btn-volver {
-      padding: 12px 25px; background: white; color: var(--guinda);
+      padding: 10px 22px; background: rgba(255, 255, 255, 0.9); color: var(--guinda);
       border: none; border-radius: 50px; cursor: pointer;
-      font-weight: 800; margin-bottom: 25px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      transition: 0.3s;
+      font-weight: 800; margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      display: inline-flex; align-items: center; gap: 8px;
     }
-    .btn-volver:hover { background: var(--oro); color: black; transform: translateX(-5px); }
+    .btn-volver:hover { background: var(--oro); color: var(--guinda-deep); transform: translateX(-5px); }
 
     h1 { 
-      text-align: center; margin-bottom: 25px; font-size: 28px; 
-      text-transform: uppercase; letter-spacing: 4px;
+      text-align: center; margin-bottom: 20px; font-size: 26px; 
+      text-transform: uppercase; letter-spacing: 3px;
       font-weight: 900;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
     }
 
-    /* CHAT CONTAINER */
+    /* CHAT CONTAINER - ALTURA DINÁMICA */
     .chat-container {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      border-radius: 25px;
-      height: 500px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      height: 55vh;
+      min-height: 400px;
       display: flex; flex-direction: column;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
       overflow: hidden; margin-bottom: 25px;
-      border: 1px solid rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.4);
     }
 
     #chat-messages {
-      flex: 1; padding: 30px; overflow-y: auto;
-      display: flex; flex-direction: column; gap: 18px;
+      flex: 1; padding: 25px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 20px;
+      scroll-behavior: smooth;
     }
 
     .msg-user {
       align-self: flex-end; background: var(--user-bg); color: white;
       padding: 14px 22px; border-radius: 20px 20px 0 20px;
       max-width: 80%; font-size: 15px;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     .msg-bot {
-      align-self: flex-start; background: white; color: #1a1a1a;
-      padding: 18px 25px; border-radius: 20px 20px 20px 0;
+      align-self: flex-start; background: white; color: #2c3e50;
+      padding: 16px 22px; border-radius: 20px 20px 20px 0;
       max-width: 85%; font-size: 15px; line-height: 1.6;
-      border-left: 6px solid var(--guinda);
-      box-shadow: 5px 10px 20px rgba(0,0,0,0.1);
+      border-left: 5px solid var(--guinda);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    /* 🔵 TEMA AZULITO */
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex; gap: 5px; padding: 10px 15px; align-items: center;
+    }
+    .typing-indicator span {
+      width: 8px; height: 8px; background: var(--guinda); border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out both;
+    }
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+    /* TEMAS DE FICHAS TÉCNICAS */
     .ficha-tecnica {
-      border-radius: 18px; padding: 25px; margin-top: 15px; 
-      transition: all 0.4s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.15); width: 100%;
+      border-radius: 16px; padding: 20px; margin-top: 15px; 
+      transition: all 0.4s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 100%;
     }
     .ficha-tecnica.tema-azul {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #ffffff; border-left: 6px solid #00d2ff;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); color: #2c3e50; border-left: 6px solid #3498db;
     }
-    .tema-azul .ficha-header { color: #00d2ff; border-bottom: 1px solid rgba(255,255,255,0.2); }
-    .tema-azul .dato-label { color: #a1c4fd; font-size: 11px; text-transform: uppercase; font-weight: bold; }
-    .tema-azul .dato-valor { color: #ffffff; font-weight: 600; display: block; font-size: 14px; }
-    .tema-azul .ficha-observaciones { background: rgba(255,255,255,0.1); border-left: 3px solid #00d2ff; }
+    .tema-azul .ficha-header { color: #2980b9; border-bottom: 2px solid rgba(0,0,0,0.05); }
+    .tema-azul .dato-label { color: #7f8c8d; font-size: 11px; text-transform: uppercase; font-weight: 800; }
+    .tema-azul .dato-valor { color: #2c3e50; font-weight: 700; display: block; font-size: 14px; }
+    .tema-azul .ficha-observaciones { background: rgba(0,0,0,0.03); border-left: 3px solid #3498db; }
 
-    /* 🕶️ TEMA OSCURO PREMIUM */
     .ficha-tecnica.tema-dark-ficha {
-      background: linear-gradient(135deg, #111723 0%, #1c2536 100%); color: #f5f6fa; border-left: 6px solid var(--oro);
+      background: linear-gradient(135deg, #1e272e 0%, #2f3640 100%); color: #f5f6fa; border-left: 6px solid var(--oro);
     }
-    .tema-dark-ficha .ficha-header { color: var(--oro); border-bottom: 1px solid #2c3a52; }
-    .tema-dark-ficha .dato-label { color: #6b7c96; font-size: 11px; text-transform: uppercase; font-weight: bold; }
-    .tema-dark-ficha .dato-valor { color: #ffffff; font-weight: 600; display: block; font-size: 14px; }
+    .tema-dark-ficha .ficha-header { color: var(--oro); border-bottom: 2px solid rgba(255,255,255,0.1); }
+    .tema-dark-ficha .dato-label { color: #a4b0be; font-size: 11px; text-transform: uppercase; font-weight: 800; }
+    .tema-dark-ficha .dato-valor { color: #ffffff; font-weight: 700; display: block; font-size: 14px; }
     .tema-dark-ficha .ficha-observaciones { background: rgba(0,0,0,0.3); border-left: 3px solid var(--oro); }
 
     .ficha-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 12px; font-weight: 900; text-transform: uppercase; }
     .ficha-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-    .ficha-observaciones { padding: 12px; border-radius: 8px; margin-bottom: 10px; }
-    .btn-toggle-dark { background: rgba(255, 255, 255, 0.2); border: none; color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    .btn-toggle-dark:hover { background: white; color: #1e3c72; transform: scale(1.05); }
+    .ficha-observaciones { padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+    
+    .btn-toggle-dark { 
+      background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0,0,0,0.1); color: #333; 
+      padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; transition: all 0.3s; 
+    }
+    .tema-dark-ficha .btn-toggle-dark { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; }
+    .btn-toggle-dark:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
 
     /* MODAL */
     .jarvis-modal {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
-      display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(8px);
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+      display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(10px);
+      animation: fadeIn 0.3s ease-out;
     }
     .modal-content {
-      background: white; padding: 40px; border-radius: 30px; border-top: 15px solid var(--guinda); text-align: center;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.8); max-width: 400px; width: 90%; color: #333;
+      background: white; padding: 35px; border-radius: 20px; border-top: 10px solid var(--guinda); 
+      text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); max-width: 400px; width: 90%; color: #333;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+    .modal-content input {
+      width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 12px; 
+      outline: none; font-size: 14px; transition: border 0.3s;
+    }
+    .modal-content input:focus { border-color: var(--guinda); }
+    .btn-registrar-modal {
+      background: var(--guinda); color: white; border: none; width: 100%; padding: 16px; 
+      border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 15px; font-size: 15px;
+      transition: all 0.3s;
+    }
+    .btn-registrar-modal:hover { background: var(--guinda-deep); transform: translateY(-2px); }
 
-    /* INPUTS Y BOTONES - INTEGRACIÓN LIMPIA ABAJO */
+    /* INPUTS Y BOTONES */
     .input-group {
-      display: flex; 
-      flex-direction: column; 
-      gap: 12px; 
-      background: var(--blanco-glass); 
-      padding: 20px; 
-      border-radius: 25px; 
-      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; flex-direction: column; gap: 12px; background: var(--blanco-glass); 
+      padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
     }
     
-    .input-row {
-      display: flex;
-      gap: 12px;
-      width: 100%;
-    }
+    .input-row { display: flex; gap: 10px; width: 100%; }
 
-    #pregunta { flex: 1; padding: 18px; border: none; border-radius: 15px; outline: none; font-size: 16px; }
+    #pregunta { 
+      flex: 1; padding: 16px 20px; border: none; border-radius: 15px; outline: none; 
+      font-size: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    }
     
     .btn-enviar { 
-      background: var(--oro); 
-      color: black; 
-      font-weight: 900; 
-      border: none; 
-      padding: 16px; 
-      border-radius: 15px; 
-      cursor: pointer; 
-      width: 100%; 
-      font-size: 15px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      background: var(--oro); color: var(--guinda-deep); font-weight: 900; border: none; 
+      padding: 16px; border-radius: 15px; cursor: pointer; width: 100%; font-size: 15px;
+      text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    .btn-enviar:hover { 
-      background: white; 
-      color: var(--guinda);
-      transform: translateY(-2px);
-    }
+    .btn-enviar:hover { background: white; color: var(--guinda); transform: translateY(-2px); }
     .btn-enviar:active { transform: translateY(0); }
     
-    .btn-voz { background: #34495e; color: white; border: none; padding: 0 20px; border-radius: 15px; cursor: pointer; font-size: 20px; transition: 0.3s; }
-    .btn-voz:hover { transform: scale(1.05); }
+    .btn-voz { 
+      background: #34495e; color: white; border: none; width: 55px; border-radius: 15px; 
+      cursor: pointer; font-size: 20px; transition: all 0.3s; display: flex; justify-content: center; align-items: center;
+    }
+    .btn-voz:hover { background: #2c3e50; transform: scale(1.05); }
 
-    footer { padding: 30px 20px; background: rgba(0,0,0,0.3); text-align: center; margin-top: 40px; }
-    .memorial-box { font-style: italic; font-size: 13px; color: rgba(255, 255, 255, 0.7); }
-    .nombres-resaltados { color: white; font-weight: bold; display: block; margin-top: 5px; }
+    footer { padding: 30px 20px; text-align: center; margin-top: 20px; }
+    .memorial-box { font-style: italic; font-size: 13px; color: rgba(255, 255, 255, 0.8); }
+    .nombres-resaltados { color: var(--oro); font-weight: bold; display: block; margin-top: 8px; font-size: 14px; letter-spacing: 1px;}
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* KEYFRAMES */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn { from { opacity: 0; transform: translateY(15px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes typing { 0%, 100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-4px); opacity: 1; } }
+
+    /* Media Queries para Móviles */
+    @media (max-width: 600px) {
+        .barra-superior { padding: 0 15px; height: 80px; }
+        .logo { height: 50px; }
+        .titulo-header { font-size: 1.1em; }
+        .contenedor { margin-top: 100px; }
+        .ficha-grid { grid-template-columns: 1fr; gap: 8px; }
+    }
 </style>
 </head>
 <body>
 
   <div id="modal-registro" class="jarvis-modal">
     <div class="modal-content">
-      <h3 style="color:var(--guinda); font-weight:900; margin-bottom: 10px;">🔐 ACCESO AL EQUIPO</h3>
-      <p id="info-maquina-registro" style="font-weight:bold; color:#666; margin-bottom:20px;"></p>
+      <h3 style="color:var(--guinda); font-weight:900; margin-bottom: 5px;">🔐 ACCESO AL EQUIPO</h3>
+      <p id="info-maquina-registro" style="font-weight:bold; color:#7f8c8d; margin-bottom:20px; font-size: 13px;"></p>
       
-      <input type="text" id="nombre-alumno" placeholder="Nombre completo" style="width:100%; padding:15px; margin:8px 0; border:2px solid #eee; border-radius:10px; outline: none;">
-      <input type="text" id="boleta-alumno" placeholder="No. Boleta" style="width:100%; padding:15px; margin:8px 0; border:2px solid #eee; border-radius:10px; outline: none;">
-      <input type="text" id="grupo-alumno" placeholder="Grupo" style="width:100%; padding:15px; margin:8px 0; border:2px solid #eee; border-radius:10px; outline: none;">
+      <input type="text" id="nombre-alumno" placeholder="Nombre completo">
+      <input type="text" id="boleta-alumno" placeholder="No. Boleta (Ej. 2024...)">
+      <input type="text" id="grupo-alumno" placeholder="Grupo (Ej. 6IV1)">
       
-      <button onclick="confirmarRegistro()" style="background:var(--guinda); color:white; border:none; width:100%; padding:18px; border-radius:10px; font-weight:900; cursor:pointer; margin-top:15px;">REGISTRAR OPERACIÓN</button>
-      <p onclick="cerrarModal()" style="margin-top:15px; color:gray; cursor:pointer; font-size:12px; text-decoration:underline;">Cancelar</p>
+      <button class="btn-registrar-modal" onclick="confirmarRegistro()">REGISTRAR OPERACIÓN</button>
+      <p onclick="cerrarModal()" style="margin-top:15px; color:#95a5a6; cursor:pointer; font-size:13px; text-decoration:none; font-weight: bold; transition: 0.3s;">Cancelar</p>
     </div>
   </div>
 
-  <div class="barra-superior">
+  <header class="barra-superior">
     <img src="../img/logo_ipn.png" class="logo" alt="IPN">
-    <div style="color:var(--guinda); font-weight:900; font-size:1.3em; text-align:center; text-transform:uppercase;">Sistema Guinda<br><small style="font-size:0.6em; letter-spacing: 2px;">Gestión de Taller CECyT 7</small></div>
+    <div class="titulo-header">
+      Sistema Guinda<br><small>Gestión de Taller CECyT 7</small>
+    </div>
     <img src="../img/logo_cecyt7.png" class="logo" alt="CECyT 7">
-  </div>
+  </header>
 
-  <div class="contenedor">
-    <button class="btn-volver" onclick="window.location.href='./carreras.html'">← VOLVER AL PANEL</button>
+  <main class="contenedor">
+    <button class="btn-volver" onclick="window.location.href='./carreras.html'">
+      <span style="font-size: 18px;">←</span> Volver al Panel
+    </button>
     
     <h1>GESTIÓN DE EQUIPOS</h1>
 
     <div class="chat-container">
       <div id="chat-messages">
-        <div class="msg-bot">🤖 Terminal Activa.<br>Hola, técnico. ¿En qué equipo vas a trabajar o qué ficha técnica deseas consultar? También puedes usar el botón de micrófono para hablarme.</div>
+        <div class="msg-bot">
+          🤖 <b>Terminal Activa.</b><br><br>
+          Hola, técnico. ¿En qué equipo vas a trabajar o qué ficha técnica deseas consultar? También puedes usar el botón de micrófono para hablarme de forma directa.
+        </div>
       </div>
     </div>
 
     <div class="input-group">
       <div class="input-row">
-        <button id="btn-voz" class="btn-voz" onclick="toggleVoz()">🎙️</button>
-        <input type="text" id="pregunta" placeholder="Ej: 'Usar Torno 1' o '/experiencia torno 1 vibra la bancada'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
+        <button id="btn-voz" class="btn-voz" onclick="toggleVoz()" title="Usar Micrófono">🎙️</button>
+        <input type="text" id="pregunta" placeholder="Ej: 'Usar Torno 1' o '/reporte mesa 2 desgaste en prensa'" onkeypress="if(event.key === 'Enter') hacerPregunta()">
       </div>
-      <button class="btn-enviar" onclick="hacerPregunta()">ENVIAR COMANDO</button>
+      <button class="btn-enviar" onclick="hacerPregunta()">Enviar Comando</button>
     </div>
-  </div>
+  </main>
 
   <footer>
     <div class="memorial-box">
-        "En memoria de <span class="nombres-resaltados">José Gabriel Hernández Mendez y Alí Yael Gonzales Aranda</span> Siempre vivos en nuestros corazones. Con amor, sus amigos."
+        "En memoria de 
+        <span class="nombres-resaltados">José Gabriel Hernández Mendez y Alí Yael Gonzales Aranda</span> 
+        Siempre vivos en nuestros corazones. Con amor, sus amigos."
     </div>
   </footer>
 
@@ -255,7 +312,6 @@
         'comparador': 737994113, 'cnc': 123325945 
     };
 
-    // 🛠️ NUEVO: DICCIONARIO DE HERRAMIENTAS ESPECÍFICAS
     const HERRAMIENTAS_REQUERIDAS = {
         'torno': 'Llave de tu torno, punto giratorio, portaherramientas, tornillos Allen, llave española, aceitera.',
         'soldadora': 'Careta, peto, guantes, piqueta, pinzas.',
@@ -263,7 +319,7 @@
         'esmeril': 'Gafas de seguridad de impacto, pinzas de presión o tenazas, recipiente con agua para enfriamiento.'
     };
 
-    const EPP_GLOBAL = "⚠️ **Protocolo de Seguridad:** Recuerda el uso de tu Equipo de Protección Personal, como botas de seguridad y bata. Tu integridad física es lo más importante.";
+    const EPP_GLOBAL = "⚠️ <b>Protocolo de Seguridad:</b> Recuerda el uso estricto de tu Equipo de Protección Personal (botas de seguridad, bata, gafas). Tu integridad física es la prioridad del taller.";
 
     let CACHE = {};
     let estadoSesion = { maquinaPendiente: null, idPendiente: null };
@@ -272,7 +328,7 @@
 
     function initVoz() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            alert("El navegador actual no soporta la API de reconocimiento de voz.");
+            alert("Tu navegador actual no soporta la API de reconocimiento de voz. Intenta en Chrome.");
             return;
         }
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -281,12 +337,16 @@
         recognition.continuous = false;
 
         recognition.onstart = () => {
-            document.getElementById('btn-voz').style.background = '#e74c3c';
-            document.getElementById('btn-voz').innerText = '🛑';
+            const btn = document.getElementById('btn-voz');
+            btn.style.background = '#e74c3c';
+            btn.innerText = '🛑';
+            btn.style.animation = 'pulse 1.5s infinite';
         };
         recognition.onend = () => {
-            document.getElementById('btn-voz').style.background = '#34495e';
-            document.getElementById('btn-voz').innerText = '🎙️';
+            const btn = document.getElementById('btn-voz');
+            btn.style.background = '#34495e';
+            btn.innerText = '🎙️';
+            btn.style.animation = 'none';
             vozActiva = false;
         };
         recognition.onresult = (event) => {
@@ -313,7 +373,7 @@
         const q = pregunta.toLowerCase();
         const dicc = {
             'torno': [/torn/], 'fresadora': [/fresa/], 'mesa': [/mesa/], 'esmeril': [/esmeril/],
-            'soldadora': [/solda/], 'taladradora': [/taladra/], 'cepillo': [/cepillo/],
+            'soldadora': [/solda/], 'taladradora': [/taladra/], 'cepillo': [/cepill/],
             'comparador': [/compa/], 'cnc': [/cnc/, /compu/]
         };
         for (const [key, regexs] of Object.entries(dicc)) {
@@ -327,6 +387,17 @@
         return m ? m[1] : null;
     }
 
+    function scrollToBottom() {
+        const chat = document.getElementById('chat-messages');
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function mostrarEscribiendo(idElemento) {
+        return `<div class="msg-bot typing-indicator" id="${idElemento}">
+                  <span></span><span></span><span></span>
+                </div>`;
+    }
+
     async function hacerPregunta() {
         const input = document.getElementById('pregunta');
         const pregunta = input.value.trim();
@@ -335,7 +406,7 @@
         const chat = document.getElementById('chat-messages');
         chat.innerHTML += `<div class="msg-user">${pregunta}</div>`;
         input.value = "";
-        chat.scrollTop = chat.scrollHeight;
+        scrollToBottom();
 
         if (pregunta.toLowerCase().startsWith('experiencia') || pregunta.toLowerCase().startsWith('/experiencia') || 
             pregunta.toLowerCase().startsWith('reporte') || pregunta.toLowerCase().startsWith('/reporte')) {
@@ -347,18 +418,18 @@
         const id = detectarID(pregunta);
 
         if (!maq) {
-            imprimirBot("⚠️ Unidad de equipo no identificada. Por favor, especifique un módulo válido (ej. Torno, Fresadora, Soldadora).");
+            imprimirBot("⚠️ Unidad de equipo no identificada. Por favor, especifique un módulo válido (ej. Torno, Fresadora, Esmeril).");
             return;
         }
 
-        if (pregunta.toLowerCase().match(/(usar|registrar|ocupar|asignar)/)) {
+        if (pregunta.toLowerCase().match(/(usar|registrar|ocupar|asignar|voy a)/)) {
             abrirModalRegistro(maq.nombre, id || "S/N");
             return;
         }
 
         const tempId = "temp-" + Date.now();
-        chat.innerHTML += `<div class="msg-bot" id="${tempId}">🔍 Consultando el repositorio de datos...</div>`;
-        chat.scrollTop = chat.scrollHeight;
+        chat.innerHTML += mostrarEscribiendo(tempId);
+        scrollToBottom();
 
         try {
             if (!CACHE[maq.key]) {
@@ -371,35 +442,33 @@
                 const tempElem = document.getElementById(tempId);
                 if(tempElem) tempElem.remove();
                 
-                // 🗣️ ASISTENTE FLUIDO: Imprime reglas de seguridad ANTES de la ficha
                 imprimirBot(EPP_GLOBAL);
                 
-                // Verifica si hay herramientas específicas para esta máquina
                 if (HERRAMIENTAS_REQUERIDAS[maq.key]) {
-                    imprimirBot(`🛠️ **Requisición de Materiales:** Para el uso de este equipo, deberás contar con: *${HERRAMIENTAS_REQUERIDAS[maq.key]}*`);
+                    imprimirBot(`🛠️ <b>Requisición de Materiales:</b> Para el uso de este equipo, deberás contar con: <i>${HERRAMIENTAS_REQUERIDAS[maq.key]}</i>`);
                 }
 
                 procesarRespuestaTecnica(resultado, maq.nombre, id, maq.key);
                 
-                // 🗣️ ASISTENTE FLUIDO: Pregunta de seguimiento para guiar al usuario
                 setTimeout(() => {
-                    imprimirBot(`¿Desea **registrar la operación** en este equipo (ej. "Voy a usar el ${maq.nombre} ${id || ''}") o registrar un **reporte técnico**?`);
-                }, 800);
+                    imprimirBot(`¿Desea <b>registrar la operación</b> en este equipo (ej. "Voy a usar el ${maq.nombre} ${id || ''}") o registrar un <b>reporte técnico</b>?`);
+                }, 1200);
 
-            }, 600);
+            }, 800);
 
         } catch (e) {
-            imprimirBot("❌ Error de enlace de red con la base de datos institucional.");
+            const tempElem = document.getElementById(tempId);
+            if(tempElem) tempElem.remove();
+            imprimirBot("❌ Error de enlace de red con la base de datos institucional. Intente nuevamente.");
         }
     }
 
-    // --- RESTO DEL CÓDIGO INTACTO (REPORTES, CARGA DE DATOS, MODAL, ETC) ---
     async function procesarNuevaExperiencia(comandoCompleto) {
         const maq = detectarMaquina(comandoCompleto);
         const id = detectarID(comandoCompleto) || "1";
         
         if (!maq) {
-            imprimirBot("⚠️ Estructura incorrecta. Especifique el módulo. Ejemplo: `/reporte torno 1 presenta anomalías en el motor`.");
+            imprimirBot("⚠️ Estructura incorrecta. Especifique el módulo. Ejemplo: <code>/reporte torno 1 presenta anomalías en el motor</code>.");
             return;
         }
 
@@ -407,12 +476,12 @@
         let autorGrupo = localStorage.getItem('alumno_grupo');
 
         if (!autorNombre || !autorGrupo) {
-            imprimirBot("⚠️ **Restricción de Seguridad.** Debe autenticar su identidad antes de registrar un reporte.");
+            imprimirBot("⚠️ <b>Restricción de Seguridad.</b> Debe autenticar su identidad antes de registrar un reporte.");
             autorNombre = prompt("Ingrese su nombre completo para validar el registro técnico:");
             autorGrupo = prompt("Ingrese su grupo académico (ej. 6IV1):");
             
             if (!autorNombre || !autorGrupo || autorNombre.trim() === "" || autorGrupo.trim() === "") {
-                imprimirBot("❌ **Operación Cancelada.**");
+                imprimirBot("❌ <b>Operación Cancelada.</b> Faltan datos de validación.");
                 return;
             }
             localStorage.setItem('alumno_nombre', autorNombre);
@@ -422,9 +491,13 @@
         let textoExperiencia = comandoCompleto.replace(/\/?[eE]xperiencia/g, '').replace(/\/?[rR]eporte/g, '').replace(new RegExp(maq.key, 'gi'), '').replace(id, '').replace(/:/g, '').trim();
         
         if (textoExperiencia.length < 5) {
-            imprimirBot("⚠️ Descripción demasiado sucinta. Detalle el diagnóstico del equipo con precisión técnica.");
+            imprimirBot("⚠️ Descripción demasiado sucinta. Detalle el diagnóstico del equipo con precisión técnica (ej. ruidos extraños, desgaste en la bancada, etc.).");
             return;
         }
+
+        const tempId = "temp-reg-" + Date.now();
+        document.getElementById('chat-messages').innerHTML += mostrarEscribiendo(tempId);
+        scrollToBottom();
 
         if (!CACHE[maq.key]) {
             try { CACHE[maq.key] = await cargarDatosSheet(MAQUINAS_GID[maq.key]); } catch(e){}
@@ -438,14 +511,18 @@
             itemMaquina["EXPERIENCIAS_COMPARTIDAS"].push({ texto: textoExperiencia, autor: autorNombre, grupo: autorGrupo });
         }
 
-        imprimirBot(`🧠 **Registro de Bitácora Validado.** Se ha anexado la observación técnica para el módulo **${maq.nombre} ${id}**.`);
-
         try {
             await fetch(URL_GUINDA_GATEWAY, {
                 method: 'POST', mode: 'no-cors',
                 body: JSON.stringify({ equipo: maq.nombre, id: id, accion: "GUARDAR_EXPERIENCIA", detalle: textoExperiencia, autor: autorNombre, grupo: autorGrupo, fecha: new Date().toLocaleDateString() })
             });
-        } catch(e) { }
+            
+            document.getElementById(tempId)?.remove();
+            imprimirBot(`🧠 <b>Registro de Bitácora Validado.</b> Se ha anexado la observación técnica para el módulo <b>${maq.nombre} ${id}</b>. Gracias por contribuir al mantenimiento.`);
+        } catch(e) { 
+            document.getElementById(tempId)?.remove();
+            imprimirBot("❌ El reporte se guardó localmente, pero hubo un error al sincronizar con el servidor de Google.");
+        }
     }
 
     async function cargarDatosSheet(gid) {
@@ -461,12 +538,26 @@
         });
     }
 
+    // EL NUEVO "COMBO": LENGUAJE NATURAL + FICHA TÉCNICA
     function procesarRespuestaTecnica(item, maqNombre, id, maqKey) {
         if (!item) {
-            imprimirBot(`❌ No se localizaron registros vigentes para la unidad **${maqNombre} ${id || ''}**.`);
+            imprimirBot(`❌ No se localizaron registros vigentes para la unidad <b>${maqNombre} ${id || ''}</b>.`);
             return;
         }
 
+        // 1. EXTRAEMOS DATOS PARA EL LENGUAJE NATURAL
+        const estado = (item["ESTADO"] || "Sin Diagnóstico").toUpperCase();
+        const ubicacion = item["UBICACION"] || 'el Área Central de Taller';
+        const marca = item["MARCA"] || 'marca no especificada';
+        const colorEstado = (estado.includes('OPERATIVO') || estado.includes('BUEN')) ? '#27ae60' : '#c0392b';
+
+        // 2. EL "COMBO": GUINDA HABLA DE FORMA NATURAL PRIMERO
+        let estadoText = estado.includes('OPERATIVO') ? 'listo y operativo' : 'con estado de ' + estado.toLowerCase();
+        let mensajeNatural = `Revisando los registros... 🔍<br><br>El equipo <b>${maqNombre} ${id || ''}</b> (Marca: ${marca}) se encuentra <b>${estadoText}</b> y está ubicado en ${ubicacion}. <br><br>Aquí tienes la cédula técnica completa a detalle:`;
+        
+        imprimirBot(mensajeNatural);
+
+        // 3. GENERAMOS EL GRID DE DATOS EXCLUYENDO LOS QUE YA USAMOS ARRIBA
         const omitir = ["IDENTIFICACION", "UBICACION", "ESTADO", "MARCA", "MODELO", "NOTAS", "ESPECIFICACIONES"];
         let gridDinamico = "";
         Object.keys(item).forEach(col => {
@@ -476,89 +567,110 @@
             }
         });
 
+        // 4. GENERAMOS EL BLOQUE DE EXPERIENCIAS (SI HAY)
         let bloqueExperiencias = "";
         if (item["EXPERIENCIAS_COMPARTIDAS"] && item["EXPERIENCIAS_COMPARTIDAS"].length > 0) {
-            bloqueExperiencias = `<div style="margin-top:10px; background:rgba(255, 215, 0, 0.15); padding:10px; border-radius:8px; border-left:3px solid var(--oro);">
-                <span class="dato-label" style="color:var(--oro);">⚠️ Historial de Observaciones Técnicas:</span>
-                <ul style="font-size:0.85em; margin-left:15px; margin-top:5px; color:#fff; list-style-type: square;">
-                    ${item["EXPERIENCIAS_COMPARTIDAS"].map(exp => `<li style="margin-bottom: 5px;">"${exp.texto}" <br><small style="color: #a1c4fd; font-style: italic;">— Registrado por: ${exp.autor} (Grupo: ${exp.grupo})</small></li>`).join('')}
+            bloqueExperiencias = `<div style="margin-top:15px; background:rgba(255, 215, 0, 0.1); padding:12px; border-radius:10px; border-left:4px solid var(--oro);">
+                <span class="dato-label" style="color:#d4af37;">⚠️ Historial de Observaciones Técnicas:</span>
+                <ul style="font-size:0.85em; margin-left:20px; margin-top:8px; list-style-type: square; color: inherit;">
+                    ${item["EXPERIENCIAS_COMPARTIDAS"].map(exp => `<li style="margin-bottom: 6px;">"${exp.texto}" <br><small style="opacity: 0.7; font-style: italic;">— Registrado por: ${exp.autor} (Grupo: ${exp.grupo})</small></li>`).join('')}
                 </ul>
             </div>`;
         }
 
-        const estado = (item["ESTADO"] || "Sin Diagnóstico").toUpperCase();
-        const colorEstado = (estado.includes('OPERATIVO') || estado.includes('BUEN')) ? '#2ecc71' : '#e74c3c';
+        // 5. ARMAMOS LA FICHA TÉCNICA VISUAL
         const idFichaUnico = 'ficha-' + Date.now();
-
         const fichaHTML = `
             <div class="ficha-tecnica tema-azul" id="${idFichaUnico}">
                 <div class="ficha-header">
                     <span>🛠️ CÉDULA TÉCNICA: ${maqNombre} ${id || ''}</span>
                     <button class="btn-toggle-dark" onclick="toggleFichaDark('${idFichaUnico}')">🌙 Vista de Contraste</button>
                 </div>
-                <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 10px;">
                     <div><span class="dato-label">CONDICIÓN OPERATIVA:</span><span class="dato-valor" style="color:${colorEstado}">● ${estado}</span></div>
-                    <div style="text-align:right"><span class="dato-label">ASIGNACIÓN DE ÁREA:</span><span class="dato-valor">${item["UBICACION"] || 'Área Central de Taller'}</span></div>
+                    <div style="text-align:right"><span class="dato-label">ASIGNACIÓN DE ÁREA:</span><span class="dato-valor">${ubicacion}</span></div>
                 </div>
                 <div class="ficha-grid">${gridDinamico}</div>
                 <div class="ficha-observaciones">
-                    <span class="dato-label" style="color:#00d2ff; font-weight:bold;">Manual de Referencia / Notas Técnicas:</span>
-                    <p style="font-size:0.85em; font-style:italic; margin-top:5px;">${item["NOTAS"] || "No se registran especificaciones."}</p>
+                    <span class="dato-label" style="color:#2980b9; font-weight:900;" class="lbl-notas">Manual de Referencia / Notas Técnicas:</span>
+                    <p style="font-size:0.9em; font-style:italic; margin-top:5px;">${item["NOTAS"] || "No se registran especificaciones adicionales en el manual."}</p>
                 </div>
                 ${bloqueExperiencias}
             </div>`;
         
-        imprimirBot(fichaHTML);
-        hablar(`Cédula técnica desplegada. Recuerda usar tu equipo de protección.`);
+        // 6. IMPRIMIMOS LA FICHA Y HACEMOS QUE GUINDA HABLE
+        setTimeout(() => {
+            imprimirBot(fichaHTML);
+            hablar(`El equipo ${maqNombre} está ${estadoText}. Desplegando cédula técnica en pantalla.`);
+        }, 800); // Un ligero delay para que parezca que procesó el primer mensaje antes de soltar la tabla
     }
 
     function toggleFichaDark(idFicha) {
         const ficha = document.getElementById(idFicha);
         const boton = ficha.querySelector('.btn-toggle-dark');
+        const lblNotas = ficha.querySelector('.ficha-observaciones .dato-label');
+        
         if (ficha.classList.contains('tema-azul')) {
             ficha.classList.remove('tema-azul'); ficha.classList.add('tema-dark-ficha');
             boton.innerText = "☀️ Vista Clásica";
+            if(lblNotas) lblNotas.style.color = 'var(--oro)';
         } else {
             ficha.classList.remove('tema-dark-ficha'); ficha.classList.add('tema-azul');
             boton.innerText = "🌙 Vista de Contraste";
+            if(lblNotas) lblNotas.style.color = '#2980b9';
         }
     }
 
     function abrirModalRegistro(maquina, id) {
         estadoSesion.maquinaPendiente = maquina;
         estadoSesion.idPendiente = id;
-        document.getElementById('info-maquina-registro').innerText = `${maquina} - UNIDAD UNIFICADA ${id}`;
+        document.getElementById('info-maquina-registro').innerText = `${maquina} - UNIDAD ${id}`;
+        
+        // Autocompletar si ya hay datos
+        if(localStorage.getItem('alumno_nombre')) document.getElementById('nombre-alumno').value = localStorage.getItem('alumno_nombre');
+        if(localStorage.getItem('alumno_grupo')) document.getElementById('grupo-alumno').value = localStorage.getItem('alumno_grupo');
+        
         document.getElementById('modal-registro').style.display = 'flex';
     }
     
     function cerrarModal() { document.getElementById('modal-registro').style.display = 'none'; }
 
     async function confirmarRegistro() {
-        const n = document.getElementById('nombre-alumno').value;
-        const b = document.getElementById('boleta-alumno').value;
-        const g = document.getElementById('grupo-alumno').value;
-        if (!n || !b || !g) return alert("Favor de validar que todos los campos estén cubiertos.");
+        const n = document.getElementById('nombre-alumno').value.trim();
+        const b = document.getElementById('boleta-alumno').value.trim();
+        const g = document.getElementById('grupo-alumno').value.trim();
+        
+        if (!n || !b || !g) {
+            alert("⚠️ Favor de validar que todos los campos estén cubiertos correctamente.");
+            return;
+        }
         
         localStorage.setItem('alumno_nombre', n);
         localStorage.setItem('alumno_grupo', g);
         
         cerrarModal();
-        imprimirBot(`🚀 **Procesando autorización para ${n}...**`);
+        const tempId = "temp-auth-" + Date.now();
+        document.getElementById('chat-messages').innerHTML += mostrarEscribiendo(tempId);
+        scrollToBottom();
         
         try {
             await fetch(URL_GUINDA_GATEWAY, { 
                 method: 'POST', mode: 'no-cors', 
                 body: JSON.stringify({nombre:n, boleta:b, grupo:g, equipo:estadoSesion.maquinaPendiente, id:estadoSesion.idPendiente, accion:"INICIO"})
             });
-            imprimirBot(`✅ **ACCESO CONCEDIDO.** Operación registrada en la bitácora institucional.`);
-            hablar(`Acceso concedido para ${n}.`);
-        } catch (e) { imprimirBot("❌ Error de comunicación con el servicio."); }
+            document.getElementById(tempId)?.remove();
+            imprimirBot(`✅ <b>ACCESO CONCEDIDO.</b> Operación registrada en la bitácora institucional para el operador <b>${n}</b>.`);
+            hablar(`Acceso concedido para ${n}. Buen trabajo.`);
+        } catch (e) { 
+            document.getElementById(tempId)?.remove();
+            imprimirBot("❌ Error de comunicación con el servicio de base de datos."); 
+        }
     }
 
     function imprimirBot(texto) {
         const chat = document.getElementById('chat-messages');
         chat.innerHTML += `<div class="msg-bot">${texto}</div>`;
-        chat.scrollTop = chat.scrollHeight;
+        scrollToBottom();
     }
 
     function parseCSV(text) {
@@ -568,7 +680,9 @@
             if (c === '"') { inQuotes = !inQuotes; continue; }
             if (c === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
             if ((c === '\n' || c === '\r') && !inQuotes) {
-                row.push(cur); cur = ''; if (row.length > 1 || row[0] !== '') rows.push(row);
+                if (c === '\r' && text[i+1] === '\n') i++; // Skip \n after \r
+                row.push(cur); cur = ''; 
+                if (row.length > 1 || row[0] !== '') rows.push(row);
                 row = []; continue;
             }
             cur += c;
